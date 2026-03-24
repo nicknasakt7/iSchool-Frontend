@@ -15,7 +15,7 @@ import { userSchema } from "@/validation/validate";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { IoSchoolOutline } from "react-icons/io5";
+
 import { MdArrowRightAlt } from "react-icons/md";
 import { motion } from "motion/react"
 
