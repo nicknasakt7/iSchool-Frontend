@@ -5,5 +5,5 @@ export const metadata: Metadata = {
 };
 
 export default function Student() {
-  return <div>sutterwrsdfsdf</div>;
+  return <div>test2</div>;
 }

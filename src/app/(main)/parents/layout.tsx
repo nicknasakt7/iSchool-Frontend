@@ -1,5 +1,6 @@
 // "use client";
 
+import Headers from "@/components/layouts/headers";
 import React from "react";
 
 export default function Layout({
@@ -7,5 +8,10 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <></>;
+  return (
+    <div className="min-h-screen">
+      <Headers />
+      {children}
+    </div>
+  );
 }
