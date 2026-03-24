@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 import "./styles/globals.css";
 import { poppins } from "./styles/font";
+import Navbar from "@/components/navbar/navbar";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -43,6 +44,12 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">{children}</body>
     <html lang="en" className={cn("font-sans", inter.variable)}>
       <body className={`antialiased ${poppins.className}`}>{children}</body>
+    <html lang="en">
+      <body>
+        <Navbar/>
+        
+        {children}
+      </body>
     </html>
   );
 }
