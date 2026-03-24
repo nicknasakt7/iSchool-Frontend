@@ -9,12 +9,14 @@ export default function Navbar() {
         <div>
           <IoSchoolOutline className="text-blue-500" />
         </div>
-        <div>
-          <p className="font-bold text-blue-500 text-xl">iSchool</p>
-        </div>
+        <Link href={'/'}>
+          <div>
+            <p className="font-bold text-blue-500 text-xl">iSchool</p>
+          </div>
+        </Link>
       </div>
       <div className="flex gap-4 items-center ">
-        <Link href={'/login'}>
+        <Link href={"/login"}>
           <div className=" hover:bg-gray-50 px-4 py-1 rounded-2xl animate-pulse">
             <button className="font-extralight">Login</button>
           </div>

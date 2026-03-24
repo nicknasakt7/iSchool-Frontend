@@ -5,8 +5,9 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 
 import "./styles/globals.css";
-import { poppins } from "./styles/font";
+
 import Navbar from "@/components/navbar/navbar";
+import { Poppins } from "next/font/google";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -20,7 +21,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-poppins", // 👈 สำคัญ
+});
 
 
 
