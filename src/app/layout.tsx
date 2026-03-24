@@ -3,10 +3,8 @@ import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 
 import "./styles/globals.css";
-import { osWald, poppins } from "./styles/font";
+import { poppins } from "./styles/font";
 import { Inter } from "next/font/google";
-
-import "./styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
