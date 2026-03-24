@@ -4,6 +4,11 @@ import { cn } from "@/lib/utils";
 import { Inter } from "next/font/google";
 import { poppins } from "./styles/font";
 import "./styles/globals.css";
+import { osWald, poppins } from "./styles/font";
+import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
