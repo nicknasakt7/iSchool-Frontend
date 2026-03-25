@@ -1,12 +1,25 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+
 
 import { cn } from "@/lib/utils";
 
 import "./styles/globals.css";
-import { poppins } from "./styles/font";
-import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+import Navbar from "@/components/navbar/navbar";
+import { Poppins } from "next/font/google";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+
+
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-poppins", // 👈 สำคัญ
+});
+
+
 
 export const metadata: Metadata = {
   title: {
@@ -21,8 +34,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    
     <html lang="en" className={cn("font-sans", inter.variable)}>
-      <body className={`antialiased ${poppins.className}`}>{children}</body>
+      <body className={`antialiased ${poppins.className}`}>
+ 
+        <Navbar/>
+        
+        {children}
+      </body>
     </html>
   );
 }
