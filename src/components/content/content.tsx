@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { MdArrowRightAlt } from "react-icons/md";
 import { motion } from "motion/react";
+import FooterContent from "./footercontent";
 
 // export default function ContentHome() {
 //   return (
@@ -149,7 +150,8 @@ export default function Hero() {
           />
         </div>
       </div>
-      
+        {/* footer content */}
+        <FooterContent/>
     </motion.div>
   );
 }

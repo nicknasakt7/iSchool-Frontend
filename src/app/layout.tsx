@@ -37,9 +37,7 @@ export default function RootLayout({
     
     <html lang="en" className={cn("font-sans", inter.variable)}>
       <body className={`antialiased ${poppins.className}`}>
- 
         <Navbar/>
-        
         {children}
       </body>
     </html>
