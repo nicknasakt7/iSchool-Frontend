@@ -4,6 +4,7 @@ import ContentAcademic from "@/components/content/contentAcademic";
 import ContentPillars from "@/components/content/contentpillars";
 import Footer from "@/components/footer/footer";
 import ContectForm from "@/components/form/contectform";
+import FormRegister from "@/components/form/formregister";
 
 export default function HomePage() {
   return (
@@ -19,7 +20,7 @@ export default function HomePage() {
           {/* content academic */}
           <ContentAcademic/>
           {/* Form contect*/}
-          <ContectForm/>
+          <FormRegister/>
         </div>
         <Footer/>
       </div>

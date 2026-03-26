@@ -3,22 +3,6 @@
 import Image from "next/image";
 import { toast } from "sonner";
 
-type TitleProps = {
-  title: string;
-  desc: string;
-};
-
-const Title = ({ title, desc }: TitleProps) => {
-  return (
-    <div className="flex flex-col items-center text-center space-y-3">
-      <h2 className="text-3xl sm:text-5xl font-semibold dark:text-white">
-        {title}
-      </h2>
-      <p className="max-w-lg text-gray-500 dark:text-white/75">{desc}</p>
-    </div>
-  );
-};
-
 export default function ContectForm() {
   const handleOnsubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,15 +36,9 @@ export default function ContectForm() {
   return (
     <div id="contect">
       <div
-        className="flex flex-col items-center pt-20 gap-6 px-4 sm:px-12 lg:px-24 xl:px-40 text-gray-800 dark:text-white"
+        className="flex flex-col items-center  gap-6  text-gray-800 dark:text-white"
       >
-        <Title
-          title="Join the Future of Learning"
-          desc="Admissions are now open for the upcoming academic year. Secure
-          your spot in the global community of innovators."
-        />
-
-        <form onSubmit={handleOnsubmit} className="grid sm:grid-cols-2 gap-3 sm:gap-5 max-w-2xl w-full">
+        <form onSubmit={handleOnsubmit} className="grid sm:grid-cols-2 gap-1 sm:gap-2 max-w-2xl w-full">
           <div>
             <p className="mb-2 text-sm font-medium">Your name</p>
             <div className="flex flex-cols sm:flex-row border border-gray-200 rounded-xl pl-2 dark:border-gray-600">
@@ -99,7 +77,7 @@ export default function ContectForm() {
             <p className="mb-2 text-sm font-medium">Message</p>
             <textarea
               name="message"
-              rows={8}
+              rows={3}
               placeholder="Entet your message"
               className="text-sm w-full border border-gray-200 rounded-xl pl-2 pt-2 dark:border-gray-600 outline-none"
               required

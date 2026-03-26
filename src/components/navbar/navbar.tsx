@@ -10,7 +10,8 @@ import { PATH } from "@/constants/path.constant";
 export default function Navbar() {
   const [,setSidsbaropen] = useState(false);
   const path = usePathname();
-  const isLoginPath = path === PATH.LOGIN;
+  const isLoginPath = path === PATH.LOGIN || path === PATH.CONTENT
+  
 
   return (
     <nav className="flex justify-between items-center px-4 sm:px-12 lg:px-24 xl:px-40 py-4 sticky top-0 z-20 backdrop-blur-lg font-medium bg-white/50 dark:bg-gray-900/70 ">
@@ -39,7 +40,7 @@ export default function Navbar() {
               href="#contect"
               className=" hover:scale-105"
             >
-              Home
+              Form Regiter
             </a>
             <MdArrowRightAlt />
           </div>
