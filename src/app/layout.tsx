@@ -6,7 +6,6 @@ import Navbar from "@/components/navbar/navbar";
 import { Poppins } from "next/font/google";
 import { Toaster } from "sonner";
 
-
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const poppins = Poppins({
@@ -30,7 +29,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", inter.variable)}>
       <body className={`antialiased ${poppins.className}`}>
-        
+        <Navbar />
+
         {children}
         <Toaster position="top-right" richColors />
       </body>
