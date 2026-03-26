@@ -108,7 +108,7 @@ export default function ContectForm() {
           {/* w-max กว้างเท่ากับเนื้อหาภายในทั้งหมด */}
           <button
             type="submit"
-            className="w-max bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all flex gap-2 text-white text-sm px-8 py-3 rounded-full cursor-pointer hover:scale-105 duration-400 transition-all"
+            className="w-max bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all flex gap-2 text-white text-sm px-8 py-3 rounded-full cursor-pointer hover:scale-105 duration-400 "
           >
             Submit Application{" "}
             <Image src="/arrow_icon.svg" alt="submit" width={20} height={20} />
