@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { MdArrowRightAlt } from "react-icons/md";
 import { motion } from "motion/react";
+import FooterContent from "./footercontent";
+import Link from "next/link";
 
 // export default function ContentHome() {
 //   return (
@@ -84,7 +86,6 @@ export default function Hero() {
       transition={{ duration: 1 }}
     >
       <div className="flex flex-col md:flex-row pt-10 px-5">
-        {/* LEFT */}
         <div>
           <div className="bg-[#f0f4f8] inline-block">
             <h1 className="text-[10px]">
@@ -92,7 +93,6 @@ export default function Hero() {
             </h1>
           </div>
 
-          {/* 🔥 Typing Text */}
           <div className="mt-5 space-y-2.5 text-5xl">
             <motion.p variants={container} initial="hidden" animate="visible">
               {text1.split("").map((char, i) => (
@@ -127,18 +127,19 @@ export default function Hero() {
           </div>
 
           <div className="mt-5 flex gap-5">
+            <Link href={'/content'}>
             <button className="flex items-center bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all px-5 py-1.5 rounded-2xl text-white">
               <p>Explore School</p>
               <MdArrowRightAlt />
             </button>
-
+            </Link>
+            
             <button className="bg-white rounded-2xl hover:bg-[#f7f9fb] px-5">
               Our Curriculum
             </button>
           </div>
         </div>
 
-        {/* RIGHT */}
         <div>
           <Image
             src="/content.png"
@@ -149,7 +150,8 @@ export default function Hero() {
           />
         </div>
       </div>
-      
+
+        <FooterContent/>
     </motion.div>
   );
 }
