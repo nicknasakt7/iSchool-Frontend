@@ -1,6 +1,6 @@
 // "use client";
 
-import Headers from "@/components/layouts/headers";
+import Headers from "@/components/features/homepage/layouts/headers";
 import React from "react";
 
 export default function Layout({
