@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { IoSchoolOutline } from "react-icons/io5";
 import { MdArrowRightAlt } from "react-icons/md";
+import { Button } from "../ui/button";
 
 export default function Navbar() {
     const [sidebarOpen, setSidsbaropen] = useState(false)
@@ -30,6 +31,7 @@ export default function Navbar() {
           <a onClick={() => setSidsbaropen(false)} href="#contect" className=' hover:scale-105'>Home</a>
           <MdArrowRightAlt />
         </div>
+        <Button variant='destructive'>cancel</Button>
       </div>
     </nav>
   );
