@@ -1,10 +1,10 @@
 "use client";
 
-import AcademicRecordCard from "@/components/features/students/AcademicRecordCard";
-import AIInsightsCard from "@/components/features/students/AiInsightCard";
-import GradeQueryCard from "@/components/features/students/GradeQueryCard";
-import StandingCard from "@/components/features/students/StandingCard";
-import StudentProfileCard from "@/components/features/students/StudentprofileCard";
+import AcademicRecordCard from "@/components/features/students-fronts/AcademicRecordCard";
+import AIInsightsCard from "@/components/features/students-fronts/AiInsightCard";
+import GradeQueryCard from "@/components/features/students-fronts/GradeQueryCard";
+import StandingCard from "@/components/features/students-fronts/StandingCard";
+import StudentProfileCard from "@/components/features/students-fronts/StudentprofileCard";
 import { mockStudent } from "@/components/mocks/mock-student-data";
 // shadcn
 import {
