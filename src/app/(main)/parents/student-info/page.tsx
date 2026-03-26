@@ -1,28 +1,59 @@
-import StudentCard from "@/components/students/StudentCard";
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "parent/studentinfo",
-};
+import AcademicRecordCard from "@/components/features/students/AcademicRecordCard";
+import AIInsightsCard from "@/components/features/students/AiInsightCard";
+import GradeQueryCard from "@/components/features/students/GradeQueryCard";
+import StandingCard from "@/components/features/students/StandingCard";
+import StudentProfileCard from "@/components/features/students/StudentprofileCard";
+import { mockStudent } from "@/components/mocks/mock-student-data";
+// shadcn
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export default function Student() {
-  const mockStudent = {
-    firstName: "peter",
-    lastName: "park",
-    nickName: "joey",
-    gpa: 3.5,
-    grade: 5,
-  };
+// next
+
+export default function StudentsPage() {
+  const student = mockStudent;
+
   return (
-    <div className="min-h-screen bg-gray-100 p-10">
-      <div className="max-w-2xl mx-auto grid grid-cols-2 gap-6">
-        <StudentCard student={mockStudent} />
+    <div className="p-6 space-y-6">
+      <div className="flex justify-center items-center">
+        {/* dropdown */}
+        <Select>
+          <SelectTrigger className="w-200px">
+            <SelectValue placeholder="Select Student..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1">Julian Thorne</SelectItem>
+            <SelectItem value="2">Another Student</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* 🧩 Layout */}
+      <div className="grid grid-cols-12 gap-6">
+        {/* 🟦 Left */}
+        <div className="col-span-3 space-y-6">
+          <StudentProfileCard student={student} />
+          <AcademicRecordCard student={student} />
+        </div>
+
+        {/* 🟩 Middle */}
+        <div className="col-span-6 space-y-6">
+          <GradeQueryCard student={student} />
+          <AIInsightsCard student={student} />
+        </div>
+
+        {/* 🟥 Right */}
+        <div className="col-span-3">
+          <StandingCard student={student} />
+        </div>
       </div>
     </div>
   );
 }
-//เทส
-
-// export default function Student() {
-//   return <div>student</div>;
-// }
