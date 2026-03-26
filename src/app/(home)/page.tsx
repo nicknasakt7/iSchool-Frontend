@@ -2,9 +2,9 @@ import BookPillars from "@/components/content/blockpillars";
 import ContentHome from "@/components/content/content";
 import ContentAcademic from "@/components/content/contentAcademic";
 import ContentPillars from "@/components/content/contentpillars";
-import Footer from "@/components/footer/footer";
-import ContectForm from "@/components/form/contectform";
-import FormRegister from "@/components/form/formregister";
+import Footer from "@/components/features/homepage/footer/footer";
+import FormRegister from "@/components/features/homepage/form/formregister";
+
 
 export default function HomePage() {
   return (

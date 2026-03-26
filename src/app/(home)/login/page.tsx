@@ -1,4 +1,5 @@
-import Login from "@/components/login/login";
+import Login from "@/components/features/homepage/login/login";
+
 
 export default function PageLogin() {
   return (
