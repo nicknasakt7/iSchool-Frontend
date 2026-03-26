@@ -1,4 +1,4 @@
-import CheckoutPage from "@/components/stripe/checkout";
+import CheckoutPage from "@/components/features/payments/stripe/checkout";
 import {
   FlaskConical,
   GraduationCap,

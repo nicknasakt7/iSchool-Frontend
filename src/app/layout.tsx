@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", inter.variable)}>
+    <html lang="en" className={cn(`antialiased ${poppins.className}`)}>
       <body className={`antialiased ${poppins.className}`}>
         {children}
         <Toaster position="top-right" richColors />
