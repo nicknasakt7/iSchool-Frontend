@@ -1,16 +1,29 @@
+"use client";
 import Link from "next/link";
-import React from "react";
+import { usePathname } from "next/navigation";
 
 export default function Headers() {
+  const pathName = usePathname();
+
   return (
-    <header className=" flex justify-center items-center gap-3">
+    <div className=" flex justify-center items-center gap-3">
       <div>
-        <Link href="/parents/student-info">student</Link>
+        <Link
+          href="/parents/student-info"
+          className={`pd-2 ${pathName === "/parents/student-info" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+        >
+          student
+        </Link>
       </div>
 
       <div>
-        <Link href="/parents/payment">payment</Link>
+        <Link
+          href="/parents/payment"
+          className={`pd-2 ${pathName === "/parents/payment" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+        >
+          payment
+        </Link>
       </div>
-    </header>
+    </div>
   );
 }
