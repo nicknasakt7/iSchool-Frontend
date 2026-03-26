@@ -1,8 +1,9 @@
 import Image from "next/image";
+import ContectForm from "../form/contectform";
 
 export default function Footer() {
   return (
-    <div className='bg-slate-50 dark:bg-gray-900 pt-25 sm:pt-10 mt-20 sm:mt-40 px-4 sm:px-10 lg:px-24 xl:px-40 pb-20'>
+    <div className='bg-slate-50 dark:bg-gray-900 pt-25 sm:pt-10 mt-20 sm:mt-20 px-4 sm:px-10 lg:px-24 xl:px-40 pb-20'>
       <div className='flex justify-between lg:items-center max-md:flex-col gap-10'>
         <div className='space-y-5 text-sm text-gray-700 dark:text-gray-400'>
           <Image src="/ischool.png" alt="logo" width={40} height={40}/>
@@ -19,8 +20,7 @@ export default function Footer() {
           <h3 className='font-semibold'>Subscribe to our newsletter</h3>
           <p className='text-sm mt-2 mb-6'>The latest news, articles, and resources, sent to your inbox weekly.</p>
           <div className='flex mt-2 mb-6 gap-2'>
-            <input type="email" placeholder='Enter your Email' className='w-full p-3 text-sm outline-none rounded-lg dark:text-gray-200 bg-transparent border border-gray-300 dark:border-gray-500'/>
-            <button type='submit' className='bg-primary text-white rounded-sm px-6 hover:scale-105 duration-500'>Susbcribe</button>
+            <ContectForm/>
           </div>
         </div>
       </div>
