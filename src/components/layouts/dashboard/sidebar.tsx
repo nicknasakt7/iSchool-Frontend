@@ -57,9 +57,21 @@ export default function Sidebar() {
 
         {/* ADMIN SECTION */}
         <SidebarSection title="ADMINISTRATION">
-          <SidebarItem name="New Entry" href="/new-entry" icon={SquarePlus} />
-          <SidebarItem name="New Teacher" href="/new-teacher" icon={UserPlus} />
-          <SidebarItem name="New Admin" href="/new-admin" icon={ShieldPlus} />
+          <SidebarItem
+            name="New Entry"
+            href="/create/new-entry"
+            icon={SquarePlus}
+          />
+          <SidebarItem
+            name="New Teacher"
+            href="/create/new-teacher"
+            icon={UserPlus}
+          />
+          <SidebarItem
+            name="New Admin"
+            href="/create/new-admin"
+            icon={ShieldPlus}
+          />
           <SidebarItem
             name="Admin Management"
             href="/admin-management"
