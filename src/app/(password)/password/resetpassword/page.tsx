@@ -7,11 +7,11 @@ export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Password ไม่ตรงกัน");
+      alert("Password is don't match");
       return;
     }
 
@@ -37,8 +37,8 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* New Password */}
           <div>
-            <label className="text-xs text-gray-500">NEW PASSWORD</label>
-            <div className="flex items-center bg-gray-100 rounded-full px-4 py-3 mt-1">
+            <label className="text-xs text-gray-500 gap-2 ">NEW PASSWORD</label>
+            <div className="flex items-center bg-gray-100 rounded-full px-4 py-3 mt-2">
               <Lock size={16} className="text-gray-400 mr-2" />
               <input
                 type="password"
@@ -52,8 +52,8 @@ export default function ResetPasswordPage() {
 
           {/* Confirm Password */}
           <div>
-            <label className="text-xs text-gray-500">RE-ENTER PASSWORD</label>
-            <div className="flex items-center bg-gray-100 rounded-full px-4 py-3 mt-1">
+            <label className="text-xs text-gray-500 ">RE-ENTER PASSWORD</label>
+            <div className="flex items-center bg-gray-100 rounded-full px-4 py-3 mt-2">
               <Lock size={16} className="text-gray-400 mr-2" />
               <input
                 type="password"
