@@ -1,0 +1,140 @@
+'use client';
+
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTransition } from 'react';
+import { Loader } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { z } from 'zod';
+import ProfileUpload from '../ProfileUpload';
+
+const schema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  role: z.string().min(1, 'Role is required'),
+});
+
+type FormValues = z.infer<typeof schema>;
+
+export default function NewAdminForm() {
+  const { handleSubmit, control } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      role: '',
+    },
+  });
+
+  const [isPending, startTransition] = useTransition();
+
+  const onSubmit = (data: FormValues) => {
+    startTransition(async () => {
+      console.log(data);
+    });
+  };
+
+  return (
+    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+      <h1 className="text-3xl font-bold text-center mb-2">New Admin</h1>
+      <p className="text-center text-muted-foreground mb-8">
+        Onboard a new faculty member to the iSchool ecosystem.
+      </p>
+      {/* Profile Upload */}
+      <ProfileUpload />
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FieldGroup className="gap-5">
+          <div className="grid grid-cols-2 gap-5">
+            {/* First Name */}
+            <Controller
+              control={control}
+              name="firstName"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>First Name</FieldLabel>
+                  <Input {...field} placeholder="e.g. Julianne" />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            {/* Last Name */}
+            <Controller
+              control={control}
+              name="lastName"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Last Name</FieldLabel>
+                  <Input {...field} placeholder="e.g. Moore" />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            {/* Role (full width) */}
+            <Controller
+              control={control}
+              name="role"
+              render={({ field, fieldState }) => (
+                <Field className="col-span-2" data-invalid={fieldState.invalid}>
+                  <FieldLabel>Role</FieldLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select position..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="super_admin">Super Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
+
+          {/* Submit */}
+          <Field>
+            <div className="flex justify-center mt-4">
+              <Button
+                className="rounded-full px-8 py-6 text-base"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <>
+                    <Loader className="animate-spin" /> Adding...
+                  </>
+                ) : (
+                  'Add New Admin →'
+                )}
+              </Button>
+            </div>
+          </Field>
+        </FieldGroup>
+      </form>
+    </div>
+  );
+}
