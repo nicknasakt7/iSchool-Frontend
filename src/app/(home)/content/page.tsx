@@ -1,18 +1,15 @@
-'use client'
+'use client';
 
-import Image from "next/image";
-import { ChevronDown } from "lucide-react";
-import { motion } from "motion/react";
+import Image from 'next/image';
+import { ChevronDown } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export default function PageContent() {
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        scale: 0.5,
-      }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.9 }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
     >
       <div className="bg-linear-to-b from-gray-100 to-white min-h-screen">
         <section className="flex flex-col items-center justify-center text-center px-6 pt-24 pb-16">
@@ -38,12 +35,13 @@ export default function PageContent() {
               width={600}
               height={400}
               className="w-full h-full object-cover"
+              priority
             />
           </div>
 
           <div className="space-y-6">
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800">
-              Foundations of the{" "}
+              Foundations of the{' '}
               <span className="text-blue-500">Digital Atrium</span>
             </h2>
 
@@ -82,7 +80,7 @@ export default function PageContent() {
 
           <div className="space-y-6">
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800">
-              The Birth of the Ischool <br />{" "}
+              The Birth of the Ischool <br />{' '}
               <span className="text-blue-500">AI Insight Layer</span>
             </h2>
 
