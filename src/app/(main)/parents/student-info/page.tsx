@@ -46,7 +46,13 @@ export default function StudentsPage() {
         {/* 🟩 Middle */}
         <div className="col-span-6 space-y-6">
           <GradeQueryCard student={student} />
-          <AIInsightsCard student={student} />
+          <AIInsightsCard
+            student={student}
+            title="AI Insights"
+            tips={["Focus on weak subjects", "Keep consistency"]}
+            aiConclusion={["Strong performance in STEM"]}
+            aiTips={["Improve English writing", "Practice more exercises"]}
+          />
         </div>
 
         {/* 🟥 Right */}
