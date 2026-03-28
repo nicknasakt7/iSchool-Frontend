@@ -3,7 +3,11 @@
 import { Student } from "@/components/mocks/mock-student-types";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default function StandingCard({ student }: { student: Student }) {
+type StandingCardProps = {
+  student: Student;
+};
+
+export default function StandingCard({ student }: StandingCardProps) {
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardContent className="p-6 text-center">

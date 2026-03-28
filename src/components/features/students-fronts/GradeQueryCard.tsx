@@ -5,7 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
-export default function GradeQueryCard({ student }: { student: Student }) {
+type GradeQueryCardProps = {
+  student: Student;
+};
+
+export default function GradeQueryCard({ student }: GradeQueryCardProps) {
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardContent className="p-6 space-y-4">

@@ -4,7 +4,7 @@ export type Subject = {
   name: string;
   grade: string;
   score: number;
-  status: "COMPLETED" | "IN_PROGRESS";
+  status: "Passed" | "Failed" | "In Progress";
 };
 
 export type Student = {
@@ -29,6 +29,6 @@ export type Student = {
 
   standingPercent: number;
 
-  aiConclusion: string;
+  aiConclusion: string[];
   aiTips: string[];
 };

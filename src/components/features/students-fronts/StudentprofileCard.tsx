@@ -1,7 +1,12 @@
 import { Student } from "@/components/mocks/mock-student-types";
 import Image from "next/image";
 
-export default function StudentProfileCard({ student }: { student: Student }) {
+type StudentProfileCardProps = {
+  student: Student;
+};
+export default function StudentProfileCard({
+  student,
+}: StudentProfileCardProps) {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <div className="flex flex-col items-center text-center">

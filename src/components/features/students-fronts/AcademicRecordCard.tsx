@@ -5,11 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 
-type Props = {
+type AcademicRecordCardProps = {
   student: Student;
 };
 
-export default function AcademicRecordCard({ student }: Props) {
+export default function AcademicRecordCard({
+  student,
+}: AcademicRecordCardProps) {
   return (
     <Card className="rounded-2xl shadow-sm">
       <CardContent className="p-6 space-y-4">

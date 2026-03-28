@@ -19,10 +19,10 @@ export const mockStudent: Student = {
       name: "Advanced Calculus II",
       grade: "A+",
       score: 98,
-      status: "COMPLETED",
+      status: "Passed",
     },
-    { name: "English Literature", grade: "B-", score: 82, status: "COMPLETED" },
-    { name: "World History", grade: "A", score: 94, status: "COMPLETED" },
+    { name: "English Literature", grade: "B-", score: 82, status: "Passed" },
+    { name: "World History", grade: "A", score: 94, status: "Passed" },
   ],
 
   email: "j.thorne@academy.edu",
@@ -33,8 +33,9 @@ export const mockStudent: Student = {
 
   standingPercent: 5,
 
-  aiConclusion:
+  aiConclusion: [
     "Julian is demonstrating exceptional aptitude in STEM subjects...",
+  ],
 
   aiTips: [
     "Enroll in Creative Writing workshop this summer.",
