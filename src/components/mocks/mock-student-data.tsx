@@ -33,8 +33,9 @@ export const mockStudent: Student = {
 
   standingPercent: 5,
 
-  aiConclusion:
+  aiConclusion: [
     "Julian is demonstrating exceptional aptitude in STEM subjects...",
+  ],
 
   aiTips: [
     "Enroll in Creative Writing workshop this summer.",
