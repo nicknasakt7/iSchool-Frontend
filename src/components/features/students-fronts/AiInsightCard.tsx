@@ -13,8 +13,9 @@ type AIInsightsCardProps = {
 };
 
 export default function AIInsightsCard({
-  student,
   title,
+  aiConclusion,
+  aiTips,
 }: AIInsightsCardProps) {
   return (
     <Card className="rounded-2xl shadow-sm">
@@ -30,9 +31,7 @@ export default function AIInsightsCard({
           <Card className="border">
             <CardContent className="p-4">
               <p className="text-xs text-blue-600 mb-2">CORE CONCLUSION</p>
-              <p className="text-sm text-muted-foreground">
-                {student.aiConclusion}
-              </p>
+              <p className="text-sm text-muted-foreground">{aiConclusion[0]}</p>
             </CardContent>
           </Card>
 
@@ -42,7 +41,7 @@ export default function AIInsightsCard({
               <p className="text-xs text-blue-600 mb-2">ACTIONABLE TIPS</p>
 
               <ul className="list-disc ml-4 text-sm text-muted-foreground">
-                {student.aiConclusion.map((tips, i) => (
+                {aiTips.map((tips, i) => (
                   <li key={i}>{tips}</li>
                 ))}
               </ul>
