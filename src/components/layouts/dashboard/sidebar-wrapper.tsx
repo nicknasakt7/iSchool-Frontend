@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import Sidebar from './sidebar';
 
-type sidebarWrapperProps = {
+type SidebarWrapperProps = {
   children: React.ReactNode;
 };
 
-export default function SidebarWrapper({ children }: sidebarWrapperProps) {
+export default function SidebarWrapper({ children }: SidebarWrapperProps) {
   const [open, setOpen] = useState(false);
 
   return (

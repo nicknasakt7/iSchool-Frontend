@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import MainHeader from '@/components/features/dashboard/main-header';
 import SearchInput from '@/components/shared/search-input';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,37 +17,34 @@ const students = [
 export default function CheckInPage() {
   const [search, setSearch] = useState('');
 
-  // 🔥 filter ตรงนี้
+  //  filter ตรงนี้
   const filteredStudents = students.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
-    <div className="p-6 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
-      <MainHeader />
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
+        <AttendanceHeader showUpdated />
+        <SearchInput onSearch={setSearch} />
 
-      {/* 🔥 ส่ง onSearch เข้าไป */}
-      <SearchInput onSearch={setSearch} />
+        <div className="space-y-4">
+          {filteredStudents.map(s => (
+            <StudentRow key={s.id} student={s} />
+          ))}
 
-      <AttendanceHeader showUpdated />
+          {filteredStudents.length === 0 && (
+            <div className="text-sm text-muted-foreground text-center py-6">
+              No content
+            </div>
+          )}
+        </div>
 
-      <div className="space-y-4">
-        {filteredStudents.map(s => (
-          <StudentRow key={s.id} student={s} />
-        ))}
-
-        {filteredStudents.length === 0 && (
-          <div className="text-sm text-muted-foreground text-center py-6">
-            No content
-          </div>
-        )}
-      </div>
-
-      {/* bottom action */}
-      <div className="bottom-6 flex justify-center items-center">
-        <Button>
-          Complete Attendance <ArrowRight />
-        </Button>
+        <div className="flex justify-center items-center pt-2">
+          <Button>
+            Complete Attendance <ArrowRight />
+          </Button>
+        </div>
       </div>
     </div>
   );

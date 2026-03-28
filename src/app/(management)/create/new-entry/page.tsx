@@ -3,18 +3,12 @@
 
 import NewEntryForm from '@/components/features/create/form/NewEntryForm';
 
-export default function Page() {
+export default function CreateStudentPage() {
   return (
-    <div className="flex min-h-screen">
-      {/* <Sidebar /> */}
-
-      <div className="flex-1 flex flex-col">
-        {/* <Header /> */}
-
-        <main className="p-8 flex justify-center">
-          <NewEntryForm />
-        </main>
-      </div>
+    <div className="flex-1 flex flex-col">
+      <main className="p-6 flex justify-center">
+        <NewEntryForm />
+      </main>
     </div>
   );
 }

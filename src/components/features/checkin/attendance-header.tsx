@@ -49,7 +49,7 @@ export default function AttendanceHeader({
       <div className="flex items-start justify-between gap-4">
         {/* left */}
         <div>
-          <h1 className="text-2xl font-semibold">Morning Attendance</h1>
+          <h1 className="text-4xl font-bold">Morning Attendance</h1>
 
           <p className="text-sm text-muted-foreground">
             Daily student check-in for{' '}

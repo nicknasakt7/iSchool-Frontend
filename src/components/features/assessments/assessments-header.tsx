@@ -35,7 +35,7 @@ export default function AssessmentsHeader({
     <div className="flex flex-col gap-4">
       {/* 🔥 TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Assessments</h1>
+        <h1 className="text-4xl font-bold">Assessments</h1>
       </div>
       <SearchInput
         placeholder="Find student by name or student ID..."

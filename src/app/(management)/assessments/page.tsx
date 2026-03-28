@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import AssessmentsHeader from '@/components/features/assessments/assessments-header';
-import MainHeader from '@/components/features/dashboard/main-header';
 import { mockStudents } from '@/components/mocks/assessment-student';
 import StudentPerformanceCard from '@/components/features/assessments/student0performance-card';
 import ClassPerformanceSummary from '@/components/features/assessments/class-summary';
@@ -49,8 +48,7 @@ export default function AssessmentsPage() {
     );
   });
   return (
-    <div className="p-6 space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
-      <MainHeader />
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
       <AssessmentsHeader
         onGradeChange={setGrade}
         onClassroomChange={setClassroom}

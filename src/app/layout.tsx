@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import './styles/globals.css';
 import { Poppins } from 'next/font/google';
 import { Toaster } from 'sonner';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const poppins = Poppins({
   subsets: ['latin'],
