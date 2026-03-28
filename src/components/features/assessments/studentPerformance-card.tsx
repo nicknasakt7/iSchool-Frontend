@@ -84,10 +84,6 @@ export default function StudentPerformanceCard({
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           {localScores.map((item, i) => (
             <div key={i} className="bg-muted rounded-xl p-3 space-y-2 relative">
-              <button className="absolute top-1 right-1 text-red-500 opacity-60 hover:opacity-100">
-                <X size={14} />
-              </button>
-
               {/* label */}
               <Input
                 value={item.label}

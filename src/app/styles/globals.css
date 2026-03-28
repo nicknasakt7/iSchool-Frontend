@@ -47,8 +47,10 @@
   --radius-4xl: calc(var(--radius) * 2.6);
   --color-muted-header: var(--muted-header);
   --color-new-red-600: var(--new-red-600);
-  --color-new-green-500: var(--new-green-500);
+  --color-new-green-600: var(--new-green-600);
   --color-new-blue-500: var(--new-blue-500);
+  --color-new-orange-700: var(--new-orange-700);
+  --color-new-orange-400: var(--new-orange-400);
 }
 
 :root {
@@ -87,6 +89,9 @@
   --sidebar-ring: oklch(0.708 0 0);
   --new-red-600: oklch(57.7% 0.245 27.325);
   --new-blue-500: oklch(54.6% 0.245 262.881);
+  --new-green-500: oklch(62.7% 0.194 149.214);
+  --new-orange-400: oklch(75% 0.183 55.934);
+  --new-orange-700: oklch(55.3% 0.195 38.402);
 }
 
 .dark {

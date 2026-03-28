@@ -18,7 +18,7 @@ export default function Error({
 
       {/* TITLE */}
       <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
-        Intelligence Layer <span className="text-red-500">Paused</span>
+        Intelligence Layer <span className="text-new-red-600">Paused</span>
       </h1>
 
       {/* DESCRIPTION */}
@@ -38,7 +38,7 @@ export default function Error({
 
       {/* ERROR CODE */}
       <div className="text-xs text-muted-foreground">
-        ERROR REFERENCE:{' '}
+        ERROR REFERENCE:
         <span className="bg-muted px-2 py-1 rounded-md">
           {error?.message || 'UNKNOWN_ERROR'}
         </span>

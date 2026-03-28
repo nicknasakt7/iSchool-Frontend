@@ -3,9 +3,20 @@
 import { useState } from 'react';
 import AssessmentsHeader from '@/components/features/assessments/assessments-header';
 import { mockStudents } from '@/components/mocks/assessment-student';
-import StudentPerformanceCard from '@/components/features/assessments/student0performance-card';
-import ClassPerformanceSummary from '@/components/features/assessments/class-summary';
 
+import ClassPerformanceSummary from '@/components/features/assessments/class-summary';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Plus, X } from 'lucide-react';
+import StudentPerformanceCard from '@/components/features/assessments/studentPerformance-card';
+
+/* ================= TYPES ================= */
+type ScoreTemplate = {
+  label: string;
+  max: number;
+};
+
+/* ================= PAGE ================= */
 export default function AssessmentsPage() {
   const [grade, setGrade] = useState('');
   const [classroom, setClassroom] = useState('');
@@ -13,6 +24,50 @@ export default function AssessmentsPage() {
   const [students, setStudents] = useState(mockStudents);
   const [search, setSearch] = useState('');
 
+  /* 🔥 template กลาง */
+  const [scoreTemplate, setScoreTemplate] = useState<ScoreTemplate[]>([
+    { label: 'Homework', max: 10 },
+    { label: 'Quiz', max: 20 },
+  ]);
+
+  /* ================= TEMPLATE HANDLER ================= */
+  const handleTemplateChange = (
+    index: number,
+    field: keyof ScoreTemplate,
+    value: string,
+  ) => {
+    const updated = [...scoreTemplate];
+    updated[index] = {
+      ...updated[index],
+      [field]: field === 'label' ? value : Number(value),
+    };
+    setScoreTemplate(updated);
+  };
+
+  const addTemplate = () => {
+    setScoreTemplate(prev => [...prev, { label: 'New', max: 10 }]);
+  };
+
+  const removeTemplate = (index: number) => {
+    setScoreTemplate(prev => prev.filter((_, i) => i !== index));
+  };
+
+  /* 🔥 apply ให้ทั้ง class */
+  const applyTemplateToStudents = () => {
+    setStudents(prev =>
+      prev.map(student => ({
+        ...student,
+        scores: scoreTemplate.map(t => ({
+          label: t.label,
+          max: t.max,
+          score: 0,
+        })),
+        total: 0,
+      })),
+    );
+  };
+
+  /* ================= SCORE ================= */
   const handleScoreChange = (
     studentIndex: number,
     scoreIndex: number,
@@ -23,7 +78,6 @@ export default function AssessmentsPage() {
 
       updated[studentIndex].scores[scoreIndex].score = value;
 
-      // 💥 recompute total
       const total = updated[studentIndex].scores.reduce(
         (sum, s) => sum + s.score,
         0,
@@ -35,6 +89,7 @@ export default function AssessmentsPage() {
     });
   };
 
+  /* ================= FILTER ================= */
   const filteredStudents = students.filter(student => {
     const matchSearch =
       student.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -47,8 +102,11 @@ export default function AssessmentsPage() {
       (!search || matchSearch)
     );
   });
+
+  /* ================= UI ================= */
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      {/* HEADER */}
       <AssessmentsHeader
         onGradeChange={setGrade}
         onClassroomChange={setClassroom}
@@ -59,15 +117,62 @@ export default function AssessmentsPage() {
         onSearch={setSearch}
       />
 
-      {/* 🔥 debug ดูก่อน */}
-      <div className="text-sm text-muted-foreground">
-        grade: {grade} | classroom: {classroom} | subject: {subject}
+      {/* ================= BUILDER ================= */}
+      <div className="bg-card rounded-2xl p-6 space-y-6 shadow-sm">
+        <div>
+          <p className="text-lg font-semibold">Create Assessment Group</p>
+          <p className="text-sm text-muted-foreground">
+            Create once and apply scoring to the entire class
+          </p>
+        </div>
+
+        {/* template items */}
+        <div className="flex flex-wrap gap-4">
+          {scoreTemplate.map((item, i) => (
+            <div
+              key={i}
+              className="relative border rounded-xl p-3 w-40 space-y-2 bg-muted/30"
+            >
+              <button
+                onClick={() => removeTemplate(i)}
+                className="absolute top-1 right-1 text-red-500"
+              >
+                <X size={14} />
+              </button>
+
+              <Input
+                value={item.label}
+                onChange={e => handleTemplateChange(i, 'label', e.target.value)}
+              />
+
+              <Input
+                type="number"
+                value={item.max}
+                onChange={e => handleTemplateChange(i, 'max', e.target.value)}
+              />
+            </div>
+          ))}
+
+          {/* add */}
+          <button
+            onClick={addTemplate}
+            className="w-40 h-24 border-dashed border rounded-xl flex items-center justify-center text-muted-foreground hover:bg-muted/50"
+          >
+            <Plus />
+          </button>
+        </div>
+
+        {/* APPLY BUTTON */}
+        <div className="flex justify-end">
+          <Button onClick={applyTemplateToStudents}>Apply to Class</Button>
+        </div>
       </div>
-      {/* count */}
+
+      {/* ================= LIST ================= */}
       <p className="text-sm text-muted-foreground">
         Showing {filteredStudents.length} Students
       </p>
-      {/* list */}
+
       <div className="space-y-4">
         {filteredStudents.length > 0 ? (
           filteredStudents.map((s, i) => (
@@ -85,6 +190,7 @@ export default function AssessmentsPage() {
         )}
       </div>
 
+      {/* SUMMARY */}
       <ClassPerformanceSummary />
     </div>
   );

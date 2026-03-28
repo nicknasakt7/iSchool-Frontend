@@ -1,10 +1,10 @@
-'use client';
-
 import AlertCard from '@/components/features/dashboard/alert-card';
 import LeftStatCard from '@/components/features/dashboard/left-stat-card';
 import SummaryCard from '@/components/features/dashboard/summary-card';
+import { simulateLoading } from '@/lib/utils';
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  await simulateLoading(1);
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 ease-out">
       {/* TITLE */}
