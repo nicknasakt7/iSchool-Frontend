@@ -3,7 +3,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTransition } from 'react';
-import { Loader } from 'lucide-react';
+import { ArrowRight, Loader } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,8 +51,8 @@ export default function NewAdminForm() {
   };
 
   return (
-    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
-      <h1 className="text-3xl font-bold text-center mb-2">New Admin</h1>
+    <div className="bg-card p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+      <h1 className="text-4xl font-bold text-center mb-2">New Admin</h1>
       <p className="text-center text-muted-foreground mb-8">
         Onboard a new faculty member to the iSchool ecosystem.
       </p>
@@ -119,17 +119,15 @@ export default function NewAdminForm() {
           {/* Submit */}
           <Field>
             <div className="flex justify-center mt-4">
-              <Button
-                className="rounded-full px-8 py-6 text-base"
-                disabled={isPending}
-              >
+              <Button className="rounded-full text-base" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader className="animate-spin" /> Adding...
                   </>
                 ) : (
-                  'Add New Admin →'
+                  'Add New Admin'
                 )}
+                <ArrowRight />
               </Button>
             </div>
           </Field>
