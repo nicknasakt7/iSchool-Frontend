@@ -68,6 +68,9 @@ export default function StudentPerformanceCard({
           <div className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white font-bold text-sm">
             {studentIndex + 1}
           </div>
+          <div className="bg-amber-600 rounded-lg w-15 h-15 flex items-center justify-center">
+            SJ
+          </div>
 
           <div>
             <p className="font-semibold text-lg">{name}</p>
