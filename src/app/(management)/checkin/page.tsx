@@ -25,8 +25,8 @@ export default function CheckInPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
-        <AttendanceHeader showUpdated />
         <SearchInput onSearch={setSearch} />
+        <AttendanceHeader showUpdated />
 
         <div className="space-y-4">
           {filteredStudents.map(s => (

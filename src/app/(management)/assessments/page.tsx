@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import AssessmentsHeader from '@/components/features/assessments/assessments-header';
 import { mockStudents } from '@/components/mocks/assessment-student';
-
 import ClassPerformanceSummary from '@/components/features/assessments/class-summary';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +15,6 @@ type ScoreTemplate = {
   max: number;
 };
 
-/* ================= PAGE ================= */
 export default function AssessmentsPage() {
   const [grade, setGrade] = useState('');
   const [classroom, setClassroom] = useState('');
@@ -24,11 +22,18 @@ export default function AssessmentsPage() {
   const [students, setStudents] = useState(mockStudents);
   const [search, setSearch] = useState('');
 
-  /* 🔥 template กลาง */
+  /* ================= TEMPLATE ================= */
   const [scoreTemplate, setScoreTemplate] = useState<ScoreTemplate[]>([
     { label: 'Homework', max: 10 },
     { label: 'Quiz', max: 20 },
   ]);
+
+  /* ================= HELPER ================= */
+  const getTotalMax = (template: ScoreTemplate[]) =>
+    template.reduce((sum, item) => sum + item.max, 0);
+
+  const totalMax = getTotalMax(scoreTemplate);
+  const nextTotal = totalMax + 10;
 
   /* ================= TEMPLATE HANDLER ================= */
   const handleTemplateChange = (
@@ -37,23 +42,33 @@ export default function AssessmentsPage() {
     value: string,
   ) => {
     const updated = [...scoreTemplate];
+
     updated[index] = {
       ...updated[index],
       [field]: field === 'label' ? value : Number(value),
     };
+
+    if (getTotalMax(updated) > 100) return;
+
     setScoreTemplate(updated);
   };
 
   const addTemplate = () => {
-    setScoreTemplate(prev => [...prev, { label: 'New', max: 10 }]);
+    const updated = [...scoreTemplate, { label: 'New', max: 10 }];
+
+    if (getTotalMax(updated) > 100) return;
+
+    setScoreTemplate(updated);
   };
 
   const removeTemplate = (index: number) => {
     setScoreTemplate(prev => prev.filter((_, i) => i !== index));
   };
 
-  /* 🔥 apply ให้ทั้ง class */
+  /* ================= APPLY ================= */
   const applyTemplateToStudents = () => {
+    if (totalMax > 100) return;
+
     setStudents(prev =>
       prev.map(student => ({
         ...student,
@@ -126,16 +141,21 @@ export default function AssessmentsPage() {
           </p>
         </div>
 
-        {/* template items */}
+        {/* TOTAL */}
+        <p className="text-sm text-muted-foreground">
+          Total Score: {totalMax} / 100
+        </p>
+
+        {/* TEMPLATE ITEMS */}
         <div className="flex flex-wrap gap-4">
           {scoreTemplate.map((item, i) => (
             <div
               key={i}
-              className="relative border rounded-xl p-3 w-40 space-y-2 bg-muted/30"
+              className="relative border rounded-xl p-4 w-40 space-y-2 bg-muted/30 overflow-visible"
             >
               <button
                 onClick={() => removeTemplate(i)}
-                className="absolute top-1 right-1 text-red-500"
+                className="absolute rounded-full -top-2 -right-2 bg-cardrounded-full p-1 shadow-md hover:shadow-lg hover:scale-110 transition-all duration-200 text-new-red-600"
               >
                 <X size={14} />
               </button>
@@ -153,16 +173,23 @@ export default function AssessmentsPage() {
             </div>
           ))}
 
-          {/* add */}
+          {/* ADD BUTTON */}
           <button
             onClick={addTemplate}
-            className="w-40 h-24 border-dashed border rounded-xl flex items-center justify-center text-muted-foreground hover:bg-muted/50"
+            disabled={nextTotal > 100}
+            className={`w-40 h-24 border-dashed border rounded-xl flex flex-col items-center justify-center
+              ${
+                nextTotal > 100
+                  ? 'opacity-40 cursor-not-allowed'
+                  : 'text-muted-foreground hover:bg-muted'
+              }
+            `}
           >
-            <Plus />
+            <Plus /> Add score
           </button>
         </div>
 
-        {/* APPLY BUTTON */}
+        {/* APPLY */}
         <div className="flex justify-end">
           <Button onClick={applyTemplateToStudents}>Apply to Class</Button>
         </div>

@@ -51,6 +51,19 @@
   --color-new-blue-500: var(--new-blue-500);
   --color-new-orange-700: var(--new-orange-700);
   --color-new-orange-400: var(--new-orange-400);
+  --color-new-amber-600: var(--new-amber-500)
+    --gradient-primary: linear-gradient(
+      to right,
+      var(--gradient-start),
+      var(--gradient-end)
+    );
+  --btn-primary-bg: var(--gradient-primary);
+  --btn-primary-text: oklch(98% 0 0);
+
+  --btn-outline-color: oklch(74.5% 0.15 240);
+  --btn-outline-hover-bg: oklch(74.5% 0.15 240 / 0.1);
+  --btn-destructive-color: oklch(60% 0.25 27);
+  --btn-destructive-hover-bg: oklch(60% 0.25 27 / 0.1);
 }
 
 :root {
@@ -66,7 +79,7 @@
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(97.015% 0.00011 271.152 / 0.519);
   --muted-header: oklch(88.837% 0.0001 271.152 / 0.519);
-  --muted-foreground: oklch(41.283% 0.00005 271.152);
+  --muted-foreground: oklch(53.565% 0.00123 14.461);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -92,6 +105,17 @@
   --new-green-500: oklch(62.7% 0.194 149.214);
   --new-orange-400: oklch(75% 0.183 55.934);
   --new-orange-700: oklch(55.3% 0.195 38.402);
+  --new-amber-600: oklch(76.9% 0.188 70.08);
+  --gradient-start: oklch(54.6% 0.245 262.9);
+  --gradient-end: oklch(74.5% 0.15 240);
+  --gradient-start: oklch(54.6% 0.245 262.9);
+  --gradient-end: oklch(74.5% 0.15 240);
+
+  /* outline */
+  --btn-outline-color: oklch(74.5% 0.15 240);
+  --btn-outline-hover-bg: oklch(74.5% 0.15 240 / 0.1);
+  --btn-destructive-color: oklch(60% 0.25 27);
+  --btn-destructive-hover-bg: oklch(60% 0.25 27 / 0.1);
 }
 
 .dark {
@@ -126,6 +150,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --gradient-start: oklch(60% 0.22 262);
+  --gradient-end: oklch(70% 0.18 240);
+
+  --btn-outline-color: oklch(80% 0.12 240);
+  --btn-outline-hover-bg: oklch(80% 0.12 240 / 0.15);
+  --btn-destructive-color: oklch(70% 0.22 27);
+  --btn-destructive-hover-bg: oklch(70% 0.22 27 / 0.15);
 }
 
 @layer base {

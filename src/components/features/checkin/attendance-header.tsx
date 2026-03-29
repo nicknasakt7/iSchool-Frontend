@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import AttendanceStats from './attendance-stats';
 import FilterDropdown from '@/components/shared/filter-dropdown';
+import SearchInput from '@/components/shared/search-input';
 
 type AttendanceHeaderProps = {
   showUpdated?: boolean;
@@ -45,7 +46,7 @@ export default function AttendanceHeader({
 
   return (
     <div className="space-y-4">
-      {/* 🔥 Header */}
+      {/* Header */}
       <div className="flex items-start justify-between gap-4">
         {/* left */}
         <div>
@@ -61,7 +62,7 @@ export default function AttendanceHeader({
         <AttendanceStats total={24} present={18} />
       </div>
 
-      {/* 🔥 Filter Bar */}
+      {/*  Filter Bar */}
       <div className="flex flex-wrap items-center gap-3">
         <FilterDropdown
           label="Select Grade"
