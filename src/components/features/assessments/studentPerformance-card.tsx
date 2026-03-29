@@ -115,12 +115,16 @@ export default function StudentPerformanceCard({
           ))}
         </div>
 
-        {/* ลบ Add Score ไปแล้ว */}
-
         {/* Total */}
         <div className="flex items-center gap-6">
-          <p className="text-xl font-bold text-blue-600">{total}/100</p>
-          <p className="text-new-blue-500">GPA {gpa}</p>
+          <div className="flex flex-col text-xl items-center font-bold">
+            Total
+            <p className="text-lg font-bold text-new-blue-500">{total}/100</p>
+          </div>
+          <div className="flex flex-col items-center text-lg font-bold">
+            GPA
+            <p className="text-lg font-bold text-new-blue-500">{gpa}</p>
+          </div>
         </div>
 
         {/* Comment */}
