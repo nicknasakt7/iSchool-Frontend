@@ -13,15 +13,15 @@ export default function Layout({
   const tabs = [
     {
       label: 'Enrollment Hub',
-      href: '/admin-management',
+      href: '/admin-managements/enrollments',
     },
     {
       label: 'Relations & Outreach',
-      href: '/admin-management/relations',
+      href: '/admin-managements/relations',
     },
     {
       label: 'Teacher Resource Management',
-      href: '/admin-management/teacher-resource',
+      href: '/admin-managements/teachers',
     },
   ];
 
@@ -36,12 +36,12 @@ export default function Layout({
             <Link key={tab.href} href={tab.href}>
               <div
                 className={`
-                  px-5 py-2 rounded-full text-sm font-medium
+                  px-5 py-2 rounded-full text-md
                   transition-all duration-200
                   ${
                     isActive
-                      ? 'bg-white shadow-sm'
-                      : 'text-muted-foreground hover:text-black'
+                      ? 'bg-card shadow-md font-bold text-primary'
+                      : 'text-muted-foreground hover:text-primary'
                   }
                 `}
               >
