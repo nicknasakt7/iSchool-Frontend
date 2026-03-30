@@ -1,7 +1,5 @@
 'use client';
 
-// Full shadcn + Controller + FieldGroup version (based on your pattern)
-
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTransition } from 'react';
@@ -23,7 +21,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-// OPTIONAL: replace with your schema
 import { z } from 'zod';
 import ProfileUpload from '../ProfileUpload';
 
@@ -32,9 +29,15 @@ const schema = z.object({
   lastName: z.string().min(1),
   nickname: z.string().optional(),
   dob: z.string().min(1),
-  parents: z.string().min(1),
+
+  // 🔥 NEW: Parent fields
+  parentFirstName: z.string().min(1),
+  parentLastName: z.string().min(1),
+  parentEmail: z.string().email(),
+
   grade: z.string().min(1),
   classroom: z.string().min(1),
+
   favorite: z.string().optional(),
   health: z.string().optional(),
 });
@@ -49,7 +52,11 @@ export default function NewEntryForm() {
       lastName: '',
       nickname: '',
       dob: '',
-      parents: '',
+
+      parentFirstName: '',
+      parentLastName: '',
+      parentEmail: '',
+
       grade: '',
       classroom: '',
       favorite: '',
@@ -66,25 +73,20 @@ export default function NewEntryForm() {
   };
 
   return (
-    <div className="bg-white p-10 rounded-2xl shadow-sm w-full max-w-3xl">
-      <h1 className="text-4xl font-bold text-center mb-2">New Entry</h1>
-      <p className="text-center text-muted-foreground mb-8">
-        Add a new student record
-      </p>
-
+    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
       <ProfileUpload />
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FieldGroup className="gap-4">
-          <div className="grid grid-cols-2 gap-4">
-            {/* First Name */}
+        <FieldGroup className="gap-5">
+          <div className="grid grid-cols-2 gap-5">
+            {/* Student */}
             <Controller
               control={control}
               name="firstName"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>First Name</FieldLabel>
-                  <Input {...field} placeholder="First Name" />
+                  <Input {...field} placeholder="e.g. Julian" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -92,14 +94,13 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* Last Name */}
             <Controller
               control={control}
               name="lastName"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Last Name</FieldLabel>
-                  <Input {...field} placeholder="Last Name" />
+                  <Input {...field} placeholder="e.g. Sterling" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -107,11 +108,10 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* Nickname */}
             <Controller
               control={control}
               name="nickname"
-              render={({ field, fieldState }) => (
+              render={({ field }) => (
                 <Field>
                   <FieldLabel>Nickname</FieldLabel>
                   <Input {...field} placeholder="Optional" />
@@ -119,7 +119,6 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* DOB */}
             <Controller
               control={control}
               name="dob"
@@ -134,14 +133,42 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* Parents */}
+            {/* 🔥 Parent (NEW) */}
             <Controller
               control={control}
-              name="parents"
+              name="parentFirstName"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Parent First Name</FieldLabel>
+                  <Input {...field} placeholder="e.g. John" />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="parentLastName"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Parent Last Name</FieldLabel>
+                  <Input {...field} placeholder="e.g. Doe" />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="parentEmail"
               render={({ field, fieldState }) => (
                 <Field className="col-span-2" data-invalid={fieldState.invalid}>
-                  <FieldLabel>Parents / Guardians</FieldLabel>
-                  <Input {...field} placeholder="Full names" />
+                  <FieldLabel>Parent Email</FieldLabel>
+                  <Input {...field} placeholder="parent@email.com" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -158,7 +185,7 @@ export default function NewEntryForm() {
                   <FieldLabel>Grade</FieldLabel>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Grade" />
+                      <SelectValue placeholder="Select Level" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1">Grade 1</SelectItem>
@@ -173,14 +200,23 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* Classroom */}
+            {/* 🔥 Classroom dropdown (UPDATED) */}
             <Controller
               control={control}
               name="classroom"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Classroom</FieldLabel>
-                  <Input {...field} placeholder="Room 302" />
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select classroom" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="301">Room 301</SelectItem>
+                      <SelectItem value="302">Room 302</SelectItem>
+                      <SelectItem value="303">Room 303</SelectItem>
+                    </SelectContent>
+                  </Select>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -188,7 +224,6 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* Favorite */}
             <Controller
               control={control}
               name="favorite"
@@ -200,7 +235,6 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* Health */}
             <Controller
               control={control}
               name="health"
@@ -215,15 +249,14 @@ export default function NewEntryForm() {
 
           <Field>
             <div className="flex justify-center mt-4">
-              <Button className="w-full rounded-full" disabled={isPending}>
+              <Button className="rounded-full px-8 py-6" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader className="animate-spin" /> Adding...
                   </>
                 ) : (
-                  'Add New Entry'
+                  'Add New Entry →'
                 )}
-                <ArrowRight />
               </Button>
             </div>
           </Field>

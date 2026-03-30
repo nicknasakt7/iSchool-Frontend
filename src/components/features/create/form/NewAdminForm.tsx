@@ -1,3 +1,144 @@
+// 'use client';
+
+// import { Controller, useForm } from 'react-hook-form';
+// import { zodResolver } from '@hookform/resolvers/zod';
+// import { useTransition } from 'react';
+// import { Loader } from 'lucide-react';
+
+// import { Button } from '@/components/ui/button';
+// import { Input } from '@/components/ui/input';
+// import {
+//   Field,
+//   FieldError,
+//   FieldGroup,
+//   FieldLabel,
+// } from '@/components/ui/field';
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from '@/components/ui/select';
+
+// import { z } from 'zod';
+// import ProfileUpload from '../ProfileUpload';
+
+// const schema = z.object({
+//   firstName: z.string().min(1, 'First name is required'),
+//   lastName: z.string().min(1, 'Last name is required'),
+//   role: z.string().min(1, 'Role is required'),
+// });
+
+// type FormValues = z.infer<typeof schema>;
+
+// export default function NewAdminForm() {
+//   const { handleSubmit, control } = useForm<FormValues>({
+//     resolver: zodResolver(schema),
+//     defaultValues: {
+//       firstName: '',
+//       lastName: '',
+//       role: '',
+//     },
+//   });
+
+//   const [isPending, startTransition] = useTransition();
+
+//   const onSubmit = (data: FormValues) => {
+//     startTransition(async () => {
+//       console.log(data);
+//     });
+//   };
+
+//   return (
+//     <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+//       <h1 className="text-3xl font-bold text-center mb-2">New Admin</h1>
+//       <p className="text-center text-muted-foreground mb-8">
+//         Onboard a new faculty member to the iSchool ecosystem.
+//       </p>
+//       {/* Profile Upload */}
+//       <ProfileUpload />
+
+//       <form onSubmit={handleSubmit(onSubmit)}>
+//         <FieldGroup className="gap-5">
+//           <div className="grid grid-cols-2 gap-5">
+//             {/* First Name */}
+//             <Controller
+//               control={control}
+//               name="firstName"
+//               render={({ field, fieldState }) => (
+//                 <Field data-invalid={fieldState.invalid}>
+//                   <FieldLabel>First Name</FieldLabel>
+//                   <Input {...field} placeholder="e.g. Julianne" />
+//                   {fieldState.invalid && (
+//                     <FieldError errors={[fieldState.error]} />
+//                   )}
+//                 </Field>
+//               )}
+//             />
+
+//             {/* Last Name */}
+//             <Controller
+//               control={control}
+//               name="lastName"
+//               render={({ field, fieldState }) => (
+//                 <Field data-invalid={fieldState.invalid}>
+//                   <FieldLabel>Last Name</FieldLabel>
+//                   <Input {...field} placeholder="e.g. Moore" />
+//                   {fieldState.invalid && (
+//                     <FieldError errors={[fieldState.error]} />
+//                   )}
+//                 </Field>
+//               )}
+//             />
+
+//             {/* Role (full width) */}
+//             <Controller
+//               control={control}
+//               name="role"
+//               render={({ field, fieldState }) => (
+//                 <Field className="col-span-2" data-invalid={fieldState.invalid}>
+//                   <FieldLabel>Role</FieldLabel>
+//                   <Select value={field.value} onValueChange={field.onChange}>
+//                     <SelectTrigger>
+//                       <SelectValue placeholder="Select position..." />
+//                     </SelectTrigger>
+//                     <SelectContent>
+//                       <SelectItem value="admin">Admin</SelectItem>
+//                       <SelectItem value="super_admin">Super Admin</SelectItem>
+//                     </SelectContent>
+//                   </Select>
+//                   {fieldState.invalid && (
+//                     <FieldError errors={[fieldState.error]} />
+//                   )}
+//                 </Field>
+//               )}
+//             />
+//           </div>
+
+//           {/* Submit */}
+//           <Field>
+//             <div className="flex justify-center mt-4">
+//               <Button
+//                 className="rounded-full px-8 py-6 text-base"
+//                 disabled={isPending}
+//               >
+//                 {isPending ? (
+//                   <>
+//                     <Loader className="animate-spin" /> Adding...
+//                   </>
+//                 ) : (
+//                   'Add New Admin →'
+//                 )}
+//               </Button>
+//             </div>
+//           </Field>
+//         </FieldGroup>
+//       </form>
+//     </div>
+//   );
+// }
+
 'use client';
 
 import { Controller, useForm } from 'react-hook-form';
@@ -25,20 +166,26 @@ import { z } from 'zod';
 import ProfileUpload from '../ProfileUpload';
 
 const schema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  role: z.string().min(1, 'Role is required'),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+
+  email: z.string().email(),
+  password: z.string().min(6),
+
+  role: z.literal('admin'), // 🔥 fix ให้เป็น admin เท่านั้น
 });
 
 type FormValues = z.infer<typeof schema>;
 
 export default function NewAdminForm() {
-  const { handleSubmit, control } = useForm<FormValues>({
+  const { handleSubmit, control, reset } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       firstName: '',
       lastName: '',
-      role: '',
+      email: '',
+      password: '',
+      role: 'admin',
     },
   });
 
@@ -47,16 +194,12 @@ export default function NewAdminForm() {
   const onSubmit = (data: FormValues) => {
     startTransition(async () => {
       console.log(data);
+      reset();
     });
   };
 
   return (
-    <div className="bg-card p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
-      <h1 className="text-4xl font-bold text-center mb-2">New Admin</h1>
-      <p className="text-center text-muted-foreground mb-8">
-        Onboard a new faculty member to the iSchool ecosystem.
-      </p>
-      {/* Profile Upload */}
+    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
       <ProfileUpload />
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -69,7 +212,7 @@ export default function NewAdminForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>First Name</FieldLabel>
-                  <Input {...field} placeholder="e.g. Julianne" />
+                  <Input {...field} placeholder="e.g. John" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -84,7 +227,7 @@ export default function NewAdminForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Last Name</FieldLabel>
-                  <Input {...field} placeholder="e.g. Moore" />
+                  <Input {...field} placeholder="e.g. Doe" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -92,25 +235,51 @@ export default function NewAdminForm() {
               )}
             />
 
-            {/* Role (full width) */}
+            {/* Email */}
             <Controller
               control={control}
-              name="role"
+              name="email"
               render={({ field, fieldState }) => (
                 <Field className="col-span-2" data-invalid={fieldState.invalid}>
-                  <FieldLabel>Role</FieldLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select position..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="super_admin">Super Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FieldLabel>Email</FieldLabel>
+                  <Input {...field} placeholder="admin@email.com" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
+                </Field>
+              )}
+            />
+
+            {/* Password */}
+            <Controller
+              control={control}
+              name="password"
+              render={({ field, fieldState }) => (
+                <Field className="col-span-2" data-invalid={fieldState.invalid}>
+                  <FieldLabel>Password</FieldLabel>
+                  <Input type="password" {...field} />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            {/* 🔥 Role (Dropdown: Admin only) */}
+            <Controller
+              control={control}
+              name="role"
+              render={({ field }) => (
+                <Field className="col-span-2">
+                  <FieldLabel>Role</FieldLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </Field>
               )}
             />
@@ -119,7 +288,7 @@ export default function NewAdminForm() {
           {/* Submit */}
           <Field>
             <div className="flex justify-center mt-4">
-              <Button className="rounded-full text-base" disabled={isPending}>
+              <Button className="rounded-full px-8 py-6" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader className="animate-spin" /> Adding...
