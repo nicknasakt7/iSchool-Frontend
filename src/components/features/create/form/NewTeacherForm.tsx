@@ -7,7 +7,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTransition } from 'react';
-import { Loader } from 'lucide-react';
+import { ArrowRight, Loader } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -151,10 +151,7 @@ export default function NewTeacherForm() {
           {/* Submit */}
           <Field>
             <div className="flex justify-center mt-4">
-              <Button
-                className="rounded-full px-8 py-6 text-base"
-                disabled={isPending}
-              >
+              <Button className="rounded-full text-base" disabled={isPending}>
                 {isPending ? (
                   <>
                     <Loader className="animate-spin" /> Adding...
@@ -162,6 +159,7 @@ export default function NewTeacherForm() {
                 ) : (
                   'Add New Teacher →'
                 )}
+                <ArrowRight />
               </Button>
             </div>
           </Field>

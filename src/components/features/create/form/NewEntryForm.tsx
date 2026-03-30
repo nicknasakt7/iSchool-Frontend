@@ -5,7 +5,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTransition } from 'react';
-import { Loader } from 'lucide-react';
+import { ArrowRight, Loader } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -67,7 +67,7 @@ export default function NewEntryForm() {
 
   return (
     <div className="bg-white p-10 rounded-2xl shadow-sm w-full max-w-3xl">
-      <h1 className="text-3xl font-bold text-center mb-2">New Entry</h1>
+      <h1 className="text-4xl font-bold text-center mb-2">New Entry</h1>
       <p className="text-center text-muted-foreground mb-8">
         Add a new student record
       </p>
@@ -214,15 +214,18 @@ export default function NewEntryForm() {
           </div>
 
           <Field>
-            <Button className="w-full rounded-full" disabled={isPending}>
-              {isPending ? (
-                <>
-                  <Loader className="animate-spin" /> Adding...
-                </>
-              ) : (
-                'Add New Entry →'
-              )}
-            </Button>
+            <div className="flex justify-center mt-4">
+              <Button className="w-full rounded-full" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <Loader className="animate-spin" /> Adding...
+                  </>
+                ) : (
+                  'Add New Entry'
+                )}
+                <ArrowRight />
+              </Button>
+            </div>
           </Field>
         </FieldGroup>
       </form>

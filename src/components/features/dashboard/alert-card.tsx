@@ -4,7 +4,7 @@ type AlertCardProps = Record<string, never>;
 
 export default function AlertCard({}: AlertCardProps) {
   return (
-    <div className="w-full h-full rounded-4xl p-6 text-white bg-linear-to-r from-orange-400 to-orange-700/90 shadow-lg flex flex-col md:flex-row gap-6">
+    <div className="w-full h-full rounded-4xl p-6 text-white bg-linear-to-r from-new-orange-400 to-new-orange-700/90 shadow-lg flex flex-col md:flex-row gap-6">
       {/* LEFT */}
       <div className="flex-1 min-w-0">
         {' '}
@@ -17,14 +17,14 @@ export default function AlertCard({}: AlertCardProps) {
           Predictive analysis indicates a high risk of academic decline in
           Mathematics.
         </p>
-        <button className=" flex gap-2 rounded-full bg-white text-red-500 font-bold px-4 py-2 text-sm hover:bg-gray-100">
+        <button className="flex items-center gap-2 rounded-full bg-white text-red-500 font-bold px-4 py-2 text-sm hover:bg-gray-100">
           Review Student Profiles <ArrowRightIcon />
         </button>
       </div>
 
       {/* RIGHT */}
       <div className="shrink-0 flex items-center justify-center md:justify-end">
-        <div className="bg-white/10 backdrop-blur rounded-3xl px-6 py-8 text-center">
+        <div className="bg-white/10 backdrop-blur rounded-3xl px-6 py-8 text-center border">
           <p className="text-4xl md:text-5xl font-bold whitespace-nowrap">
             84%
           </p>

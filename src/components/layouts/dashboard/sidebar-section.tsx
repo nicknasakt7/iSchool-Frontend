@@ -1,9 +1,12 @@
-type Props = {
+type SidebarSectionProps = {
   title?: string;
   children: React.ReactNode;
 };
 
-export default function SidebarSection({ title, children }: Props) {
+export default function SidebarSection({
+  title,
+  children,
+}: SidebarSectionProps) {
   return (
     <div className="space-y-2">
       {title && (

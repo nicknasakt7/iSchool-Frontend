@@ -1,10 +1,9 @@
-import BookPillars from "@/components/content/blockpillars";
-import ContentHome from "@/components/content/content";
-import ContentAcademic from "@/components/content/contentAcademic";
-import ContentPillars from "@/components/content/contentpillars";
-import Footer from "@/components/features/homepage/footer/footer";
-import FormRegister from "@/components/features/homepage/form/formregister";
-
+import BookPillars from '@/components/content/blockpillars';
+import ContentHome from '@/components/content/content';
+import ContentAcademic from '@/components/content/contentAcademic';
+import ContentPillars from '@/components/content/contentpillars';
+import Footer from '@/components/features/homepage/footer/footer';
+import FormRegister from '@/components/features/homepage/form/formregister';
 
 export default function HomePage() {
   return (
@@ -16,13 +15,13 @@ export default function HomePage() {
           {/* Pillarscontent  */}
           <ContentPillars />
           {/* bolckshow */}
-          <BookPillars/>
+          <BookPillars />
           {/* content academic */}
-          <ContentAcademic/>
+          <ContentAcademic />
           {/* Form contect*/}
-          <FormRegister/>
+          <FormRegister />
         </div>
-        <Footer/>
+        <Footer />
       </div>
     </>
   );

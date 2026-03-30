@@ -23,7 +23,7 @@ export default function SidebarItem({ name, href, icon: Icon }: Props) {
         'text-foreground hover:bg-card hover:text-primary',
 
         isActive &&
-          'bg-card text-primary font-medium relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-primary before:rounded-r',
+          'bg-card text-primary font-semibold relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-primary before:rounded-r',
       )}
     >
       <Icon className="w-5 h-5" />

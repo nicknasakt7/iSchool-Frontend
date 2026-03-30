@@ -4,21 +4,21 @@ import { Menu, GraduationCap, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type DashboardHeaderProps = {
-  onOpenSidebar?: () => void; // 🔥 ➕ เพิ่ม (รับ function จาก layout)
+  onOpenSidebar?: () => void; //  เพิ่ม (รับ function จาก layout)
 };
 
 export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
   return (
     // <div className="flex flex-col gap-4 mb-6 bg-background shadow-sm rounded-xl p-4">
-    <div className="flex flex-col gap-4 mb-6 border-b border-border/80 pb-4">
-      {/* 🔥 TOP BAR (มือถือเท่านั้น) */}
+    <div className="flex flex-col gap-4 px-4 md:px-6 py-4 border-b border-border/80 bg-muted-header">
+      {/*  TOP BAR (มือถือเท่านั้น) */}
       <div className="flex items-center justify-between md:hidden ">
         {/* ➕ เพิ่ม: ปุ่ม hamburger */}
         <button onClick={onOpenSidebar}>
           <Menu className="w-6 h-6" />
         </button>
         {/* ➕ เพิ่ม: logo เล็ก */}
-        {/* 🔥 LOGO (mobile) */}
+        {/*  LOGO (mobile) */}
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center">
             <GraduationCap className="w-4 h-4 text-white" />
@@ -29,7 +29,7 @@ export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
         <div className="w-6" /> {/* balance layout */}
       </div>
 
-      {/* 🔥 MAIN HEADER */}
+      {/* MAIN HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         {/* RIGHT */}
         <div className="flex items-center justify-between md:justify-end gap-4 flex-wrap order-1 md:order-2 w-full">

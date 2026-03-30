@@ -6,6 +6,9 @@ import FilterDropdown from '@/components/shared/filter-dropdown';
 
 type AttendanceHeaderProps = {
   showUpdated?: boolean;
+  total: number;
+  present: number;
+  absent: number;
 };
 
 const grades = [
@@ -17,6 +20,9 @@ const classrooms = [{ label: '1', value: '1' }];
 
 export default function AttendanceHeader({
   showUpdated,
+  present,
+  total,
+  absent,
 }: AttendanceHeaderProps) {
   const [time, setTime] = useState('');
   const [grade, setGrade] = useState('');
@@ -45,11 +51,11 @@ export default function AttendanceHeader({
 
   return (
     <div className="space-y-4">
-      {/* 🔥 Header */}
+      {/* Header */}
       <div className="flex items-start justify-between gap-4">
         {/* left */}
         <div>
-          <h1 className="text-2xl font-semibold">Morning Attendance</h1>
+          <h1 className="text-4xl font-bold">Morning Attendance</h1>
 
           <p className="text-sm text-muted-foreground">
             Daily student check-in for{' '}
@@ -58,10 +64,10 @@ export default function AttendanceHeader({
         </div>
 
         {/* right */}
-        <AttendanceStats total={24} present={18} />
+        <AttendanceStats total={total} present={present} absent={absent} />
       </div>
 
-      {/* 🔥 Filter Bar */}
+      {/*  Filter Bar */}
       <div className="flex flex-wrap items-center gap-3">
         <FilterDropdown
           label="Select Grade"

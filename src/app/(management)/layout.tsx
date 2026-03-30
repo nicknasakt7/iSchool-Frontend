@@ -1,17 +1,47 @@
-import SidebarWrapper from '@/components/layouts/dashboard/sidebar-wrapper';
+'use client';
 
-export default function Layout({
+import { useState } from 'react';
+import Sidebar from '@/components/layouts/dashboard/sidebar';
+import MainHeader from '@/components/features/dashboard/main-header';
+
+export default function DashboardLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const [openSidebar, setOpenSidebar] = useState(false);
+
+  const handleOpenSidebar = () => setOpenSidebar(true);
+  const handleCloseSidebar = () => setOpenSidebar(false);
+
   return (
-    <main className="flex-1 bg-muted/40 ">
-      <SidebarWrapper>
-        <div className="ml-64 animate-in fade-in slide-in-from-bottom-2 duration-1500 ease-out">
-          {children}
+    <div className="flex min-h-screen">
+      {/* ===== DESKTOP SIDEBAR ===== */}
+      <div className="hidden md:block w-64 border-r">
+        <Sidebar />
+      </div>
+
+      {/* ===== MOBILE SIDEBAR ===== */}
+      {openSidebar && (
+        <div className="fixed inset-0 z-50 flex">
+          <div
+            className="fixed inset-0 bg-black/40"
+            onClick={handleCloseSidebar}
+          />
+
+          <div className="relative w-64 bg-primary-foreground h-full shadow-lg animate-in slide-in-from-left duration-200">
+            <Sidebar />
+          </div>
         </div>
-      </SidebarWrapper>
-    </main>
+      )}
+
+      {/* ===== MAIN CONTENT ===== */}
+      <div className="flex-1">
+        <div>
+          <MainHeader onOpenSidebar={handleOpenSidebar} />
+        </div>
+        <main className="px-4 md:px-6 py-4">{children}</main>
+      </div>
+    </div>
   );
 }
