@@ -74,7 +74,7 @@ export default function Sidebar() {
           />
           <SidebarItem
             name="Admin Management"
-            href="/admin-management"
+            href="/admin-managements"
             icon={Laptop}
           />
         </SidebarSection>
