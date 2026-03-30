@@ -8,6 +8,7 @@ type AttendanceHeaderProps = {
   showUpdated?: boolean;
   total: number;
   present: number;
+  absent: number;
 };
 
 const grades = [
@@ -21,6 +22,7 @@ export default function AttendanceHeader({
   showUpdated,
   present,
   total,
+  absent,
 }: AttendanceHeaderProps) {
   const [time, setTime] = useState('');
   const [grade, setGrade] = useState('');
@@ -62,7 +64,7 @@ export default function AttendanceHeader({
         </div>
 
         {/* right */}
-        <AttendanceStats total={total} present={present} />
+        <AttendanceStats total={total} present={present} absent={absent} />
       </div>
 
       {/*  Filter Bar */}

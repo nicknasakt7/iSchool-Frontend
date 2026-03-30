@@ -8,10 +8,10 @@ import AttendanceHeader from '@/components/features/checkin/attendance-header';
 import StudentRow from '@/components/features/checkin/student-row';
 
 const students = [
-  { id: '1', name: 'Alex Johnson', status: 'present' as const },
-  { id: '2', name: 'Marcus Reed', status: 'present' as const },
-  { id: '3', name: 'Sarah Miller', status: 'present' as const },
-  { id: '4', name: 'David Chen', status: 'absent' as const },
+  { id: '1', name: 'Alex Johnson' },
+  { id: '2', name: 'Marcus Reed' },
+  { id: '3', name: 'Sarah Miller' },
+  { id: '4', name: 'David Chen' },
 ];
 
 export default function CheckInPage() {
@@ -20,9 +20,11 @@ export default function CheckInPage() {
     [key: string]: 'present' | 'absent';
   }>({});
   const [finalPresent, setFinalPresent] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Check ชื่อ
+  // 👉 เลือกสถานะ
   const handleSelect = (id: string, value: 'present' | 'absent') => {
+    if (isSubmitted) return; // 🔒 กันแก้หลัง submit
     setAttendance(prev => ({
       ...prev,
       [id]: value,
@@ -37,47 +39,64 @@ export default function CheckInPage() {
     v => v === 'present',
   ).length;
 
-  const isComplete = selectedCount === total;
+  const absentCount = total - presentCount;
 
-  //  filter ตรงนี้
+  const isComplete = selectedCount === total && total > 0;
+
+  // 🔍 filter
   const filteredStudents = students.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
-        <SearchInput onSearch={setSearch} />
-        <AttendanceHeader showUpdated total={total} present={finalPresent} />
+      <SearchInput onSearch={setSearch} />
 
-        <div className="space-y-4">
-          {filteredStudents.map(s => (
-            <StudentRow
-              key={s.id}
-              student={s}
-              selected={attendance[s.id] || null}
-              onSelect={handleSelect}
-            />
-          ))}
+      {/* Header */}
+      <AttendanceHeader
+        showUpdated
+        total={total}
+        present={isSubmitted ? finalPresent : 0}
+        absent={isSubmitted ? absentCount : 0}
+      />
 
-          {filteredStudents.length === 0 && (
-            <div className="text-sm text-muted-foreground text-center py-6">
-              No content
-            </div>
-          )}
-        </div>
+      {/* Progress */}
+      <p className="text-sm text-muted-foreground text-center">
+        {selectedCount}/{total} students selected
+      </p>
 
-        <div className="flex justify-center items-center pt-2">
-          <Button
-            disabled={!isComplete}
-            className={!isComplete ? 'opacity-50 cursor-not-allowed' : ''}
-            onClick={() => {
-              setFinalPresent(presentCount); // 👈 อัปเดตตรงนี้
-            }}
-          >
-            Complete Attendance <ArrowRight />
-          </Button>
-        </div>
+      {/* List */}
+      <div className="space-y-4">
+        {filteredStudents.map(s => (
+          <StudentRow
+            key={s.id}
+            student={s}
+            selected={attendance[s.id] || null}
+            onSelect={handleSelect}
+          />
+        ))}
+
+        {filteredStudents.length === 0 && (
+          <div className="text-sm text-muted-foreground text-center py-6">
+            No content
+          </div>
+        )}
+      </div>
+
+      {/* Button */}
+      <div className="flex justify-center items-center pt-2">
+        <Button
+          disabled={!isComplete || isSubmitted}
+          className={
+            !isComplete || isSubmitted ? 'opacity-50 cursor-not-allowed' : ''
+          }
+          onClick={() => {
+            setFinalPresent(presentCount);
+            setIsSubmitted(true);
+          }}
+        >
+          Complete Attendance <ArrowRight />
+        </Button>
       </div>
     </div>
   );
