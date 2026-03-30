@@ -1,17 +1,19 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
-import { Check, X } from 'lucide-react';
 
 type StudentRowProps = {
   student: {
     id: string;
     name: string;
-    status: 'present' | 'absent';
   };
+  selected: 'present' | 'absent' | null;
+  onSelect: (id: string, value: 'present' | 'absent') => void;
 };
 
-export default function StudentRow({ student }: StudentRowProps) {
+export default function StudentRow({
+  student,
+  selected,
+  onSelect,
+}: StudentRowProps) {
   return (
     <div className="flex items-center justify-between bg-card p-4 rounded-2xl shadow-sm">
       {/* left */}
@@ -19,24 +21,32 @@ export default function StudentRow({ student }: StudentRowProps) {
         <div className="w-10 h-10 bg-muted rounded-full" />
         <div>
           <p className="font-medium">{student.name}</p>
-          <p className="text-xs text-muted-foreground">ID: #40201</p>
+          <p className="text-xs text-muted-foreground">ID: #{student.id}</p>
         </div>
       </div>
 
       {/* right */}
       <div className="flex gap-2">
-        <Button className="rounded-full px-4" variant="default">
-          <Check className="mr-1" size={14} />
+        {/* Present */}
+        <Button
+          onClick={() => onSelect(student.id, 'present')}
+          className={`
+            rounded-full px-4
+            ${selected === 'present' ? 'opacity-70' : ''}
+          `}
+        >
           Present
         </Button>
 
+        {/* Absent */}
         <Button
-          className={`rounded-full px-4 ${
-            student.status === 'absent' ? 'bg-red-600 text-white' : ''
-          }`}
+          onClick={() => onSelect(student.id, 'absent')}
+          className={`
+            rounded-full px-4
+            ${selected === 'absent' ? 'bg-red-600 text-white' : ''}
+          `}
           variant="outline"
         >
-          <X className="mr-1" size={14} />
           Absent
         </Button>
       </div>

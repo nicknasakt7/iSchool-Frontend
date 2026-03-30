@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import AttendanceStats from './attendance-stats';
 import FilterDropdown from '@/components/shared/filter-dropdown';
-import SearchInput from '@/components/shared/search-input';
 
 type AttendanceHeaderProps = {
   showUpdated?: boolean;
+  total: number;
+  present: number;
 };
 
 const grades = [
@@ -18,6 +19,8 @@ const classrooms = [{ label: '1', value: '1' }];
 
 export default function AttendanceHeader({
   showUpdated,
+  present,
+  total,
 }: AttendanceHeaderProps) {
   const [time, setTime] = useState('');
   const [grade, setGrade] = useState('');
@@ -59,7 +62,7 @@ export default function AttendanceHeader({
         </div>
 
         {/* right */}
-        <AttendanceStats total={24} present={18} />
+        <AttendanceStats total={total} present={present} />
       </div>
 
       {/*  Filter Bar */}

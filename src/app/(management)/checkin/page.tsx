@@ -16,6 +16,28 @@ const students = [
 
 export default function CheckInPage() {
   const [search, setSearch] = useState('');
+  const [attendance, setAttendance] = useState<{
+    [key: string]: 'present' | 'absent';
+  }>({});
+  const [finalPresent, setFinalPresent] = useState(0);
+
+  // Check ชื่อ
+  const handleSelect = (id: string, value: 'present' | 'absent') => {
+    setAttendance(prev => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const total = students.length;
+
+  const selectedCount = Object.keys(attendance).length;
+
+  const presentCount = Object.values(attendance).filter(
+    v => v === 'present',
+  ).length;
+
+  const isComplete = selectedCount === total;
 
   //  filter ตรงนี้
   const filteredStudents = students.filter(s =>
@@ -26,11 +48,16 @@ export default function CheckInPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
         <SearchInput onSearch={setSearch} />
-        <AttendanceHeader showUpdated />
+        <AttendanceHeader showUpdated total={total} present={finalPresent} />
 
         <div className="space-y-4">
           {filteredStudents.map(s => (
-            <StudentRow key={s.id} student={s} />
+            <StudentRow
+              key={s.id}
+              student={s}
+              selected={attendance[s.id] || null}
+              onSelect={handleSelect}
+            />
           ))}
 
           {filteredStudents.length === 0 && (
@@ -41,7 +68,13 @@ export default function CheckInPage() {
         </div>
 
         <div className="flex justify-center items-center pt-2">
-          <Button>
+          <Button
+            disabled={!isComplete}
+            className={!isComplete ? 'opacity-50 cursor-not-allowed' : ''}
+            onClick={() => {
+              setFinalPresent(presentCount); // 👈 อัปเดตตรงนี้
+            }}
+          >
             Complete Attendance <ArrowRight />
           </Button>
         </div>

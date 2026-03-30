@@ -1,9 +1,12 @@
-type Props = {
+type AttendanceStatsProps = {
   total: number;
   present: number;
 };
 
-export default function AttendanceStats({ total, present }: Props) {
+export default function AttendanceStats({
+  total,
+  present,
+}: AttendanceStatsProps) {
   return (
     <div className="flex items-center gap-4">
       {/* Students */}
