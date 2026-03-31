@@ -125,7 +125,7 @@ export default function StudentPerformanceCard({
             <p className="text-lg font-bold text-new-blue-500">{total}/100</p>
           </div>
           <div className="flex flex-col items-center text-lg font-bold">
-            GPA
+            Subject Grade
             <p className="text-lg font-bold text-new-blue-500">{gpa}</p>
           </div>
         </div>
@@ -140,7 +140,9 @@ export default function StudentPerformanceCard({
         {/* Buttons */}
         <div className="flex gap-4">
           {!isEditing ? (
-            <Button onClick={() => setIsEditing(true)}>Edit</Button>
+            <Button variant="outline" onClick={() => setIsEditing(true)}>
+              Edit
+            </Button>
           ) : (
             <>
               <Button onClick={handleSave}>Save</Button>

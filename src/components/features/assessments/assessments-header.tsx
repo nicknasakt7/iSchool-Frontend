@@ -33,7 +33,7 @@ export default function AssessmentsHeader({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* 🔥 TOP */}
+      {/*  TOP */}
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-bold">Assessments</h1>
       </div>
@@ -42,7 +42,7 @@ export default function AssessmentsHeader({
         onSearch={onSearch}
       />
 
-      {/* 🔥 FILTER ROW */}
+      {/*  FILTER ROW */}
       <div className="flex flex-wrap gap-4">
         {/* Grade */}
         <FilterDropdown

@@ -1,4 +1,4 @@
-'use client';
+import EnrollmentSection from '@/components/features/admin-management/enrollments/enrollment-section';
 
 export default function EnrollmentPage() {
   return (
@@ -9,6 +9,8 @@ export default function EnrollmentPage() {
       <p className="text-sm text-muted-foreground">
         This is the main enrollment dashboard.
       </p>
+
+      <EnrollmentSection />
     </div>
   );
 }
