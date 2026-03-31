@@ -66,7 +66,7 @@ export default function TeacherManagementPage() {
         </p>
       </div>
 
-      <FilterBar value={filter} onChange={setFilter} />
+      <FilterBar value={filter} onFilterChange={setFilter} />
 
       <TeacherList
         teachers={filteredTeachers}

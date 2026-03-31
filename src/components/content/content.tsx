@@ -1,14 +1,13 @@
-'use client'
+"use client";
 
-import Image from "next/image";
-import { MdArrowRightAlt } from "react-icons/md";
-import { motion } from "motion/react";
-import FooterContent from "./footercontent";
-import Link from "next/link";
 import { PATH } from "@/constants/path.constant";
+import { ArrowBigRight } from "lucide-react";
+import { motion } from "motion/react";
+import Image from "next/image";
+import Link from "next/link";
+import FooterContent from "./footercontent";
 
 export default function Hero() {
-
   const text1 = "Smart";
   const text2 = "School with ";
   const highlight = "Ai Insight";
@@ -76,12 +75,12 @@ export default function Hero() {
 
           <div className="mt-5 flex gap-5">
             <Link href={PATH.CONTENT}>
-            <button className="flex items-center bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all px-5 py-1.5 rounded-2xl text-white">
-              <p>Explore School</p>
-              <MdArrowRightAlt />
-            </button>
+              <button className="flex items-center bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all px-5 py-1.5 rounded-2xl text-white">
+                <p>Explore School</p>
+                <ArrowBigRight />
+              </button>
             </Link>
-            
+
             <button className="bg-white rounded-2xl hover:bg-[#f7f9fb] px-5">
               Our Curriculum
             </button>
@@ -94,12 +93,12 @@ export default function Hero() {
             alt="User Picture"
             width={628}
             height={628}
-            className=" hover:scale-105 duration-200" 
+            className=" hover:scale-105 duration-200"
           />
         </div>
       </div>
 
-        <FooterContent/>
+      <FooterContent />
     </motion.div>
   );
 }
