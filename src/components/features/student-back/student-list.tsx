@@ -10,24 +10,28 @@ type StudentsListProps = {
 export default function StudentsList({ search, grade }: StudentsListProps) {
   const students = [
     {
+      id: '1',
       name: 'Benny Hen',
       nickname: 'Ben',
       grade: 'P.1',
       image: 'https://i.pravatar.cc/150?img=1',
     },
     {
+      id: '1',
       name: 'Ellie Bones',
       nickname: 'El',
       grade: 'P.1',
       image: 'https://i.pravatar.cc/150?img=2',
     },
     {
+      id: '2',
       name: 'Nick Nasa',
       nickname: 'Nick',
       grade: 'P.2',
       image: 'https://i.pravatar.cc/150?img=2',
     },
     {
+      id: '1',
       name: 'Chun Ki',
       nickname: 'Chun',
       grade: 'P.2',
@@ -35,7 +39,7 @@ export default function StudentsList({ search, grade }: StudentsListProps) {
     },
   ];
 
-  // 🔥 filter logic
+  //  filter logic
   const filtered = students.filter(s => {
     const matchSearch = `${s.name} ${s.nickname}`
       .toLowerCase()

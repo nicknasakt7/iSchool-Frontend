@@ -7,7 +7,6 @@ import {
   CheckSquare,
   Settings,
   LogOut,
-  UserPlus,
   GraduationCap,
   SquarePlus,
   ShieldPlus,
@@ -62,11 +61,11 @@ export default function Sidebar() {
             href="/create/new-entry"
             icon={SquarePlus}
           />
-          <SidebarItem
+          {/* <SidebarItem
             name="New Teacher"
             href="/create/new-teacher"
             icon={UserPlus}
-          />
+          /> */}
           <SidebarItem
             name="New Admin"
             href="/create/new-admin"
@@ -74,7 +73,7 @@ export default function Sidebar() {
           />
           <SidebarItem
             name="Admin Management"
-            href="/admin-management"
+            href="admin-managements/enrollments"
             icon={Laptop}
           />
         </SidebarSection>

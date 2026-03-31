@@ -1,6 +1,8 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 type StudentCardProps = {
+  id: string;
   name: string;
   nickname: string;
   grade: string;
@@ -8,33 +10,42 @@ type StudentCardProps = {
 };
 
 export default function StudentCard({
+  id,
   name,
   nickname,
   grade,
   image,
 }: StudentCardProps) {
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl border bg-card">
-      <div className="flex items-center gap-4">
-        <Image
-          src={image}
-          alt="image"
-          width={40}
-          height={40}
-          className="w-14 h-14 rounded-lg"
-        />
+    <Link href={`/students/${id}`}>
+      <div
+        className="
+          flex items-center justify-between p-4 rounded-xl border bg-card
+          hover:shadow-md hover:scale-[1.01]
+          transition-all duration-200 cursor-pointer
+        "
+      >
+        <div className="flex items-center gap-4">
+          <Image
+            src={image}
+            alt={name}
+            width={40}
+            height={40}
+            className="w-14 h-14 rounded-lg"
+          />
 
-        <div>
-          <p className="font-medium">{name}</p>
-          <p className="text-sm text-gray-500">{nickname}</p>
+          <div>
+            <p className="font-medium">{name}</p>
+            <p className="text-sm text-gray-500">{nickname}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+            {grade}
+          </span>
         </div>
       </div>
-
-      <div className="flex items-center gap-3">
-        <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-          {grade}
-        </span>
-      </div>
-    </div>
+    </Link>
   );
 }
