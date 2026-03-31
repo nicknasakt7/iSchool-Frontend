@@ -42,7 +42,7 @@ export default function AdminManagementLayout({
     },
     {
       label: 'Academic Setup',
-      href: '/admin-managements/academic-setup',
+      href: '/admin-managements/academic-setup/grade-architecture',
       icon: Settings,
     },
   ];
