@@ -31,7 +31,13 @@ export default function ProfileForm() {
     <div className="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow space-y-6">
       {/* Profile Header */}
       <div className="flex items-center gap-4">
-        <Image src="/images.png" alt="image" width={50} height={50} />
+        <Image
+          src="/images.png"
+          alt="image"
+          width={50}
+          height={50}
+          className="rounded-full object-cover border-4  shadow"
+        />
         <div>
           <p className="font-semibold">Profile Identity</p>
           <p className="text-sm text-gray-500">
