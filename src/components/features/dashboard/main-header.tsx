@@ -1,9 +1,8 @@
-'use client'; // 🔥 ➕ เพิ่ม (เพราะต้องมี interaction)
+"use client"; // 🔥 ➕ เพิ่ม (เพราะต้องมี interaction)
 
-import { Menu, GraduationCap, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Menu, GraduationCap, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
-
 
 type DashboardHeaderProps = {
   onOpenSidebar?: () => void; //  เพิ่ม (รับ function จาก layout)
@@ -11,8 +10,8 @@ type DashboardHeaderProps = {
 
 export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
   const { data } = useSession();
-  
-  console.log(data?.user?.email)
+
+  console.log(data?.user?.email);
   return (
     // <div className="flex flex-col gap-4 mb-6 bg-background shadow-sm rounded-xl p-4">
     <div className="flex flex-col gap-4 px-4 md:px-6 py-4 border-b border-border/80 bg-muted-header">

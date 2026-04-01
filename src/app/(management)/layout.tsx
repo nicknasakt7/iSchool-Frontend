@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Sidebar from '@/components/layouts/dashboard/sidebar';
-import MainHeader from '@/components/features/dashboard/main-header';
+import { useState } from "react";
+import Sidebar from "@/components/layouts/dashboard/sidebar";
+import MainHeader from "@/components/features/dashboard/main-header";
 
 export default function DashboardLayout({
   children,
@@ -36,7 +36,7 @@ export default function DashboardLayout({
       )}
 
       {/* ===== MAIN CONTENT ===== */}
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <div>
           <MainHeader onOpenSidebar={handleOpenSidebar} />
         </div>
