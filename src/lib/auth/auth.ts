@@ -12,38 +12,41 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       }
     })
   ],
-  // callbacks: {
-  //   jwt({ token, user, trigger, session }) {
-  //     if (user) {
-  //       token.avatarUrl = user.avatarUrl;
-  //       token.firstName = user.firstName;
-  //       token.lastName = user.lastName;
-  //       token.accessToken = user.accessToken;
-  //       token.accessTokenExpiresAt =
-  //         Date.now() + ((user.expiresIn ?? 0) - 3) * 1000;
-  //     }
+  callbacks: {
+    jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        token.id = user.id;
+        token.email = user.email;
+        token.accessToken = user.accessToken;
+        token.image = user.image;
+        token.accessTokenExpiresAt =
+          Date.now() + ((user.expiresIn ?? 0) - 3) * 1000;
+      }
 
-  //     if (
-  //       token.accessTokenExpiresAt &&
-  //       Date.now() > token.accessTokenExpiresAt
-  //     ) {
-  //       return null;
-  //     }
+      if (
+        token.accessTokenExpiresAt &&
+        Date.now() > token.accessTokenExpiresAt
+      ) {
+        return null;
+      }
 
-  //     if (trigger === 'update' && session) {
-  //       token.avatarUrl = session.user.avatarUrl;
-  //     }
+      if (trigger === 'update' && session) {
+        token.avatarUrl = session.user.avatarUrl;
+      }
 
-  //     return token;
-  //   },
-  //   session({ session, token }) {
-  //     session.user.accessToken = token.accessToken;
-  //     session.user.firstName = token.firstName;
-  //     session.user.lastName = token.lastName;
-  //     session.user.avatarUrl = token.avatarUrl;
-  //     session.user.id = token.sub;
+      return token;
+    },
+    session({ session, token }) {
+      session.user.accessToken = token.accessToken;
+      session.user.email = token.email as string;
+      session.user.image = token.picture as string;
+      session.user.firstName = token.firstName as string;
+      session.user.lastName = token.lastName as string;
+      session.user.id = token.sub;
 
-  //     return session;
-  //   }
-  // }
+      return session;
+    }
+  }
 });

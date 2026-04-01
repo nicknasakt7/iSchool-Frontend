@@ -13,7 +13,7 @@ export const login = async (input: LoginInput): Promise<ActionResult> => {
   } catch {
     return { success: false, code: 'INVALID_CREDENTIALS' };
   }
-  redirect('/');
+  redirect('/dashboard');
 };
 
 export const logout = async () => {

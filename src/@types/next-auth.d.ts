@@ -3,6 +3,8 @@ import 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface User {
+    firstName?:string;
+    lastName?:string;
     email?: string;
     password?: string;
     accessToken?: string;
@@ -10,13 +12,15 @@ declare module 'next-auth' {
   }
 }
 
-// declare module 'next-auth/jwt' {
-//   interface JWT {
-//     avatarUrl?: string | null;
-//     firstName?: string;
-//     lastName?: string;
-//     accessToken?: string;
-//     sub: string;
-//     accessTokenExpiresAt?: number;
-//   }
-// }
+declare module 'next-auth/jwt' {
+  interface JWT {
+    firstName?:string;
+    lastName?:string;
+    email?: string;
+    password?: string;
+    accessToken?: string;
+    expiresIn?: number;
+    sub: string;
+    accessTokenExpiresAt?: number;
+  }
+}

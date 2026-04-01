@@ -20,6 +20,7 @@ import { motion } from 'motion/react';
 import { useTransition } from 'react';
 import { login } from '@/lib/actions/auth.action';
 import { LoginInput } from '@/lib/schemas/auth.schema';
+import { redirect } from 'next/navigation';
 
 type RegisterInput = z.infer<typeof userSchema>;
 
@@ -33,6 +34,7 @@ export default function Login() {
   } = useForm<RegisterInput>({ resolver: zodResolver(userSchema) });
 
   const [isPending, startTransition] = useTransition();
+  
 
   const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
