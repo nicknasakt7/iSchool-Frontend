@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Sidebar from './sidebar';
+import { useState } from "react";
+import Sidebar from "./sidebar";
 
 type SidebarWrapperProps = {
   children: React.ReactNode;

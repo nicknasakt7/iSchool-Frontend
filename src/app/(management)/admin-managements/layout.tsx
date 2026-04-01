@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   CreditCard,
@@ -6,9 +6,9 @@ import {
   MessageCircle,
   Settings,
   UsersRound,
-} from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type AdminManagementLayoutProps = {
   children: React.ReactNode;
@@ -27,28 +27,28 @@ export default function AdminManagementLayout({
 
   const tabs: Tab[] = [
     {
-      label: 'Enrollment Hub',
-      href: '/admin-managements/enrollments',
+      label: "Enrollment Hub",
+      href: "/admin-managements/enrollments",
       icon: UsersRound,
     },
     {
-      label: 'Relations & Outreach',
-      href: '/admin-managements/relations',
+      label: "Relations & Outreach",
+      href: "/admin-managements/relations",
       icon: MessageCircle,
     },
     {
-      label: 'Teacher Resource Management',
-      href: '/admin-managements/teachers/teacher-managements',
+      label: "Teacher Resource Management",
+      href: "/admin-managements/teachers/teacher-managements",
       icon: GraduationCap,
     },
     {
-      label: 'Academic Setup',
-      href: '/admin-managements/academic-setup/grade-architecture',
+      label: "Academic Setup",
+      href: "/admin-managements/academic-setup/grade-architecture",
       icon: Settings,
     },
     {
-      label: 'Finance Management',
-      href: '/admin-managements/finance/fee-management',
+      label: "Finance Management",
+      href: "/admin-managements/finance/fee-management",
       icon: CreditCard,
     },
   ];
@@ -57,7 +57,7 @@ export default function AdminManagementLayout({
     <div className="space-y-6">
       <div className="bg-muted-foreground/50 rounded-full">
         {/*  Tabs */}
-        <div className="flex gap-3 bg-muted p-2 rounded-2xl w-full justify-between">
+        <div className="flex flex-wrap gap-3 bg-muted p-2 rounded-2xl w-full justify-between">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = pathname.startsWith(tab.href);
@@ -71,8 +71,8 @@ export default function AdminManagementLayout({
         transition-all duration-200 ease-out hover:-translate-y-0.5
         ${
           isActive
-            ? 'bg-linear-to-r from-[#2F5FD0] to-[#3DB2E8] text-card shadow-md font-semibold'
-            : 'text-foreground hover:text-primary bg-card hover:bg-white/60'
+            ? "bg-linear-to-r from-[#2F5FD0] to-[#3DB2E8] text-card shadow-md font-semibold"
+            : "text-foreground hover:text-primary bg-card hover:bg-white/60"
         }
       `}
                 >
@@ -86,7 +86,7 @@ export default function AdminManagementLayout({
       </div>
 
       {/*  Content */}
-      <div>{children}</div>
+      <div className="">{children}</div>
     </div>
   );
 }
