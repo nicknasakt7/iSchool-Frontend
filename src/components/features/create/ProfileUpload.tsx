@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useRef, useState } from 'react';
-import { Upload } from 'lucide-react';
-import Image from 'next/image';
+import { useRef, useState } from "react";
+import { Upload } from "lucide-react";
+import Image from "next/image";
 
 export default function ProfileUpload() {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -24,7 +24,7 @@ export default function ProfileUpload() {
     <div className="flex justify-center mb-6">
       <div
         onClick={handleClick}
-        className="w-28 h-28 rounded-2xl border-2 border-dashed flex items-center justify-center cursor-pointer relative overflow-hidden hover:bg-muted/50 transition"
+        className="w-28 h-28 rounded-2xl border-2 border-dashed flex items-center justify-center cursor-pointer relative overflow-hidden hover:bg-muted/70 transition "
       >
         {preview ? (
           <Image

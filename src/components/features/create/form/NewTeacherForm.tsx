@@ -1,198 +1,44 @@
-// 'use client';
+"use client";
 
-// // =========================
-// // New Teacher Form (shadcn + Controller + FieldGroup)
-// // =========================
+import { Controller, useForm, ControllerRenderProps } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTransition } from "react";
+import { ArrowRight, Loader } from "lucide-react";
 
-// import { Controller, useForm } from 'react-hook-form';
-// import { zodResolver } from '@hookform/resolvers/zod';
-// import { useTransition } from 'react';
-// import { Loader } from 'lucide-react';
-
-// import { Button } from '@/components/ui/button';
-// import { Input } from '@/components/ui/input';
-// import {
-//   Field,
-//   FieldError,
-//   FieldGroup,
-//   FieldLabel,
-// } from '@/components/ui/field';
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from '@/components/ui/select';
-
-// import { z } from 'zod';
-// import ProfileUpload from '../ProfileUpload';
-
-// const schema = z.object({
-//   firstName: z.string().min(1),
-//   lastName: z.string().min(1),
-//   role: z.string().min(1),
-//   grade: z.string().min(1),
-// });
-
-// type FormValues = z.infer<typeof schema>;
-
-// export default function NewTeacherForm() {
-//   const { handleSubmit, control } = useForm<FormValues>({
-//     resolver: zodResolver(schema),
-//     defaultValues: {
-//       firstName: '',
-//       lastName: '',
-//       role: '',
-//       grade: '',
-//     },
-//   });
-
-//   const [isPending, startTransition] = useTransition();
-
-//   const onSubmit = (data: FormValues) => {
-//     startTransition(async () => {
-//       console.log(data);
-//     });
-//   };
-
-//   return (
-//     <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
-//       <h1 className="text-4xl font-bold text-center mb-2">New Teacher</h1>
-//       <p className="text-center text-muted-foreground mb-8">
-//         Onboard a new faculty member
-//       </p>
-
-//       {/* Profile Upload */}
-//       <ProfileUpload />
-
-//       <form onSubmit={handleSubmit(onSubmit)}>
-//         <FieldGroup className="gap-5">
-//           <div className="grid grid-cols-2 gap-5">
-//             {/* First Name */}
-//             <Controller
-//               control={control}
-//               name="firstName"
-//               render={({ field, fieldState }) => (
-//                 <Field data-invalid={fieldState.invalid}>
-//                   <FieldLabel>First Name</FieldLabel>
-//                   <Input {...field} placeholder="e.g. Julianne" />
-//                   {fieldState.invalid && (
-//                     <FieldError errors={[fieldState.error]} />
-//                   )}
-//                 </Field>
-//               )}
-//             />
-
-//             {/* Last Name */}
-//             <Controller
-//               control={control}
-//               name="lastName"
-//               render={({ field, fieldState }) => (
-//                 <Field data-invalid={fieldState.invalid}>
-//                   <FieldLabel>Last Name</FieldLabel>
-//                   <Input {...field} placeholder="e.g. Moore" />
-//                   {fieldState.invalid && (
-//                     <FieldError errors={[fieldState.error]} />
-//                   )}
-//                 </Field>
-//               )}
-//             />
-
-//             {/* Role */}
-//             <Controller
-//               control={control}
-//               name="role"
-//               render={({ field, fieldState }) => (
-//                 <Field data-invalid={fieldState.invalid}>
-//                   <FieldLabel>Role</FieldLabel>
-//                   <Select value={field.value} onValueChange={field.onChange}>
-//                     <SelectTrigger>
-//                       <SelectValue placeholder="Select position..." />
-//                     </SelectTrigger>
-//                     <SelectContent>
-//                       <SelectItem value="teacher">Teacher</SelectItem>
-//                       <SelectItem value="assistant">Assistant</SelectItem>
-//                       <SelectItem value="head">Head Teacher</SelectItem>
-//                     </SelectContent>
-//                   </Select>
-//                   {fieldState.invalid && (
-//                     <FieldError errors={[fieldState.error]} />
-//                   )}
-//                 </Field>
-//               )}
-//             />
-
-//             {/* Grade */}
-//             <Controller
-//               control={control}
-//               name="grade"
-//               render={({ field, fieldState }) => (
-//                 <Field data-invalid={fieldState.invalid}>
-//                   <FieldLabel>Grade</FieldLabel>
-//                   <Select value={field.value} onValueChange={field.onChange}>
-//                     <SelectTrigger>
-//                       <SelectValue placeholder="Select level..." />
-//                     </SelectTrigger>
-//                     <SelectContent>
-//                       <SelectItem value="1">Grade 1</SelectItem>
-//                       <SelectItem value="2">Grade 2</SelectItem>
-//                       <SelectItem value="3">Grade 3</SelectItem>
-//                     </SelectContent>
-//                   </Select>
-//                   {fieldState.invalid && (
-//                     <FieldError errors={[fieldState.error]} />
-//                   )}
-//                 </Field>
-//               )}
-//             />
-//           </div>
-
-//           {/* Submit */}
-//           <Field>
-//             <div className="flex justify-center mt-4">
-//               <Button
-//                 className="rounded-full px-8 py-6 text-base"
-//                 disabled={isPending}
-//               >
-//                 {isPending ? (
-//                   <>
-//                     <Loader className="animate-spin" /> Adding...
-//                   </>
-//                 ) : (
-//                   'Add New Teacher →'
-//                 )}
-//               </Button>
-//             </div>
-//           </Field>
-//         </FieldGroup>
-//       </form>
-//     </div>
-//   );
-// }
-
-'use client';
-
-import { Controller, useForm, ControllerRenderProps } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTransition } from 'react';
-import { ArrowRight, Loader } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from '@/components/ui/field';
+} from "@/components/ui/field";
 
-import { z } from 'zod';
-import ProfileUpload from '../ProfileUpload';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
+import { z } from "zod";
+import ProfileUpload from "../ProfileUpload";
+import { Card } from "@/components/ui/card";
+
+/* =========================
+   SCHEMA
+========================= */
 const schema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
+  firstName: z.string().min(1, "Required"),
+  lastName: z.string().min(1, "Required"),
+
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Min 6 characters"),
+
+  gender: z.enum(["male", "female"]),
+
+  homeroomClassId: z.string().optional(),
 
   role: z.array(z.string()).min(1),
   grade: z.array(z.string()).min(1),
@@ -205,11 +51,12 @@ export default function NewTeacherForm() {
   const { handleSubmit, control, reset } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      role: [],
-      grade: [],
-      classroom: [],
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      gender: "male",
+      homeroomClassId: "",
     },
   });
 
@@ -217,14 +64,16 @@ export default function NewTeacherForm() {
 
   const onSubmit = (data: FormValues) => {
     startTransition(async () => {
-      console.log(data);
+      console.log(" submit:", data);
       reset();
     });
   };
 
-  // ✅ type เป๊ะ (รู้ว่าเป็น string[])
+  /* =========================
+     checkbox helper
+  ========================= */
   const renderCheckboxGroup = (
-    field: ControllerRenderProps<FormValues, 'role' | 'grade' | 'classroom'>,
+    field: ControllerRenderProps<FormValues, "role" | "grade" | "classroom">,
     options: string[],
   ) => {
     const current = field.value || [];
@@ -255,13 +104,13 @@ export default function NewTeacherForm() {
   };
 
   return (
-    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl space-y-6">
       <ProfileUpload />
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FieldGroup className="gap-5">
+        <FieldGroup className="gap-6">
+          {/* NAME */}
           <div className="grid grid-cols-2 gap-5">
-            {/* First Name */}
             <Controller
               control={control}
               name="firstName"
@@ -276,7 +125,6 @@ export default function NewTeacherForm() {
               )}
             />
 
-            {/* Last Name */}
             <Controller
               control={control}
               name="lastName"
@@ -290,15 +138,21 @@ export default function NewTeacherForm() {
                 </Field>
               )}
             />
+          </div>
 
-            {/* Role */}
+          {/* EMAIL + PASSWORD */}
+          <div className="grid grid-cols-2 gap-5">
             <Controller
               control={control}
-              name="role"
+              name="email"
               render={({ field, fieldState }) => (
-                <Field className="col-span-2" data-invalid={fieldState.invalid}>
-                  <FieldLabel>Role</FieldLabel>
-                  {renderCheckboxGroup(field, ['Homeroom', 'Subject'])}
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Email</FieldLabel>
+                  <Input
+                    type="email"
+                    {...field}
+                    placeholder="example@mail.com"
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -306,29 +160,13 @@ export default function NewTeacherForm() {
               )}
             />
 
-            {/* Grade */}
             <Controller
               control={control}
-              name="grade"
+              name="password"
               render={({ field, fieldState }) => (
-                <Field className="col-span-2" data-invalid={fieldState.invalid}>
-                  <FieldLabel>Grade</FieldLabel>
-                  {renderCheckboxGroup(field, ['P.1', 'P.2', 'P.3', 'P.4'])}
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            {/* Classroom */}
-            <Controller
-              control={control}
-              name="classroom"
-              render={({ field, fieldState }) => (
-                <Field className="col-span-2" data-invalid={fieldState.invalid}>
-                  <FieldLabel>Classroom</FieldLabel>
-                  {renderCheckboxGroup(field, ['1', '2'])}
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Password</FieldLabel>
+                  <Input type="password" {...field} placeholder="••••••" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -337,21 +175,76 @@ export default function NewTeacherForm() {
             />
           </div>
 
-          {/* Submit */}
-          <Field>
-            <div className="flex justify-center mt-4">
-              <Button className="rounded-full px-8 py-6" disabled={isPending}>
-                {isPending ? (
-                  <>
-                    <Loader className="animate-spin" /> Adding...
-                  </>
-                ) : (
-                  'Add New Teacher →'
-                )}
-                <ArrowRight />
-              </Button>
-            </div>
-          </Field>
+          {/* GENDER */}
+          <Controller
+            control={control}
+            name="gender"
+            render={({ field }) => (
+              <Field>
+                <FieldLabel>Gender</FieldLabel>
+                <div className="flex gap-6">
+                  {["male", "female"].map((g) => (
+                    <label
+                      key={g}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        value={g}
+                        checked={field.value === g}
+                        onChange={() => field.onChange(g)}
+                      />
+                      {g}
+                    </label>
+                  ))}
+                </div>
+              </Field>
+            )}
+          />
+
+          {/* HOMEROOM */}
+          <Controller
+            control={control}
+            name="homeroomClassId"
+            render={({ field }) => (
+              <Field>
+                <FieldLabel>Homeroom (optional)</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select class..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="p1">ป.1</SelectItem>
+                    <SelectItem value="p2">ป.2</SelectItem>
+                    <SelectItem value="p3">ป.3</SelectItem>
+                    <SelectItem value="p4">ป.4</SelectItem>
+                    <SelectItem value="p5">ป.5</SelectItem>
+                    <SelectItem value="p6">ป.6</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+            )}
+          />
+
+          {/* SUBMIT */}
+          <div className="flex justify-center pt-4">
+            <Button
+              className="rounded-full px-10 py-6 text-base"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader className="animate-spin mr-2" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  Create Teacher <ArrowRight className="ml-2" />
+                </>
+              )}
+            </Button>
+          </div>
         </FieldGroup>
       </form>
     </div>
