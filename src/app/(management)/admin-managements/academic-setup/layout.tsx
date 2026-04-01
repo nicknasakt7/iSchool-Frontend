@@ -19,13 +19,17 @@ export default function Layout({
       label: 'Create Subject And Assignment',
       href: '/admin-managements/academic-setup/create-subject',
     },
+    {
+      label: 'Student Promotion',
+      href: '/admin-managements/academic-setup/students-promotion',
+    },
   ];
 
   return (
     <div className="space-y-6">
       {/*  Tabs Layout */}
       <div className="border-t-2 flex gap-4 bg-muted p-2 rounded-full w-full">
-        {tabs.map(tab => {
+        {tabs.map((tab) => {
           const isActive = pathname === tab.href;
 
           return (
