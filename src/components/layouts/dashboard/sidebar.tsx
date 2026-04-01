@@ -11,6 +11,7 @@ import {
   SquarePlus,
   ShieldPlus,
   Laptop,
+
 } from "lucide-react";
 import SidebarSection from "./sidebar-section";
 import SidebarItem from "./sidebar-item";
@@ -63,11 +64,11 @@ export default  function Sidebar() {
             href="/create/new-entry"
             icon={SquarePlus}
           />
-          <SidebarItem
+          {/* <SidebarItem
             name="New Teacher"
             href="/admin-managements/teachers/new-teacher"
             icon={UserPlus}
-          />
+          /> */}
           <SidebarItem
             name="New Admin"
             href="/create/new-admin"
@@ -75,7 +76,6 @@ export default  function Sidebar() {
           />
           <SidebarItem
             name="Admin Management"
-            href="/admin-managements/enrollments"
             href="/admin-managements/enrollments"
             icon={Laptop}
           />
