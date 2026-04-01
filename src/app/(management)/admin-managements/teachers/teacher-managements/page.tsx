@@ -1,18 +1,20 @@
-"use client";
+'use client';
 
-import FilterBar from "@/components/features/admin-management/teachers/filter-bar";
-import TeacherList from "@/components/features/admin-management/teachers/teacher-list";
-import { mockTeachers, Teacher } from "@/components/mocks/mock-teacher";
-import { useState } from "react";
+import FilterBar from '@/components/features/admin-management/teachers/filter-bar';
+import TeacherList from '@/components/features/admin-management/teachers/teacher-list';
+import { mockTeachers, Teacher } from '@/components/mocks/mock-teacher';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useState } from 'react';
 
 export default function TeacherManagementPage() {
   const [teachers, setTeachers] = useState<Teacher[]>(mockTeachers);
 
   const [filter, setFilter] = useState({
-    search: "",
-    grade: "",
-    classroom: "",
-    subject: "",
+    search: '',
+    grade: '',
+    classroom: '',
+    subject: '',
   });
 
   // 🔥 update teacher
@@ -48,17 +50,26 @@ export default function TeacherManagementPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* 🔥 HEADER (เอามาจากหน้าแรก) */}
-      <div>
-        <h2 className="text-4xl font-semibold mb-2">
-          Teacher Resource Management
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Manage teacher capacity and assignments.
-        </p>
+      {/* 🔥 HEADER */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-4xl font-semibold mb-2">
+            Teacher Resource Management
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Manage teacher capacity and assignments.
+          </p>
+        </div>
+
+        {/* 🔥 LINK BUTTON */}
+        <Button asChild>
+          <Link href="/admin-managements/teachers/new-teacher">
+            Add Teacher
+          </Link>
+        </Button>
       </div>
 
-      {/* 🔥 ส่วนจัดการ */}
+      {/* 🔥 SECTION */}
       <div>
         <h1 className="text-2xl font-semibold">Manage Teachers</h1>
         <p className="text-muted-foreground text-sm">
@@ -66,8 +77,10 @@ export default function TeacherManagementPage() {
         </p>
       </div>
 
+      {/* 🔥 FILTER */}
       <FilterBar value={filter} onFilterChange={setFilter} />
 
+      {/* 🔥 LIST */}
       <TeacherList
         teachers={filteredTeachers}
         onDelete={handleDelete}

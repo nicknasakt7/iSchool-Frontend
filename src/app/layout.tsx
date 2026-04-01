@@ -13,7 +13,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: {
     template: '%s - payment',
-    default: 'payment',
+    default: 'iSchool',
   },
 };
 
