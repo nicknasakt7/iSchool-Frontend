@@ -1,30 +1,22 @@
 "use client";
 
-import { Controller, useForm, ControllerRenderProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition } from "react";
 import { ArrowRight, Loader } from "lucide-react";
+import { useTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
+import { createTeacher } from "@/lib/actions/teacher.action";
 import { z } from "zod";
 import ProfileUpload from "../ProfileUpload";
-import { Card } from "@/components/ui/card";
 
 /* =========================
    SCHEMA
@@ -32,39 +24,41 @@ import { Card } from "@/components/ui/card";
 const schema = z.object({
   firstName: z.string().min(1, "Required"),
   lastName: z.string().min(1, "Required"),
-
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Min 6 characters"),
-
-  gender: z.enum(["male", "female"]),
-
+  gender: z.enum(["MALE", "FEMALE"]),
   homeroomClassId: z.string().optional(),
-
-  role: z.array(z.string()).min(1),
-  grade: z.array(z.string()).min(1),
-  classroom: z.array(z.string()).min(1),
+  role: z.array(z.string()).min(1).optional(),
+  grade: z.array(z.string()).min(1).optional(),
+  classroom: z.array(z.string()).min(1).optional(),
 });
 
-type FormValues = z.infer<typeof schema>;
+export type FormValues = z.infer<typeof schema>;
 
 export default function NewTeacherForm() {
-  const { handleSubmit, control, reset } = useForm<FormValues>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
       password: "",
-      gender: "male",
-      homeroomClassId: "",
+      gender: "MALE",
+      // homeroomClassId: "",
     },
   });
 
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (data: FormValues) => {
+    console.log("==========================testttttttttttt");
     startTransition(async () => {
-      console.log(" submit:", data);
+      await createTeacher(data);
       reset();
     });
   };
@@ -72,36 +66,36 @@ export default function NewTeacherForm() {
   /* =========================
      checkbox helper
   ========================= */
-  const renderCheckboxGroup = (
-    field: ControllerRenderProps<FormValues, "role" | "grade" | "classroom">,
-    options: string[],
-  ) => {
-    const current = field.value || [];
+  // const renderCheckboxGroup = (
+  //   field: ControllerRenderProps<FormValues, "role" | "grade" | "classroom">,
+  //   options: string[],
+  // ) => {
+  //   const current = field.value || [];
 
-    const toggle = (val: string) => {
-      if (current.includes(val)) {
-        field.onChange(current.filter((v) => v !== val));
-      } else {
-        field.onChange([...current, val]);
-      }
-    };
+  //   const toggle = (val: string) => {
+  //     if (current.includes(val)) {
+  //       field.onChange(current.filter((v) => v !== val));
+  //     } else {
+  //       field.onChange([...current, val]);
+  //     }
+  //   };
 
-    return (
-      <div className="flex gap-6 flex-wrap">
-        {options.map((opt) => (
-          <label key={opt} className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              className="w-4 h-4 accent-blue-600"
-              checked={current.includes(opt)}
-              onChange={() => toggle(opt)}
-            />
-            {opt}
-          </label>
-        ))}
-      </div>
-    );
-  };
+  //   return (
+  //     <div className="flex gap-6 flex-wrap">
+  //       {options.map((opt) => (
+  //         <label key={opt} className="flex items-center gap-2 cursor-pointer">
+  //           <input
+  //             type="checkbox"
+  //             className="w-4 h-4 accent-blue-600"
+  //             checked={current.includes(opt)}
+  //             onChange={() => toggle(opt)}
+  //           />
+  //           {opt}
+  //         </label>
+  //       ))}
+  //     </div>
+  //   );
+  // };
 
   return (
     <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl space-y-6">
@@ -183,7 +177,7 @@ export default function NewTeacherForm() {
               <Field>
                 <FieldLabel>Gender</FieldLabel>
                 <div className="flex gap-6">
-                  {["male", "female"].map((g) => (
+                  {["MALE", "FEMALE"].map((g) => (
                     <label
                       key={g}
                       className="flex items-center gap-2 cursor-pointer"
@@ -203,7 +197,7 @@ export default function NewTeacherForm() {
           />
 
           {/* HOMEROOM */}
-          <Controller
+          {/* <Controller
             control={control}
             name="homeroomClassId"
             render={({ field }) => (
@@ -225,7 +219,7 @@ export default function NewTeacherForm() {
                 </Select>
               </Field>
             )}
-          />
+          /> */}
 
           {/* SUBMIT */}
           <div className="flex justify-center pt-4">
