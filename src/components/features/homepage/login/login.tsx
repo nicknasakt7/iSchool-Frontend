@@ -17,6 +17,9 @@ import { z } from 'zod';
 
 import { MdArrowRightAlt } from 'react-icons/md';
 import { motion } from 'motion/react';
+import { useTransition } from 'react';
+import { login } from '@/lib/actions/auth.action';
+import { LoginInput } from '@/lib/schemas/auth.schema';
 
 type RegisterInput = z.infer<typeof userSchema>;
 
@@ -25,12 +28,21 @@ export default function Login() {
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({ resolver: zodResolver(userSchema) });
 
-  const onsubmit: SubmitHandler<RegisterInput> = async data => {
-    console.log(data);
-    reset();
+  const [isPending, startTransition] = useTransition();
+
+  const onSubmit = (data: LoginInput) => {
+    startTransition(async () => {
+      const res = await login(data);
+      if (!res.success) {
+        setError('root', {
+          message: 'The email or password you entered is incorrect'
+        });
+      }
+    });
   };
 
   return (
@@ -44,7 +56,7 @@ export default function Login() {
     >
       <div className="flex justify-center items-cente px-3">
         <Card className="w-95 max-w-sm shadow-2xl rounded-4xl px-2 ">
-          <form onSubmit={handleSubmit(onsubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <CardHeader className="mt-3">
               <CardTitle className="font-bold">AI Insight</CardTitle>
               <CardDescription>
