@@ -1,5 +1,7 @@
 "use client";
+"use client";
 
+import AssignedTeacher from "@/components/features/subject/assign-teacher";
 import AssignedTeacher from "@/components/features/subject/assign-teacher";
 import SubjectCardSection from "@/components/features/subject/subject-select";
 import { Button } from "@/components/ui/button";
@@ -83,6 +85,18 @@ type Subject = {
   name: string;
 };
 
+type AssignedTeacher = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  role: "primary" | "assistant";
+};
+
+type Subject = {
+  id: number;
+  name: string;
+};
+
 export default function CreateSubjectPage() {
   const [subjects, setSubjects] = useState<Subject[]>([{ id: 1, name: "" }]);
 
@@ -133,7 +147,23 @@ export default function CreateSubjectPage() {
         onRemove={handleRemove}
         onSave={handleSubmit}
       />
+      {/* LEFT */}
+      <SubjectCardSection
+        subjects={subjects}
+        onChange={handleChange}
+        onAdd={handleAdd}
+        onRemove={handleRemove}
+        onSave={handleSubmit}
+      />
 
+      {/* RIGHT */}
+      <AssignedTeacher
+        subjects={subjects}
+        assigned={assigned}
+        setAssigned={setAssigned}
+      />
+
+      <Button onClick={handleSubmit}>Save</Button>
       {/* RIGHT */}
       <AssignedTeacher
         subjects={subjects}
@@ -144,6 +174,18 @@ export default function CreateSubjectPage() {
       <Button onClick={handleSubmit}>Save</Button>
     </div>
   );
+
+  // return (
+  //   <div>
+  //     <Input
+  //       value={subjectName}
+  //       onChange={(e) => setSubjectName(e.target.value)}
+  //       placeholder="Enter Subject name"
+  //     />
+
+  //     <button onClick={handleSubmit}>Save</button>
+  //   </div>
+  // );
 
   // return (
   //   <div>
