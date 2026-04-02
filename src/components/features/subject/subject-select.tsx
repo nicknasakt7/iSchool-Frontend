@@ -60,7 +60,7 @@ export default function SubjectCardSection() {
             )}
 
             {/* HEADER */}
-            <div className="flex items-center gap-3 border border-red-500">
+            <div className="flex items-center gap-3 ">
               <div className="w-10 h-10 bg-blue-500 text-white flex items-center justify-center rounded-lg">
                 <BookOpen className="w-5 h-5" />
               </div>
