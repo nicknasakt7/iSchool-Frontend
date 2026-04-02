@@ -24,13 +24,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth()
+  // const session = await auth()
 
-console.log(session)
   return (
     <html lang="en" className={cn(`antialiased ${poppins.className}`)}>
       <body className={`antialiased ${poppins.className}`}>
-        <SessionProvider session={session}>
+        <SessionProvider >
           {children}
           <Toaster position="top-right" richColors />
         </SessionProvider>

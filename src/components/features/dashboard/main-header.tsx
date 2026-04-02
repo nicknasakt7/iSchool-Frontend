@@ -11,7 +11,7 @@ type DashboardHeaderProps = {
 export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
   const { data } = useSession();
 
-  console.log(data?.user?.teacher?.firstName);
+  console.log(data);
   return (
     // <div className="flex flex-col gap-4 mb-6 bg-background shadow-sm rounded-xl p-4">
     <div className="flex flex-col gap-4 px-4 md:px-6 py-4 border-b border-border/80 bg-muted-header">
