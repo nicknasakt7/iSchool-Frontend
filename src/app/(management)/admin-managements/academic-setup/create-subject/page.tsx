@@ -1,8 +1,11 @@
 "use client";
+"use client";
 
+import AssignedTeacher from "@/components/features/subject/assign-teacher";
 import AssignedTeacher from "@/components/features/subject/assign-teacher";
 import SubjectCardSection from "@/components/features/subject/subject-select";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api/client";
 import { useState } from "react";
 
 // import { useState } from "react";
@@ -82,6 +85,18 @@ type Subject = {
   name: string;
 };
 
+type AssignedTeacher = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  role: "primary" | "assistant";
+};
+
+type Subject = {
+  id: number;
+  name: string;
+};
+
 export default function CreateSubjectPage() {
   const [subjects, setSubjects] = useState<Subject[]>([{ id: 1, name: "" }]);
 
@@ -110,14 +125,8 @@ export default function CreateSubjectPage() {
       for (const subject of subjects) {
         if (!subject.name) continue;
 
-        await fetch("http://localhost:3001/api/subjects", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: subject.name,
-          }),
+        await api.post("/subjects", {
+          name: subject.name,
         });
       }
 
@@ -138,7 +147,23 @@ export default function CreateSubjectPage() {
         onRemove={handleRemove}
         onSave={handleSubmit}
       />
+      {/* LEFT */}
+      <SubjectCardSection
+        subjects={subjects}
+        onChange={handleChange}
+        onAdd={handleAdd}
+        onRemove={handleRemove}
+        onSave={handleSubmit}
+      />
 
+      {/* RIGHT */}
+      <AssignedTeacher
+        subjects={subjects}
+        assigned={assigned}
+        setAssigned={setAssigned}
+      />
+
+      <Button onClick={handleSubmit}>Save</Button>
       {/* RIGHT */}
       <AssignedTeacher
         subjects={subjects}
@@ -149,6 +174,18 @@ export default function CreateSubjectPage() {
       <Button onClick={handleSubmit}>Save</Button>
     </div>
   );
+
+  // return (
+  //   <div>
+  //     <Input
+  //       value={subjectName}
+  //       onChange={(e) => setSubjectName(e.target.value)}
+  //       placeholder="Enter Subject name"
+  //     />
+
+  //     <button onClick={handleSubmit}>Save</button>
+  //   </div>
+  // );
 
   // return (
   //   <div>

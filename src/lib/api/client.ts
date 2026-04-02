@@ -1,7 +1,7 @@
 import { serverEnv } from "@/config/env.validation";
 import { ApiError } from "@/lib/api/api.error";
 import { auth } from "@/lib/auth/auth";
-import { error } from "console";
+
 import { redirect } from "next/navigation";
 
 type RequestOptions = {
@@ -49,7 +49,7 @@ const apiFetch = async <T>(
 
     throw new ApiError(error.message, error.code, error.details);
   }
-  console.log(error);
+
   return (await res.json()).data;
 };
 
