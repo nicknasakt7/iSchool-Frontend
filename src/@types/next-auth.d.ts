@@ -16,6 +16,10 @@ declare module 'next-auth' {
       firstName: string;
       lastName: string;
     };
+    parent?: {
+      firstName: string;
+      lastName: string;
+    };
   }
 }
 
@@ -33,6 +37,10 @@ declare module 'next-auth/jwt' {
     accessTokenExpiresAt?: number;
     role?: string;
     teacher?: {
+      firstName: string;
+      lastName: string;
+    };
+    parent?: {
       firstName: string;
       lastName: string;
     };

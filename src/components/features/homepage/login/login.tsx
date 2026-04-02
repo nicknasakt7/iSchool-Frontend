@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { userSchema } from '@/validation/validate';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -33,10 +33,10 @@ export default function Login() {
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({ resolver: zodResolver(userSchema) });
 
-  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { update } = useSession();
 
+  const [isPending, startTransition] = useTransition();
   const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
       const res = await login(data);

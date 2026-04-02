@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
-import { cn } from "@/lib/utils";
-import "./styles/globals.css";
-import { Poppins } from "next/font/google";
-import { Toaster } from "sonner";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/lib/auth/auth";
+import type { Metadata } from 'next';
+import { cn } from '@/lib/utils';
+import './styles/globals.css';
+import { Poppins } from 'next/font/google';
+import { Toaster } from 'sonner';
+import Providers from './provider';
 
 const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-poppins", // 👈 สำคัญ
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  variable: '--font-poppins', // 👈 สำคัญ
 });
 
 export const metadata: Metadata = {
@@ -29,10 +28,10 @@ export default async function RootLayout({
   return (
     <html lang="en" className={cn(`antialiased ${poppins.className}`)}>
       <body className={`antialiased ${poppins.className}`}>
-        <SessionProvider >
+        <Providers>
           {children}
           <Toaster position="top-right" richColors />
-        </SessionProvider>
+        </Providers>
       </body>
     </html>
   );

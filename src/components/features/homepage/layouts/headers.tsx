@@ -1,39 +1,74 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { IoSchoolOutline } from "react-icons/io5";
+'use client';
+
+import { Button } from '@/components/ui/button';
+import { logout } from '@/lib/actions/auth.action';
+import { GraduationCap } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Headers() {
   const pathName = usePathname();
+  const { data } = useSession();
 
   return (
-    // logo
-    <nav className="flex justify-between items-center mt-5 px-4 py-2">
-      <div className="flex justify-center items-center gap-2 hover:scale-105">
-        <div>
-          <IoSchoolOutline className="text-blue-500" />
+    <nav className="flex items-center justify-between px-6 py-3 border-b bg-background">
+      {/* LEFT: LOGO */}
+      <Link href="/" className="flex items-center gap-3 group">
+        <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-md">
+          <GraduationCap className="w-5 h-5 text-white" />
         </div>
-        <Link href={"/"}>
-          <div>
-            <p className="font-bold text-blue-500 text-xl">iSchool</p>
-          </div>
-        </Link>
-      </div>
-      <div className="flex items-center justify-center gap-4">
+        <span className="text-lg font-bold text-primary group-hover:opacity-80 transition">
+          iSchool
+        </span>
+      </Link>
+
+      {/* CENTER: MENU */}
+      <div className="flex items-center gap-6">
         <Link
           href="/parents/student-info"
-          className={`pd-2 ${pathName === "/parents/student-info" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+          className={`text-sm font-medium transition ${
+            pathName === '/parents/student-info'
+              ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
         >
-          student
+          Student
         </Link>
+
         <Link
           href="/parents/payment"
-          className={`pd-2 ${pathName === "/parents/payment" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+          className={`text-sm font-medium transition ${
+            pathName === '/parents/payment'
+              ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
         >
-          payment
+          Payment
         </Link>
       </div>
-      <div>feeee</div>
+
+      {/* RIGHT: USER */}
+      <div className="flex items-center gap-4">
+        <div className="flex flex-col items-center text-right bg-card px-4 py-2 rounded-xl">
+          <p className="text-xs text-muted-foreground">Welcome</p>
+          <p className="font-semibold text-sm text-primary">
+            {data?.user?.parent?.firstName} {data?.user?.parent?.lastName}
+          </p>
+          <p className="text-[10px] text-muted-foreground uppercase">
+            {data?.user?.role}
+          </p>
+        </div>
+
+        <Button
+          variant="destructive"
+          size="sm"
+          className="rounded-lg"
+          onClick={logout}
+        >
+          Logout
+        </Button>
+      </div>
     </nav>
   );
 }

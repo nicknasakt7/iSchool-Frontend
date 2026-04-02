@@ -2,17 +2,35 @@
 
 import StudentsHeader from '@/components/features/student-back/student-header';
 import StudentsList from '@/components/features/student-back/student-list';
-
+import { useDebounce } from '@/lib/api/student/hooks/useDebounce';
 import { useState } from 'react';
 
 export default function StudentsPage() {
   const [search, setSearch] = useState('');
   const [grade, setGrade] = useState('all');
+  const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 500);
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleGrade = (value: string) => {
+    setGrade(value);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
-      <StudentsHeader onSearch={setSearch} onGradeChange={setGrade} />
-      <StudentsList search={search} grade={grade} />
+      <StudentsHeader onSearch={handleSearch} onGradeChange={handleGrade} />
+
+      <StudentsList
+        search={debouncedSearch}
+        grade={grade}
+        page={page}
+        setPage={setPage}
+      />
     </div>
   );
 }

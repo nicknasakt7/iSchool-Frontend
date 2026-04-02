@@ -9,8 +9,14 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         const result = await authService.login(credentials);
         const { user, accessToken, expiresIn } = result;
         console.log('result', result);
-        // console.log('  teacher: user.teacher',   user.teacher)
-        return { ...user, accessToken, expiresIn, teacher: user.teacher };
+        // console.log('  teacher: user.teacher', user.teacher);
+        return {
+          ...user,
+          accessToken,
+          expiresIn,
+          teacher: user.teacher,
+          parent: user.parent,
+        };
       },
     }),
   ],
@@ -28,6 +34,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         token.profileImageUrl = user.profileImageUrl;
 
         token.teacher = user.teacher;
+
+        token.parent = user.parent;
 
         token.accessTokenExpiresAt =
           Date.now() + ((user.expiresIn ?? 0) - 3) * 1000;
@@ -58,6 +66,8 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 
       session.user.teacher = token.teacher;
       // console.log('session', session)
+
+      session.user.parent = token.parent;
       return session;
     },
   },

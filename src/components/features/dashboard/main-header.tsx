@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 type DashboardHeaderProps = {
-  onOpenSidebar?: () => void; //  เพิ่ม (รับ function จาก layout)
+  onOpenSidebar?: () => void;
 };
 
 export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
@@ -50,13 +50,13 @@ export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
               />
             </Avatar>
             <div className="text-sm">
-              <p>
+              <div>
                 Welcome
                 <p className="font-bold text-primary">
                   {session.data?.user?.teacher?.firstName}{' '}
                   {session.data?.user?.teacher?.lastName}
                 </p>
-              </p>
+              </div>
               <p className="text-muted-foreground text-xs font-semibold">
                 {session.data?.user?.role}
               </p>

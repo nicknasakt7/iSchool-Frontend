@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   LayoutDashboard,
@@ -11,13 +11,17 @@ import {
   SquarePlus,
   ShieldPlus,
   Laptop,
+} from 'lucide-react';
+import SidebarSection from './sidebar-section';
+import SidebarItem from './sidebar-item';
+import { logout } from '@/lib/actions/auth.action';
+import { useSession } from 'next-auth/react';
 
-} from "lucide-react";
-import SidebarSection from "./sidebar-section";
-import SidebarItem from "./sidebar-item";
-import { logout } from "@/lib/actions/auth.action";
-
-export default  function Sidebar() {
+export default function Sidebar() {
+  const { data } = useSession();
+  const role = data?.user?.role;
+  const isSuperAdmin = role === 'SUPER_ADMIN';
+  const canAccessAdmin = role && ['ADMIN', 'SUPER_ADMIN'].includes(role);
 
   return (
     <aside className="fixed w-64 md:w-64 h-full md:h-screen border-r bg-primary-foreground backdrop-blur flex flex-col justify-between">
@@ -64,21 +68,21 @@ export default  function Sidebar() {
             href="/create/new-entry"
             icon={SquarePlus}
           />
-          {/* <SidebarItem
-            name="New Teacher"
-            href="/admin-managements/teachers/new-teacher"
-            icon={UserPlus}
-          /> */}
-          <SidebarItem
-            name="New Admin"
-            href="/create/new-admin"
-            icon={ShieldPlus}
-          />
-          <SidebarItem
-            name="Admin Management"
-            href="/admin-managements/enrollments"
-            icon={Laptop}
-          />
+          {isSuperAdmin && (
+            <SidebarItem
+              name="New Admin"
+              href="/create/new-admin"
+              icon={ShieldPlus}
+            />
+          )}
+
+          {canAccessAdmin && (
+            <SidebarItem
+              name="Admin Management"
+              href="/admin-managements/enrollments"
+              icon={Laptop}
+            />
+          )}
         </SidebarSection>
       </div>
 
@@ -89,7 +93,10 @@ export default  function Sidebar() {
           Settings
         </button>
 
-        <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-card transition " onClick={logout}>
+        <button
+          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-card transition "
+          onClick={logout}
+        >
           <LogOut className="w-5 h-5" />
           Logout
         </button>
