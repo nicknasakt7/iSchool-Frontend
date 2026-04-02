@@ -24,11 +24,14 @@ import ProfileUpload from "../ProfileUpload";
 const schema = z.object({
   firstName: z.string().min(1, "Required"),
   lastName: z.string().min(1, "Required"),
-  email: z.string().email("Invalid email"),
+  email: z.email("Invalid email"),
   password: z.string().min(6, "Min 6 characters"),
-  gender: z.enum(["MALE", "FEMALE"]),
-  homeroomClassId: z.string().optional(),
+
+  gender: z.enum(["MALE", "FEMALE", "OTHER"]),
   role: z.array(z.string()).min(1).optional(),
+
+  homeroomClassId: z.string().optional(),
+
   grade: z.array(z.string()).min(1).optional(),
   classroom: z.array(z.string()).min(1).optional(),
 });
@@ -56,7 +59,6 @@ export default function NewTeacherForm() {
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (data: FormValues) => {
-    console.log("==========================testttttttttttt");
     startTransition(async () => {
       await createTeacher(data);
       reset();

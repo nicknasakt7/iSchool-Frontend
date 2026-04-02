@@ -1,8 +1,10 @@
+export type Gender = "MALE" | "FEMALE" | "OTHER";
+
 export type Teacher = {
   id: string;
   email: string;
   password: string;
-  gender: string;
+  gender: Gender;
   firstName: string;
   lastName: string;
   homeroomClassId?: string | null;

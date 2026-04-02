@@ -1,74 +1,82 @@
-'use client';
+"use client";
 
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTransition } from 'react';
-import { ArrowRight, Loader } from 'lucide-react';
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTransition } from "react";
+import { ArrowRight, Loader } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from '@/components/ui/field';
+} from "@/components/ui/field";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
-import { z } from 'zod';
-import ProfileUpload from '../ProfileUpload';
+import { z } from "zod";
+import ProfileUpload from "../ProfileUpload";
+import { createStudent } from "@/lib/actions/student.action";
 
 const schema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   nickname: z.string().optional(),
   dob: z.string().min(1),
+  gender: z.enum(["MALE", "FEMALE", "OTHER"]),
 
-  // 🔥 NEW: Parent fields
+  // NEW: Parent fields
   parentFirstName: z.string().min(1),
   parentLastName: z.string().min(1),
-  parentEmail: z.string().email(),
+  parentEmail: z.email(),
 
   grade: z.string().min(1),
-  classroom: z.string().min(1),
+  classroom: z.string().min(1).optional(),
 
   favorite: z.string().optional(),
   health: z.string().optional(),
+
+  studentCode: z.uuid(),
 });
 
-type FormValues = z.infer<typeof schema>;
+export type StudentFormValues = z.infer<typeof schema>;
 
 export default function NewEntryForm() {
-  const { handleSubmit, control } = useForm<FormValues>({
+  const { handleSubmit, control, reset } = useForm<StudentFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      nickname: '',
-      dob: '',
+      firstName: "",
+      lastName: "",
+      nickname: "",
+      dob: "",
+      gender: "MALE",
 
-      parentFirstName: '',
-      parentLastName: '',
-      parentEmail: '',
+      parentFirstName: "",
+      parentLastName: "",
+      parentEmail: "",
 
-      grade: '',
-      classroom: '',
-      favorite: '',
-      health: '',
+      grade: "",
+      classroom: "",
+      favorite: "",
+      health: "",
+
+      studentCode: "",
     },
   });
 
   const [isPending, startTransition] = useTransition();
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: StudentFormValues) => {
     startTransition(async () => {
-      console.log(data);
+      await createStudent(data);
+      reset();
     });
   };
 
@@ -255,7 +263,7 @@ export default function NewEntryForm() {
                     <Loader className="animate-spin" /> Adding...
                   </>
                 ) : (
-                  'Add New Entry →'
+                  "Add New Entry →"
                 )}
               </Button>
             </div>
