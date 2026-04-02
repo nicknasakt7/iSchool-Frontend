@@ -20,9 +20,8 @@ import { motion } from 'motion/react';
 import { useTransition } from 'react';
 import { login } from '@/lib/actions/auth.action';
 import { LoginInput } from '@/lib/schemas/auth.schema';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-
 
 type RegisterInput = z.infer<typeof userSchema>;
 
@@ -30,26 +29,25 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    reset,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({ resolver: zodResolver(userSchema) });
 
   const [isPending, startTransition] = useTransition();
-  const router = useRouter()
-  const {update} = useSession()
+  const router = useRouter();
+  const { update } = useSession();
 
   const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
       const res = await login(data);
       if (!res.success) {
         setError('root', {
-          message: 'The email or password you entered is incorrect'
+          message: 'The email or password you entered is incorrect',
         });
       }
       // router.refresh()
-      update()
-      router.push('/dashboard')
+      update();
+      router.push('/dashboard');
     });
   };
 

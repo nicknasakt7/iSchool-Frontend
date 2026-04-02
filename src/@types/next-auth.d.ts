@@ -3,13 +3,15 @@ import 'next-auth/jwt';
 
 declare module 'next-auth' {
   interface User {
-    firstName?:string;
-    lastName?:string;
+    firstName?: string;
+    lastName?: string;
     email?: string;
     password?: string;
     accessToken?: string;
     expiresIn?: number;
-    role?:string;
+    profileImageUrl?: string | null;
+    profileImagePublicId?: string | null;
+    role?: string;
     teacher?: {
       firstName: string;
       lastName: string;
@@ -19,15 +21,17 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    firstName?:string;
-    lastName?:string;
+    firstName?: string;
+    lastName?: string;
     email?: string;
     password?: string;
     accessToken?: string;
     expiresIn?: number;
+    profileImageUrl?: string | null;
+    profileImagePublicId?: string | null;
     sub: string;
     accessTokenExpiresAt?: number;
-    role?:string;
+    role?: string;
     teacher?: {
       firstName: string;
       lastName: string;
