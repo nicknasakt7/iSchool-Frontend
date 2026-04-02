@@ -44,9 +44,7 @@ export default function TeacherItem({
             {teacher.firstName} {teacher.lastName}
           </p>
 
-          <p className="text-sm text-muted-foreground">
-            Grade {teacher.grade.join(", ")} • {teacher.subject.join(", ")}
-          </p>
+          <p className="text-sm text-muted-foreground">Grade {teacher.id}</p>
         </div>
       </div>
 

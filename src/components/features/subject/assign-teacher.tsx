@@ -27,7 +27,7 @@ type AssignedTeacher = Teacher & {
   role: "primary" | "assistant";
 };
 
-export default function AssignedTeacher({
+export default function AssignTeacher({
   subjects,
   assigned,
   setAssigned,
@@ -83,6 +83,11 @@ export default function AssignedTeacher({
   return (
     <div className="border rounded-2xl p-6 space-y-6 bg-white">
       {/* HEADER */}
+      {subjects.length > 0 && (
+        <div className="text-xs text-muted-foreground">
+          Subjects: {subjects.map((s) => s.name).join(", ")}
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Assign Teachers</h2>
 
