@@ -67,13 +67,11 @@ export default function NewEntryForm() {
       parentsLastName: "",
       parentsEmail: "",
 
-      gender: "",
       grade: "",
       classroom: "",
       gradeId: "",
       classId: "",
       favorite: "",
-      health: "",
       healthNote: "",
     },
   });
