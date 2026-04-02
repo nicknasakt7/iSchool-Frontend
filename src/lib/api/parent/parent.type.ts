@@ -1,16 +1,17 @@
 export type Gender = "MALE" | "FEMALE" | "OTHER";
 
-export type Role = "TEACHER";
+export type Role = "PARENTS";
 
-export type Teacher = {
+export type Parent = {
   id: string;
   email: string;
-  password: string;
-  gender: Gender;
   firstName: string;
   lastName: string;
-  homeroomClassId?: string | null;
-  profileImageUrl?: string | null;
+  tel: string;
+  lineId: string;
+  token: string;
+  role: Role;
+  gender: Gender;
   createdAt: Date;
   updatedAt: Date;
 };
