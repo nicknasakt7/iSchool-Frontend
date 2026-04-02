@@ -35,6 +35,7 @@ const schema = z.object({
   parentLastName: z.string().min(1),
   parentEmail: z.string().email(),
 
+  gender: z.string().min(1),
   grade: z.string().min(1),
   classroom: z.string().min(1),
 
@@ -57,6 +58,7 @@ export default function NewEntryForm() {
       parentLastName: '',
       parentEmail: '',
 
+      gender: '',
       grade: '',
       classroom: '',
       favorite: '',
@@ -176,53 +178,88 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* Grade */}
-            <Controller
-              control={control}
-              name="grade"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Grade</FieldLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Grade 1</SelectItem>
-                      <SelectItem value="2">Grade 2</SelectItem>
-                      <SelectItem value="3">Grade 3</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+            <div className="col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+              {/* Gender */}
+              <Controller
+                control={control}
+                name="gender"
+                render={({ field, fieldState }) => (
+                  <Field
+                    className="w-full flex flex-col"
+                    data-invalid={fieldState.invalid}
+                  >
+                    <FieldLabel>Gender</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
 
-            {/* 🔥 Classroom dropdown (UPDATED) */}
-            <Controller
-              control={control}
-              name="classroom"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Classroom</FieldLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select classroom" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="301">Room 301</SelectItem>
-                      <SelectItem value="302">Room 302</SelectItem>
-                      <SelectItem value="303">Room 303</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+              {/* Grade */}
+              <Controller
+                control={control}
+                name="grade"
+                render={({ field, fieldState }) => (
+                  <Field
+                    className="w-full flex flex-col"
+                    data-invalid={fieldState.invalid}
+                  >
+                    <FieldLabel>Grade</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">Grade 1</SelectItem>
+                        <SelectItem value="2">Grade 2</SelectItem>
+                        <SelectItem value="3">Grade 3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              {/* Classroom */}
+              <Controller
+                control={control}
+                name="classroom"
+                render={({ field, fieldState }) => (
+                  <Field
+                    className="w-full flex flex-col"
+                    data-invalid={fieldState.invalid}
+                  >
+                    <FieldLabel>Classroom</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select classroom" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="01">Room 1</SelectItem>
+                        <SelectItem value="02">Room 2</SelectItem>
+                        <SelectItem value="03">Room 3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </div>
 
             <Controller
               control={control}
@@ -255,8 +292,9 @@ export default function NewEntryForm() {
                     <Loader className="animate-spin" /> Adding...
                   </>
                 ) : (
-                  'Add New Entry →'
+                  'Add New Entry'
                 )}
+                <ArrowRight />
               </Button>
             </div>
           </Field>
