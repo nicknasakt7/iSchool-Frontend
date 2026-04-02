@@ -28,46 +28,53 @@ import { createStudent } from "@/lib/actions/student.action";
 const schema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  nickname: z.string().optional(),
+  nickName: z.string().optional(),
   dob: z.string().min(1),
   gender: z.enum(["MALE", "FEMALE", "OTHER"]),
 
   // NEW: Parent fields
-  parentFirstName: z.string().min(1),
-  parentLastName: z.string().min(1),
-  parentEmail: z.email(),
+  parentsFirstName: z.string().min(1),
+  parentsLastName: z.string().min(1),
+  parentsEmail: z.email(),
 
-  gender: z.string().min(1),
   grade: z.string().min(1),
   classroom: z.string().min(1).optional(),
+  gradeId: z.string().min(1),
+  classId: z.string().min(1).optional(),
 
   favorite: z.string().optional(),
-  health: z.string().optional(),
-
-  studentCode: z.uuid(),
+  healthNote: z.string().optional(),
 });
 
 export type StudentFormValues = z.infer<typeof schema>;
 
 export default function NewEntryForm() {
-  const { handleSubmit, control, reset } = useForm<StudentFormValues>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<StudentFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       firstName: "",
       lastName: "",
-      nickname: "",
+      nickName: "",
       dob: "",
       gender: "MALE",
 
-      parentFirstName: "",
-      parentLastName: "",
-      parentEmail: "",
+      parentsFirstName: "",
+      parentsLastName: "",
+      parentsEmail: "",
 
       gender: "",
       grade: "",
       classroom: "",
+      gradeId: "",
+      classId: "",
       favorite: "",
       health: "",
+      healthNote: "",
     },
   });
 
@@ -118,7 +125,7 @@ export default function NewEntryForm() {
 
             <Controller
               control={control}
-              name="nickname"
+              name="nickName"
               render={({ field }) => (
                 <Field>
                   <FieldLabel>Nickname</FieldLabel>
@@ -133,7 +140,7 @@ export default function NewEntryForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Date of Birth</FieldLabel>
-                  <Input {...field} placeholder="mm/dd/yyyy" />
+                  <Input {...field} placeholder="mm-dd-yyyy" />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -144,7 +151,7 @@ export default function NewEntryForm() {
             {/* 🔥 Parent (NEW) */}
             <Controller
               control={control}
-              name="parentFirstName"
+              name="parentsFirstName"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Parent First Name</FieldLabel>
@@ -158,7 +165,7 @@ export default function NewEntryForm() {
 
             <Controller
               control={control}
-              name="parentLastName"
+              name="parentsLastName"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Parent Last Name</FieldLabel>
@@ -172,7 +179,7 @@ export default function NewEntryForm() {
 
             <Controller
               control={control}
-              name="parentEmail"
+              name="parentsEmail"
               render={({ field, fieldState }) => (
                 <Field className="col-span-2" data-invalid={fieldState.invalid}>
                   <FieldLabel>Parent Email</FieldLabel>
@@ -238,6 +245,31 @@ export default function NewEntryForm() {
                   </Field>
                 )}
               />
+              {/* Grade */}
+              <Controller
+                control={control}
+                name="gradeId"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Grade</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="47c09bcf-089e-4acb-a16d-520b4647b1cc">
+                          Grade 1
+                        </SelectItem>
+                        <SelectItem value="2">Grade 2</SelectItem>
+                        <SelectItem value="3">Grade 3</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
 
               {/* Classroom */}
               <Controller
@@ -266,6 +298,31 @@ export default function NewEntryForm() {
                 )}
               />
             </div>
+            {/* 🔥 Classroom dropdown (UPDATED) */}
+            <Controller
+              control={control}
+              name="classId"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Classroom</FieldLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select classroom" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="33eb243a-cbd0-4ba1-9d8f-210ea693daa4">
+                        Room 301
+                      </SelectItem>
+                      <SelectItem value="302">Room 302</SelectItem>
+                      <SelectItem value="303">Room 303</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
             <Controller
               control={control}
@@ -280,7 +337,7 @@ export default function NewEntryForm() {
 
             <Controller
               control={control}
-              name="health"
+              name="healthNote"
               render={({ field }) => (
                 <Field className="col-span-2">
                   <FieldLabel>Health Note</FieldLabel>
