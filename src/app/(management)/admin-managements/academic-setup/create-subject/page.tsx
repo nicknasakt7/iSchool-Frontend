@@ -3,6 +3,7 @@
 import AssignedTeacher from "@/components/features/subject/assign-teacher";
 import SubjectCardSection from "@/components/features/subject/subject-select";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api/client";
 import { useState } from "react";
 
 // import { useState } from "react";
@@ -110,14 +111,8 @@ export default function CreateSubjectPage() {
       for (const subject of subjects) {
         if (!subject.name) continue;
 
-        await fetch("http://localhost:3001/api/subjects", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: subject.name,
-          }),
+        await api.post("/subjects", {
+          name: subject.name,
         });
       }
 
