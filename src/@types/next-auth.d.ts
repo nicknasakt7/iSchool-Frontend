@@ -9,6 +9,11 @@ declare module 'next-auth' {
     password?: string;
     accessToken?: string;
     expiresIn?: number;
+    role?:string;
+    teacher?: {
+      firstName: string;
+      lastName: string;
+    };
   }
 }
 
@@ -22,5 +27,10 @@ declare module 'next-auth/jwt' {
     expiresIn?: number;
     sub: string;
     accessTokenExpiresAt?: number;
+    role?:string;
+    teacher?: {
+      firstName: string;
+      lastName: string;
+    };
   }
 }
