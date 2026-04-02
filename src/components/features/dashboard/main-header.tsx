@@ -42,8 +42,8 @@ export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
             <Sparkles /> AI Insight
           </Button>
 
-          <div className="bg-card border-2 border-card p-2 rounded-xl flex items-center gap-2 md:ml-auto">
-            <Avatar className="size-10">
+          <div className="bg-card border-2 border-card px-8 py-2 rounded-xl flex items-center gap-4 md:ml-auto">
+            <Avatar className="size-15">
               <AvatarImage
                 alt="user"
                 src={session.data?.user?.profileImageUrl ?? '/user.png'}
@@ -51,10 +51,13 @@ export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
             </Avatar>
             <div className="text-sm">
               <p>
-                Welcome {session.data?.user?.teacher?.firstName}{' '}
-                {session.data?.user?.teacher?.lastName}
+                Welcome
+                <p className="font-bold text-primary">
+                  {session.data?.user?.teacher?.firstName}{' '}
+                  {session.data?.user?.teacher?.lastName}
+                </p>
               </p>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-muted-foreground text-xs font-semibold">
                 {session.data?.user?.role}
               </p>
             </div>
