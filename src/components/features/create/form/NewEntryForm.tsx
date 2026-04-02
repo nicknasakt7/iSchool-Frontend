@@ -37,8 +37,6 @@ const schema = z.object({
   parentsLastName: z.string().min(1),
   parentsEmail: z.email(),
 
-  grade: z.string().min(1),
-  classroom: z.string().min(1).optional(),
   gradeId: z.string().min(1),
   classId: z.string().min(1).optional(),
 
@@ -67,8 +65,6 @@ export default function NewEntryForm() {
       parentsLastName: "",
       parentsEmail: "",
 
-      grade: "",
-      classroom: "",
       gradeId: "",
       classId: "",
       favorite: "",
@@ -205,9 +201,9 @@ export default function NewEntryForm() {
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="MALE">Male</SelectItem>
+                        <SelectItem value="FEMALE">Female</SelectItem>
+                        <SelectItem value="OTHER">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     {fieldState.invalid && (
@@ -218,7 +214,7 @@ export default function NewEntryForm() {
               />
 
               {/* Grade */}
-              <Controller
+              {/* <Controller
                 control={control}
                 name="grade"
                 render={({ field, fieldState }) => (
@@ -242,7 +238,8 @@ export default function NewEntryForm() {
                     )}
                   </Field>
                 )}
-              />
+              /> */}
+
               {/* Grade */}
               <Controller
                 control={control}
@@ -270,7 +267,7 @@ export default function NewEntryForm() {
               />
 
               {/* Classroom */}
-              <Controller
+              {/* <Controller
                 control={control}
                 name="classroom"
                 render={({ field, fieldState }) => (
@@ -294,7 +291,7 @@ export default function NewEntryForm() {
                     )}
                   </Field>
                 )}
-              />
+              /> */}
             </div>
             {/* 🔥 Classroom dropdown (UPDATED) */}
             <Controller
