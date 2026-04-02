@@ -1,3 +1,5 @@
+'use client';
+
 // 'use client';
 
 // import ClassroomMapping from '@/components/features/admin-management/academic-setup/grade-architecture/classroom-mapping';
@@ -113,8 +115,6 @@
 //   );
 // }
 
-'use client';
-
 import ClassroomMapping from '@/components/features/admin-management/academic-setup/grade-architecture/classroom-mapping';
 import GradeLevels from '@/components/features/admin-management/academic-setup/grade-architecture/grade-levels';
 import {
@@ -124,7 +124,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { getGrade } from '@/lib/actions/grade.action';
+
+import { useEffect, useState } from 'react';
 
 type Mapping = {
   grade: string;
@@ -144,6 +146,21 @@ export default function GradeArchitecturePage() {
     { grade: 'P.1', classroom: 'ห้อง 1' },
     { grade: 'P.2', classroom: 'ห้อง 2' },
   ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // หรือ external API
+        const json = await getGrade();
+        console.log('jjjjjjjjjjsonn', json);
+        setMappings(json);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // 🔥 helper: show correct year per term
   const getTermLabel = (year: string, term: string) => {
@@ -251,6 +268,7 @@ export default function GradeArchitecturePage() {
       </div>
       {/* 🔥 MAIN */}
       <div className="grid grid-cols-2 gap-6">
+        {/* =========================== */}
         <GradeLevels
           grades={grades}
           onAdd={addGrade}
@@ -258,7 +276,7 @@ export default function GradeArchitecturePage() {
           onSave={handleSaveGrades} // 🔥 เพิ่มตรงนี้
           disabled={isSaved}
         />
-
+        {/* =========================== */}
         <ClassroomMapping
           grades={grades}
           mappings={mappings}
