@@ -1,24 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import TeacherItem from "./teacher-item";
-import { mockTeachers, Teacher } from "@/components/mocks/mock-teacher";
+
+type Teacher = {
+  id: number;
+  firstName: string;
+  lastName: string;
+};
+
+type Subject = {
+  id: number;
+  name: string;
+};
+
+type AssignedTeacherProps = {
+  subjects: Subject[];
+  assigned: AssignedTeacher[];
+  setAssigned: React.Dispatch<React.SetStateAction<AssignedTeacher[]>>;
+};
 
 type AssignedTeacher = Teacher & {
   role: "primary" | "assistant";
 };
 
-export default function AssignTeacher() {
+export default function AssignTeacher({
+  subjects,
+  assigned,
+  setAssigned,
+}: AssignedTeacherProps) {
   const [search, setSearch] = useState("");
-  const [assigned, setAssigned] = useState<AssignedTeacher[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
-  const filtered = mockTeachers.filter((t) =>
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/api/teachers");
+        const data = await res.json();
+        setTeachers(data);
+      } catch (error) {
+        console.error("โหลด teachers ไม่สำเร็จ", error);
+      }
+    };
+    fetchTeachers();
+  }, []);
+
+  const filtered = teachers.filter((t) =>
     `${t.firstName} ${t.lastName}`.toLowerCase().includes(search.toLowerCase()),
   );
-
   const addTeacher = (teacher: Teacher) => {
     if (assigned.find((t) => t.id === teacher.id)) return;
 
@@ -51,6 +83,11 @@ export default function AssignTeacher() {
   return (
     <div className="border rounded-2xl p-6 space-y-6 bg-white">
       {/* HEADER */}
+      {subjects.length > 0 && (
+        <div className="text-xs text-muted-foreground">
+          Subjects: {subjects.map((s) => s.name).join(", ")}
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Assign Teachers</h2>
 

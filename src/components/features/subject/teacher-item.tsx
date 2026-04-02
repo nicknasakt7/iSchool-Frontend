@@ -7,10 +7,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Teacher } from "@/components/mocks/mock-teacher";
+
+type AssignedTeacher = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  role: "primary" | "assistant";
+};
 
 type TeacherItemProps = {
-  teacher: Teacher;
+  teacher: AssignedTeacher;
   role: "primary" | "assistant";
   onRoleChange: (role: "primary" | "assistant") => void;
   onRemove: () => void;
@@ -38,9 +44,7 @@ export default function TeacherItem({
             {teacher.firstName} {teacher.lastName}
           </p>
 
-          <p className="text-sm text-muted-foreground">
-            Grade {teacher.grade.join(", ")} • {teacher.subject.join(", ")}
-          </p>
+          <p className="text-sm text-muted-foreground">Grade {teacher.id}</p>
         </div>
       </div>
 
