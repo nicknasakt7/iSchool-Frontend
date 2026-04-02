@@ -6,14 +6,22 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
-        const { user, accessToken, expiresIn } =
+        const result =
           await authService.login(credentials);
-        return { ...user, accessToken, expiresIn };
+          const { user, accessToken, expiresIn } =result
+          console.log('result', result)
+          // console.log('  teacher: user.teacher',   user.teacher)
+        return { ...user, 
+          accessToken, 
+          expiresIn ,
+          teacher: user.teacher
+        };
       }
     })
   ],
   callbacks: {
     jwt({ token, user, trigger, session }) {
+      // console.log('token', token)
       if (user) {
         token.firstName = user.firstName;
         token.lastName = user.lastName;
@@ -21,6 +29,10 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         token.email = user.email;
         token.accessToken = user.accessToken;
         token.image = user.image;
+        token.role = user.role;
+
+        token.teacher = user.teacher;
+        
         token.accessTokenExpiresAt =
           Date.now() + ((user.expiresIn ?? 0) - 3) * 1000;
       }
@@ -39,13 +51,17 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       return token;
     },
     session({ session, token }) {
+
       session.user.accessToken = token.accessToken;
       session.user.email = token.email as string;
       session.user.image = token.picture as string;
       session.user.firstName = token.firstName as string;
       session.user.lastName = token.lastName as string;
       session.user.id = token.sub;
-
+      session.user.role = token.role as string;
+      
+      session.user.teacher = token.teacher;
+// console.log('session', session)
       return session;
     }
   }
