@@ -1,46 +1,59 @@
 "use client";
 
-import { useState } from "react";
-import { X, BookOpen, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { BookOpen, Plus, X } from "lucide-react";
 
 type Subject = {
   id: number;
   name: string;
 };
 
-export default function SubjectCardSection() {
-  const [subjects, setSubjects] = useState<Subject[]>([
-    { id: 1, name: "" },
-    { id: 2, name: "" },
-  ]);
+type SubjectCardSectionProps = {
+  subjects: Subject[];
+  onChange: (id: number, value: string) => void;
+  onAdd: () => void;
+  onRemove: (id: number) => void;
+  onSave: () => void;
+};
 
-  // ➕ เพิ่ม
-  const addSubject = () => {
-    setSubjects((prev) => [...prev, { id: Date.now(), name: "" }]);
-  };
+export default function SubjectCardSection({
+  subjects,
+  onChange,
+  onAdd,
+  onRemove,
+  onSave,
+}: SubjectCardSectionProps) {
+  // const [subjects, setSubjects] = useState<Subject[]>([
+  //   { id: 1, name: "" },
+  //   { id: 2, name: "" },
+  // ]);
 
-  // ❌ ลบ
-  const removeSubject = (id: number) => {
-    setSubjects((prev) => prev.filter((s) => s.id !== id));
-  };
+  // // ➕ เพิ่ม
+  // const addSubject = () => {
+  //   setSubjects((prev) => [...prev, { id: Date.now(), name: "" }]);
+  // };
 
-  // ✏️ แก้ชื่อ
-  const updateSubject = (id: number, value: string) => {
-    setSubjects((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, name: value } : s)),
-    );
-  };
-  const handleSave = () => {
-    const hasEmpty = subjects.some((s) => !s.name.trim());
+  // // ❌ ลบ
+  // const removeSubject = (id: number) => {
+  //   setSubjects((prev) => prev.filter((s) => s.id !== id));
+  // };
 
-    if (hasEmpty) {
-      alert("please fill all subject names");
-      return;
-    }
-    console.log("SavedSubject", subjects);
-  };
+  // // ✏️ แก้ชื่อ
+  // const updateSubject = (id: number, value: string) => {
+  //   setSubjects((prev) =>
+  //     prev.map((s) => (s.id === id ? { ...s, name: value } : s)),
+  //   );
+  // };
+  // const handleSave = () => {
+  //   const hasEmpty = subjects.some((s) => !s.name.trim());
+
+  //   if (hasEmpty) {
+  //     alert("please fill all subject names");
+  //     return;
+  //   }
+  //   console.log("SavedSubject", subjects);
+  // };
 
   return (
     <div className="bg-muted/20 p-6 rounded-2xl space-y-6 ">
@@ -55,7 +68,7 @@ export default function SubjectCardSection() {
             {subjects.length > 1 && (
               <X
                 className="absolute top-3 right-3 w-4 h-4 text-muted-foreground cursor-pointer"
-                onClick={() => removeSubject(subject.id)}
+                onClick={() => onRemove(subject.id)}
               />
             )}
 
@@ -77,7 +90,7 @@ export default function SubjectCardSection() {
               <Input
                 placeholder="Enter subject name"
                 value={subject.name}
-                onChange={(e) => updateSubject(subject.id, e.target.value)}
+                onChange={(e) => onChange(subject.id, e.target.value)}
               />
             </div>
           </div>
@@ -86,7 +99,7 @@ export default function SubjectCardSection() {
 
       {/* ADD BUTTON */}
       <div
-        onClick={addSubject}
+        onClick={onAdd}
         className="border-2 border-dashed rounded-xl py-4 flex items-center justify-center gap-2 text-blue-600 cursor-pointer hover:bg-muted transition"
       >
         <Plus className="w-4 h-4" />
@@ -95,7 +108,7 @@ export default function SubjectCardSection() {
 
       <div className="mt-6 flex justify-end gap-2">
         <Button variant={"ghost"}>Cancel</Button>
-        <Button onClick={handleSave}>Save</Button>
+        <Button onClick={onSave}>Save</Button>
       </div>
     </div>
   );
