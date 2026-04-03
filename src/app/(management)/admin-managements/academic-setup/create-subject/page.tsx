@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 // import { api } from '@/lib/api/client';
 import { useState } from 'react';
 
-type AssignedTeacher = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  role: 'primary' | 'assistant';
-};
+// type AssignedTeacher = {
+//   id: number;
+//   firstName: string;
+//   lastName: string;
+//   role: 'primary' | 'assistant';
+// };
 
 type Subject = {
   id: number;
@@ -21,23 +21,23 @@ type Subject = {
 export default function CreateSubjectPage() {
   const [subjects, setSubjects] = useState<Subject[]>([{ id: 1, name: '' }]);
 
-  const [assigned, setAssigned] = useState<AssignedTeacher[]>([]);
+  // const [assigned, setAssigned] = useState<AssignedTeacher[]>([]);
 
   // 🔥 เปลี่ยนค่า input (ใช้ id)
   const handleChange = (id: number, value: string) => {
-    setSubjects(prev =>
-      prev.map(s => (s.id === id ? { ...s, name: value } : s)),
+    setSubjects((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, name: value } : s)),
     );
   };
 
   // 🔥 เพิ่ม subject
   const handleAdd = () => {
-    setSubjects(prev => [...prev, { id: Date.now(), name: '' }]);
+    setSubjects((prev) => [...prev, { id: Date.now(), name: '' }]);
   };
 
   // 🔥 ลบ subject
   const handleRemove = (id: number) => {
-    setSubjects(prev => prev.filter(s => s.id !== id));
+    setSubjects((prev) => prev.filter((s) => s.id !== id));
   };
 
   // 🔥 ยิง API
@@ -69,17 +69,15 @@ export default function CreateSubjectPage() {
         onSave={handleSubmit}
       />
 
-      {/* RIGHT */}
+      {/* RIGHT
       <AssignTeacher
         subjects={subjects}
         assigned={assigned}
         setAssigned={setAssigned}
-      />
+      /> */}
 
-      <Button onClick={handleSubmit}>Save</Button>
+      {/* <Button onClick={handleSubmit}>Save</Button> */}
       {/* RIGHT */}
-
-      <Button onClick={handleSubmit}>Save</Button>
     </div>
   );
 

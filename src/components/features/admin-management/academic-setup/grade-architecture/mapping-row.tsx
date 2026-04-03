@@ -5,7 +5,7 @@ type Mapping = {
   classroom: string;
 };
 
-type Props = {
+type MappingRowProps = {
   data: Mapping;
   grades: string[];
   onChange: (key: keyof Mapping, value: string) => void;
@@ -19,16 +19,16 @@ export default function MappingRow({
   onChange,
   onDelete,
   disabled = false,
-}: Props) {
+}: MappingRowProps) {
   return (
     <div className="flex gap-3">
       <select
         disabled={disabled}
         value={data.grade}
-        onChange={e => onChange('grade', e.target.value)}
+        onChange={(e) => onChange('grade', e.target.value)}
         className="p-2 rounded-lg bg-muted"
       >
-        {grades.map(g => (
+        {grades.map((g) => (
           <option key={g}>{g}</option>
         ))}
       </select>
@@ -36,7 +36,7 @@ export default function MappingRow({
       <input
         disabled={disabled}
         value={data.classroom}
-        onChange={e => onChange('classroom', e.target.value)}
+        onChange={(e) => onChange('classroom', e.target.value)}
         className="flex-1 p-2 rounded-lg bg-muted"
         placeholder="Classroom"
       />
