@@ -1,8 +1,9 @@
-import { FormValues } from "@/components/features/create/form/NewTeacherForm";
-import { api } from "../client";
-import { Teacher } from "./teacher.type";
+import { FormValues } from '@/components/features/create/form/NewTeacherForm';
+
+import { Teacher } from './teacher.type';
+import { api } from '../api-server';
 
 const createTeacher = (input: FormValues) =>
-  api.post<Teacher>("/teachers", input);
+  api.post<Teacher>('/teachers', input);
 
 export const teacherService = { createTeacher };

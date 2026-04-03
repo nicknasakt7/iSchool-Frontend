@@ -6,7 +6,7 @@ type StudentCardProps = {
   name: string;
   nickname: string;
   grade: string;
-  image: string;
+  image?: string;
 };
 
 export default function StudentCard({
@@ -27,11 +27,11 @@ export default function StudentCard({
       >
         <div className="flex items-center gap-4">
           <Image
-            src={image}
+            src={image || '/default-avatar.png'}
             alt={name}
-            width={40}
-            height={40}
-            className="w-14 h-14 rounded-lg"
+            width={80}
+            height={80}
+            className="rounded-full"
           />
 
           <div>

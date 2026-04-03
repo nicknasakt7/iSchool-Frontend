@@ -6,18 +6,19 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
-        const result =
-          await authService.login(credentials);
-          const { user, accessToken, expiresIn } =result
-          console.log('result', result)
-          // console.log('  teacher: user.teacher',   user.teacher)
-        return { ...user, 
-          accessToken, 
-          expiresIn ,
-          teacher: user.teacher
+        const result = await authService.login(credentials);
+        const { user, accessToken, expiresIn } = result;
+        console.log('result', result);
+        // console.log('  teacher: user.teacher', user.teacher);
+        return {
+          ...user,
+          accessToken,
+          expiresIn,
+          teacher: user.teacher,
+          parent: user.parent,
         };
-      }
-    })
+      },
+    }),
   ],
   callbacks: {
     jwt({ token, user, trigger, session }) {
@@ -30,9 +31,12 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
         token.accessToken = user.accessToken;
         token.image = user.image;
         token.role = user.role;
+        token.profileImageUrl = user.profileImageUrl;
 
         token.teacher = user.teacher;
-        
+
+        token.parent = user.parent;
+
         token.accessTokenExpiresAt =
           Date.now() + ((user.expiresIn ?? 0) - 3) * 1000;
       }
@@ -51,7 +55,6 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       return token;
     },
     session({ session, token }) {
-
       session.user.accessToken = token.accessToken;
       session.user.email = token.email as string;
       session.user.image = token.picture as string;
@@ -59,10 +62,13 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       session.user.lastName = token.lastName as string;
       session.user.id = token.sub;
       session.user.role = token.role as string;
-      
+      session.user.profileImageUrl = token.profileImageUrl;
+
       session.user.teacher = token.teacher;
-// console.log('session', session)
+      // console.log('session', session)
+
+      session.user.parent = token.parent;
       return session;
-    }
-  }
+    },
+  },
 });
