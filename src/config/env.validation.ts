@@ -1,7 +1,6 @@
 import z from 'zod';
 
 const serverEnvSchema = z.object({
-  BACKEND_URL: z.url(),
   AUTH_SECRET: z.string().min(32),
 });
 

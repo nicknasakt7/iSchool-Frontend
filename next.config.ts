@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'i.pravatar.cc',
       },
+
+      new URL('https://res.cloudinary.com/dboof56wt/**'),
     ],
   },
 };

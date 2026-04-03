@@ -1,14 +1,17 @@
 import { StudentFormValues } from '@/components/features/create/form/NewEntryForm';
-import { api } from '../client';
+import { apiClient } from '../client';
 import { Student, StudentListResponse } from './student.type';
 
-const createStudent = (input: StudentFormValues) =>
-  api.post<Student>('/students', input);
+const createStudent = (input: StudentFormValues, token?: string) =>
+  apiClient.post<Student>('/students', input, token);
 
-const getStudents = (params?: {
-  page?: number;
-  limit?: number;
-  search?: string;
-}) => api.get<StudentListResponse>('/students', params);
+const getStudents = (
+  params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  },
+  token?: string,
+) => apiClient.get<StudentListResponse>('/students', params, token);
 
 export const studentService = { createStudent, getStudents };

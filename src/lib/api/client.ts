@@ -1,6 +1,5 @@
-import { serverEnv } from '@/config/env.validation';
+// import { clientEnv } from '@/config/client-env.validation';
 import { ApiError } from '@/lib/api/api.error';
-import { auth } from '@/lib/auth/auth';
 // import { error } from 'console';
 import { redirect } from 'next/navigation';
 
@@ -8,6 +7,7 @@ type RequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   params?: Record<string, string | number | boolean>;
+  token?: string;
 };
 
 //เพิ่มมา
@@ -24,8 +24,9 @@ const buildQuery = (params?: Record<string, string | number | boolean>) => {
 
   return query.toString();
 };
-
-const BACKEND_URL = serverEnv.BACKEND_URL;
+//ไปดูหน่อย
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const BACKEND_URL = clientEnv.NEXT_PUBLIC_BACKEND_URL;
 
 const UNAUTHORIZED_CODE = ['INVALID_TOKEN', 'TOKEN_EXPIRED'] as const;
 
@@ -39,15 +40,14 @@ const apiFetch = async <T>(
 
   const fullUrl = query ? `${url}?${query}` : url;
 
-  const session = await auth();
+  // const session = await auth();
   // console.log('session  apiFetch', session);
 
   const headers: Record<string, string> = {};
   if (body && !(body instanceof FormData))
     headers['Content-type'] = 'application/json';
 
-  if (session?.user?.accessToken)
-    headers['Authorization'] = `Bearer ${session?.user?.accessToken}`;
+  if (options.token) headers['Authorization'] = `Bearer ${options.token}`;
 
   const config: RequestInit = {
     method,
@@ -76,20 +76,16 @@ const apiFetch = async <T>(
 const get = <T>(
   url: string,
   params?: Record<string, string | number | boolean>,
-) => apiFetch<T>(url, { params });
+  token?: string,
+) => apiFetch<T>(url, { params, token });
 // const get = <T>(url: string) => apiFetch<T>(url);
-const post = <T>(url: string, body?: unknown) =>
-  apiFetch<T>(url, { method: 'POST', body });
-const put = <T>(url: string, body?: unknown) =>
-  apiFetch<T>(url, { method: 'PUT', body });
-const patch = <T>(url: string, body?: unknown) =>
-  apiFetch<T>(url, { method: 'PATCH', body });
-const del = <T>(url: string) => apiFetch<T>(url, { method: 'DELETE' });
+const post = <T>(url: string, body?: unknown, token?: string) =>
+  apiFetch<T>(url, { method: 'POST', body, token });
+const put = <T>(url: string, body?: unknown, token?: string) =>
+  apiFetch<T>(url, { method: 'PUT', body, token });
+const patch = <T>(url: string, body?: unknown, token?: string) =>
+  apiFetch<T>(url, { method: 'PATCH', body, token });
+const del = <T>(url: string, token?: string) =>
+  apiFetch<T>(url, { method: 'DELETE', token });
 
-export const api = {
-  get,
-  post,
-  put,
-  patch,
-  delete: del,
-};
+export const apiClient = { get, post, put, patch, delete: del };
