@@ -1,9 +1,12 @@
 'use server';
 
+import { api } from "../api/api-server";
+import { apiClient } from "../api/client";
+import { Grade } from "../api/grade/grade.type";
 
-import { api } from "../../lib/api/client";
 
-export const getGrade = async (): Promise<> => {
+
+export const getGrade = async (): Promise<Grade> => {
   try {
    const data=  api.get<>()
    console.log('dataaaaaaa',data)
@@ -11,7 +14,5 @@ export const getGrade = async (): Promise<> => {
   } catch (err){
     return err;
   }
-  
+
 };
-
-

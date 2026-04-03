@@ -124,7 +124,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getGrade } from '@/lib/actions/grade.action';
+// import { getGrade } from '@/lib/actions/grade.action';
 
 import { useEffect, useState } from 'react';
 
@@ -147,20 +147,20 @@ export default function GradeArchitecturePage() {
     { grade: 'P.2', classroom: 'ห้อง 2' },
   ]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // หรือ external API
-        const json = await getGrade();
-        console.log('jjjjjjjjjjsonn', json);
-        setMappings(json);
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // หรือ external API
+  //       const json = await getGrade();
+  //       console.log('jjjjjjjjjjsonn', json);
+  //       setMappings(json);
+  //     } catch (error) {
+  //       console.error('Error:', error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  // fetchData();
+  // }, []);
 
   // 🔥 helper: show correct year per term
   const getTermLabel = (year: string, term: string) => {
