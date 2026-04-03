@@ -1,6 +1,6 @@
 import { ParentFormValues } from "@/components/features/homepage/parents-registration/ParentForm";
-import { api } from "../client";
 import { Parent } from "./parent.type";
+import { api } from "../api-server";
 
 const createParent = (input: ParentFormValues) => {
   const { confirmPassword, ...res } = input;
