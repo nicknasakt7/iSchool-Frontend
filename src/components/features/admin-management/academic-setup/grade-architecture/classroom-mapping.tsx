@@ -1,6 +1,14 @@
 import { Button } from '@/components/ui/button';
 import MappingRow from './mapping-row';
 import { Pen, Plus } from 'lucide-react';
+import z from 'zod';
+
+const gradeSchema = z.object({
+  name: z.string().min(1),
+  level: z.coerce.number().positive(),
+});
+
+export type gradeSchemaInput = z.infer<typeof gradeSchema>;
 
 type Mapping = {
   grade: string;
