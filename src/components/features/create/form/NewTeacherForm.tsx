@@ -28,7 +28,7 @@ const schema = z.object({
   password: z.string().min(6, "Min 6 characters"),
 
   gender: z.enum(["MALE", "FEMALE", "OTHER"]),
-  role: z.array(z.string()).min(1).optional(),
+  role: z.enum(["PARENTS", "TEACHER"]),
 
   homeroomClassId: z.string().optional(),
 
@@ -52,7 +52,7 @@ export default function NewTeacherForm() {
       email: "",
       password: "",
       gender: "MALE",
-      // homeroomClassId: "",
+      role: "TEACHER",
     },
   });
 

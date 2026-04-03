@@ -1,6 +1,6 @@
 import { AdminFormValues } from "@/components/features/create/form/NewAdminForm";
-import { api } from "../client";
 import { Admin } from "./admin.type";
+import { api } from "../api-server";
 
 const createAdmin = (input: AdminFormValues) =>
   api.post<Admin>("/users", input);
