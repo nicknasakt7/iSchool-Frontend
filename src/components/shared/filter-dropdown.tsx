@@ -18,6 +18,7 @@ export type FilterDropdownProps = {
   value?: string;
   options?: Option[] | null;
   onChange?: (value: string) => void;
+  disabled?: boolean;
 };
 
 export default function FilterDropdown({
@@ -25,12 +26,13 @@ export default function FilterDropdown({
   label,
   options,
   onChange,
+  disabled,
 }: FilterDropdownProps) {
   //  ไม่มี data = ไม่ render
   if (!options?.length) return null;
 
   return (
-    <Select value={value ?? ''} onValueChange={onChange}>
+    <Select value={value ?? ''} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger className="w-45 bg-card rounded-full">
         <SelectValue placeholder={label} />
       </SelectTrigger>

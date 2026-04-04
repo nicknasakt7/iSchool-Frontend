@@ -14,7 +14,7 @@ export default function StudentsPage() {
 
   const debouncedSearch = useDebounce(search, 500);
 
-  const { data: grades } = useGrades();
+  const { data: grades, isLoading: isLoadingGrades } = useGrades();
 
   //  ยิงเฉพาะตอนเลือก grade
   const { data: classrooms } = useClassrooms(
@@ -44,7 +44,8 @@ export default function StudentsPage() {
         onGradeChange={handleGrade}
         onClassChange={handleClass}
         grades={grades}
-        classrooms={classrooms} // 👈 เปลี่ยนเป็น API ใหม่
+        isLoadingGrades={isLoadingGrades}
+        classrooms={classrooms}
       />
 
       <StudentsList

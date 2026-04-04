@@ -1,5 +1,6 @@
 'use client';
 
+import { Grade } from '@/lib/api/grade/grade.type';
 import { useStudents } from '@/lib/api/student/hooks/useStudents';
 import StudentCard from './student-card';
 
@@ -9,6 +10,7 @@ type StudentsListProps = {
   page: number;
   setPage: (page: number) => void;
   classId: string;
+  grades?: Grade[];
 };
 
 export default function StudentsList({
@@ -18,7 +20,6 @@ export default function StudentsList({
   setPage,
   classId,
 }: StudentsListProps) {
-  //  เรียก API
   const { data, isLoading, isError } = useStudents({
     page,
     limit: 10,
@@ -27,36 +28,33 @@ export default function StudentsList({
     classId: classId === 'all' ? undefined : classId,
   });
 
-  // คำนวณ pagination
   const total = data?.meta.total ?? 0;
   const limit = data?.meta.limit ?? 10;
   const hasNext = page * limit < total;
 
-  // loading
   if (isLoading) return <p className="text-center">Loading... </p>;
 
-  // error
   if (isError)
     return <p className="text-center text-destructive">Something went wrong</p>;
 
-  // empty state
   if (!data?.data.length)
     return <p className="text-center text-gray-500 mt-10">No students found</p>;
 
   return (
     <div>
-      {/*  list */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {data.data.map(s => (
-          <StudentCard
-            key={s.id}
-            id={s.id}
-            name={`${s.firstName} ${s.lastName}`}
-            nickname={s.nickName}
-            grade={s.gradeId}
-            image={s.profileImageUrl ?? '/user.png'}
-          />
-        ))}
+        {data.data.map(s => {
+          return (
+            <StudentCard
+              key={s.id}
+              id={s.id}
+              name={`${s.firstName} ${s.lastName}`}
+              nickname={s.nickName}
+              studentCode={s.studentCode}
+              image={s.profileImageUrl ?? '/user.png'}
+            />
+          );
+        })}
       </div>
 
       {/* pagination */}

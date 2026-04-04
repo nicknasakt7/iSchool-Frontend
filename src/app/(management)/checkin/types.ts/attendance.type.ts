@@ -1,3 +1,5 @@
+import { AttendanceStatus } from '@/lib/api/attendance/attendance.type';
+
 export type AttendanceState = {
-  [studentId: string]: 'PRESENT' | 'ABSENT';
+  [studentId: string]: AttendanceStatus;
 };

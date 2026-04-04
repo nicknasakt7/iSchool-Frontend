@@ -94,6 +94,7 @@ export default function Hero() {
             width={628}
             height={628}
             className=" hover:scale-105 duration-200"
+            priority
           />
         </div>
       </div>

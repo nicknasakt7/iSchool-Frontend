@@ -1,37 +1,35 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import GradeDropdown from '@/components/shared/grade-dropdown';
+import ClassroomDropdown from '@/components/shared/classroom.dropdown';
+import { useGrades } from '@/lib/api/grade/hooks/useGrade';
+import { useClassrooms } from '@/lib/api/classroom/hook/useClassrooms';
 import AttendanceStats from './attendance-stats';
-import FilterDropdown from '@/components/shared/filter-dropdown';
 
 type AttendanceHeaderProps = {
-  showUpdated?: boolean;
   total: number;
   present: number;
   absent: number;
+  onClassChange: (classId: string) => void;
 };
 
-const grades = [
-  { label: 'P.1', value: '2' },
-  { label: 'P.2', value: '10' },
-];
-
-const classrooms = [{ label: '1', value: '1' }];
-
 export default function AttendanceHeader({
-  showUpdated,
-  present,
   total,
+  present,
   absent,
+  onClassChange,
 }: AttendanceHeaderProps) {
   const [time, setTime] = useState('');
-  const [grade, setGrade] = useState('');
-  const [classroom, setClassroom] = useState('');
+  const [gradeId, setGradeId] = useState<string | undefined>(undefined);
+  const [classroomId, setClassroomId] = useState<string>('all');
+
+  const { data: grades } = useGrades();
+  const { data: classrooms } = useClassrooms(gradeId);
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-
       const formatted = now.toLocaleString('en-US', {
         weekday: 'long',
         month: 'short',
@@ -39,55 +37,51 @@ export default function AttendanceHeader({
         hour: '2-digit',
         minute: '2-digit',
       });
-
       setTime(formatted);
     };
 
     updateTime();
     const interval = setInterval(updateTime, 60000);
-
     return () => clearInterval(interval);
   }, []);
 
+  const handleGradeChange = (value: string) => {
+    setGradeId(value === 'all' ? undefined : value);
+    setClassroomId('all');
+    onClassChange('');
+  };
+
+  const handleClassroomChange = (value: string) => {
+    setClassroomId(value);
+    onClassChange(value === 'all' ? '' : value);
+  };
+
   return (
     <div className="space-y-4">
-      {/* Header */}
       <div className="flex items-start justify-between gap-4">
-        {/* left */}
         <div>
           <h1 className="text-4xl font-bold">Morning Attendance</h1>
-
           <p className="text-sm text-muted-foreground">
             Daily student check-in for{' '}
             <span className="text-primary font-medium">{time}</span>
           </p>
         </div>
 
-        {/* right */}
         <AttendanceStats total={total} present={present} absent={absent} />
       </div>
 
-      {/*  Filter Bar */}
       <div className="flex flex-wrap items-center gap-3">
-        <FilterDropdown
-          label="Select Grade"
-          options={grades}
-          value={grade}
-          onChange={setGrade}
+        <GradeDropdown
+          value={gradeId ?? 'all'}
+          grades={grades}
+          onChange={handleGradeChange}
         />
 
-        <FilterDropdown
-          label="Select Classroom"
-          options={classrooms}
-          value={classroom}
-          onChange={setClassroom}
+        <ClassroomDropdown
+          value={classroomId}
+          classrooms={classrooms}
+          onChange={handleClassroomChange}
         />
-
-        {showUpdated && (
-          <p className="text-xs text-muted-foreground ml-auto whitespace-nowrap">
-            Updated 2 minutes ago
-          </p>
-        )}
       </div>
     </div>
   );

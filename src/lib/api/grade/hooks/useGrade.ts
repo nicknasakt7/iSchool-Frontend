@@ -8,5 +8,6 @@ export const useGrades = () => {
   return useQuery({
     queryKey: ['grades'],
     queryFn: () => gradeService.getGrades(session?.user?.accessToken),
+    enabled: !!session?.user?.accessToken,
   });
 };

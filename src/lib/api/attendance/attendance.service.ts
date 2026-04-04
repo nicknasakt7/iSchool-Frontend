@@ -1,14 +1,8 @@
 import { apiClient } from '../client';
+import { AttendanceSummary, CreateAttendanceDto } from './attendance.type';
 
-export type TakeAttendanceBody = {
-  records: {
-    studentId: string;
-    status: 'PRESENT' | 'ABSENT';
-  }[];
-};
+export const takeAttendance = (body: CreateAttendanceDto, token?: string) =>
+  apiClient.post('/attendance', body, token);
 
-export const takeAttendance = (body: TakeAttendanceBody) =>
-  apiClient.post('/attendance', body);
-
-export const getAttendanceSummary = (classId: string) =>
-  apiClient.get('/attendance/summary', { classId });
+export const getAttendanceSummary = (classId: string, token?: string) =>
+  apiClient.get<AttendanceSummary>('/attendance/summary', { classId }, token);
