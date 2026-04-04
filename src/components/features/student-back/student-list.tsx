@@ -8,6 +8,7 @@ type StudentsListProps = {
   grade: string;
   page: number;
   setPage: (page: number) => void;
+  classId: string;
 };
 
 export default function StudentsList({
@@ -15,13 +16,15 @@ export default function StudentsList({
   grade,
   page,
   setPage,
+  classId,
 }: StudentsListProps) {
   //  เรียก API
   const { data, isLoading, isError } = useStudents({
     page,
     limit: 10,
     search,
-    grade: grade === 'all' ? undefined : grade,
+    gradeId: grade === 'all' ? undefined : grade,
+    classId: classId === 'all' ? undefined : classId,
   });
 
   // คำนวณ pagination

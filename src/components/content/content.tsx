@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { PATH } from "@/constants/path.constant";
-import { ArrowBigRight } from "lucide-react";
-import { motion } from "motion/react";
-import Image from "next/image";
-import Link from "next/link";
-import FooterContent from "./footercontent";
+import { PATH } from '@/constants/path.constant';
+import { ArrowBigRight } from 'lucide-react';
+import { motion } from 'motion/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import FooterContent from './footercontent';
 
 export default function Hero() {
-  const text1 = "Smart";
-  const text2 = "School with ";
-  const highlight = "Ai Insight";
+  const text1 = 'Smart';
+  const text2 = 'School with ';
+  const highlight = 'Ai Insight';
 
   const container = {
     hidden: {},
@@ -42,7 +42,7 @@ export default function Hero() {
 
           <div className="mt-5 space-y-2.5 text-5xl">
             <motion.p variants={container} initial="hidden" animate="visible">
-              {text1.split("").map((char, i) => (
+              {text1.split('').map((char, i) => (
                 <motion.span key={i} variants={child}>
                   {char}
                 </motion.span>
@@ -50,13 +50,13 @@ export default function Hero() {
             </motion.p>
 
             <motion.p variants={container} initial="hidden" animate="visible">
-              {text2.split("").map((char, i) => (
+              {text2.split('').map((char, i) => (
                 <motion.span key={i} variants={child}>
                   {char}
                 </motion.span>
               ))}
               <span className="text-blue-500">
-                {highlight.split("").map((char, i) => (
+                {highlight.split('').map((char, i) => (
                   <motion.span key={i} variants={child}>
                     {char}
                   </motion.span>
@@ -75,7 +75,7 @@ export default function Hero() {
 
           <div className="mt-5 flex gap-5">
             <Link href={PATH.CONTENT}>
-              <button className="flex items-center bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all px-5 py-1.5 rounded-2xl text-white">
+              <button className="flex items-center font-bold bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all px-5 py-1.5 rounded-2xl text-white">
                 <p>Explore School</p>
                 <ArrowBigRight />
               </button>

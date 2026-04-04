@@ -12,18 +12,21 @@ export default function ClassroomDropdown({
   onChange,
   classrooms,
 }: ClassroomDropdownProps) {
-  const options = classrooms?.map(c => ({
-    label: c.name,
-    value: c.id,
-  }));
+  const options = [
+    { label: 'All', value: 'all' },
+    ...(classrooms ?? []).map(c => ({
+      label: c.name,
+      value: c.id,
+    })),
+  ];
 
-  // ไม่มี classroom = ไม่โชว์เลย
-  if (!options?.length) return null;
+  // ถ้ามีแค่ All (ไม่มี classroom จริง) → ไม่ต้องโชว์
+  if (options.length <= 1) return null;
 
   return (
     <FilterDropdown
       label="Classroom"
-      value={value}
+      value={value ?? 'all'}
       options={options}
       onChange={onChange}
     />

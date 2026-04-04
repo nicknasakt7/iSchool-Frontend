@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import AttendanceHeader from '@/components/features/checkin/attendance-header';
 import StudentRow from '@/components/features/checkin/student-row';
 import { takeAttendance } from '@/lib/api/attendance/attendance.service';
-import { AttendanceState } from './types';
+
 import { useStudents } from '@/lib/api/student/hooks/useStudents';
+import { AttendanceState } from './types.ts/attendance.type';
 
 export default function CheckInPage() {
   const [search, setSearch] = useState('');
@@ -17,12 +18,12 @@ export default function CheckInPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [classId, setClassId] = useState('');
 
-  // 🔥 ดึง student จาก backend
+  // ดึง student จาก backend
   const { data, isLoading } = useStudents({ classId });
 
   const students = data || [];
 
-  // 🔥 reset ทุกครั้งที่เปลี่ยนห้อง
+  //  reset ทุกครั้งที่เปลี่ยนห้อง
   useEffect(() => {
     setAttendance({});
     setIsSubmitted(false);
@@ -77,7 +78,7 @@ export default function CheckInPage() {
     <div className="space-y-6">
       <SearchInput onSearch={setSearch} />
 
-      {/* 🔥 เลือกห้อง → ยิง API */}
+      {/* เลือกห้อง → ยิง API */}
       <AttendanceHeader
         showUpdated
         total={total}

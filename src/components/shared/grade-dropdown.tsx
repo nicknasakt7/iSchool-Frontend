@@ -16,15 +16,18 @@ export default function GradeDropdown({
   onChange,
   grades,
 }: GradeDropdownProps) {
-  const options = grades?.map(g => ({
-    label: g.name,
-    value: g.id,
-  }));
+  const options = [
+    { label: 'All', value: 'all' },
+    ...(grades ?? []).map(g => ({
+      label: g.name,
+      value: g.id,
+    })),
+  ];
 
   return (
     <FilterDropdown
       label="Grade"
-      value={value}
+      value={value ?? 'all'}
       options={options}
       onChange={onChange}
     />

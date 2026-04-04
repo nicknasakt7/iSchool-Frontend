@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import { gradeService } from '../classroom.service';
+import { gradeService } from '../grade.service';
 
 export const useGrades = () => {
   const { data: session } = useSession();

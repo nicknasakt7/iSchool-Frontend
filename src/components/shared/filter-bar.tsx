@@ -4,8 +4,9 @@ import SubjectDropdown from '@/components/shared/subject-dropdown';
 import GradeDropdown from './grade-dropdown';
 
 import { useState } from 'react';
-import { useGrades } from '@/lib/api/classroom/hooks/useGrade';
+
 import ClassroomDropdown from './classroom.dropdown';
+import { useGrades } from '@/lib/api/grade/hooks/useGrade';
 
 type Props = {
   onSearch?: (value: string) => void;
