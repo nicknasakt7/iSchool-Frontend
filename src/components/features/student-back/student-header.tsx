@@ -25,7 +25,7 @@ export default function StudentsHeader({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* 🔥 TOP */}
+      {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-bold">Student Directory</h1>
 
@@ -37,7 +37,7 @@ export default function StudentsHeader({
           />
           <FilterDropdown label="All Classrooms" options={classrooms} />
         </div>
-        {/* 🔥 SEARCH */}
+        {/*  SEARCH */}
         <SearchInput
           placeholder="Search students..."
           className="md:w-80"

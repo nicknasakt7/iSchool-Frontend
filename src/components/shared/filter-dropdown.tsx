@@ -13,7 +13,7 @@ type Option = {
   value: string;
 };
 
-type FilterDropdownProps = {
+export type FilterDropdownProps = {
   label: string;
   value?: string;
   options?: Option[] | null;
@@ -26,7 +26,7 @@ export default function FilterDropdown({
   options,
   onChange,
 }: FilterDropdownProps) {
-  // 👇 ไม่มี data = ไม่ render
+  //  ไม่มี data = ไม่ render
   if (!options?.length) return null;
 
   return (

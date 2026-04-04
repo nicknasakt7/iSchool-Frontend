@@ -1,67 +1,34 @@
 'use client';
 
-import FilterBar from '@/components/features/admin-management/teachers/filter-bar';
 import TeacherList from '@/components/features/admin-management/teachers/teacher-list';
-import { mockTeachers, Teacher } from '@/components/mocks/mock-teacher';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useDebounce } from '@/lib/api/student/hooks/useDebounce';
+import FilterBar from '@/components/shared/filter-bar';
 
 export default function TeacherManagementPage() {
-  const [teachers, setTeachers] = useState<Teacher[]>(mockTeachers);
+  const [search, setSearch] = useState('');
+  const [subjectId, setSubjectId] = useState<string | undefined>();
+  const [gradeId, setGradeId] = useState<string | undefined>(); //
+  const [classId, setClassId] = useState<string | undefined>();
+  const [page, setPage] = useState(1);
 
-  const [filter, setFilter] = useState({
-    search: '',
-    grade: '',
-    classroom: '',
-    subject: '',
-  });
-
-  // 🔥 update teacher
-  const handleUpdate = (updatedTeacher: Teacher) => {
-    setTeachers((prev) =>
-      prev.map((t) => (t.id === updatedTeacher.id ? updatedTeacher : t)),
-    );
-  };
-
-  // 🔥 delete teacher
-  const handleDelete = (id: number) => {
-    setTeachers((prev) => prev.filter((t) => t.id !== id));
-  };
-
-  // 🔥 filter
-  const filteredTeachers = teachers.filter((t) => {
-    const matchSearch = t.firstName
-      .toLowerCase()
-      .includes(filter.search.toLowerCase());
-
-    const matchGrade = filter.grade ? t.grade.includes(filter.grade) : true;
-
-    const matchSubject = filter.subject
-      ? t.subject.includes(filter.subject)
-      : true;
-
-    const matchClassroom = filter.classroom
-      ? t.classroom === filter.classroom
-      : true;
-
-    return matchSearch && matchGrade && matchSubject && matchClassroom;
-  });
+  const debouncedSearch = useDebounce(search, 500);
 
   return (
     <div className="p-6 space-y-6">
-      {/* 🔥 HEADER */}
+      {/* HEADER */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-4xl font-semibold mb-2">
             Teacher Resource Management
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-chart-2">
             Manage teacher capacity and assignments.
           </p>
         </div>
 
-        {/* 🔥 LINK BUTTON */}
         <Button asChild>
           <Link href="/admin-managements/teachers/new-teacher">
             Add Teacher
@@ -69,22 +36,41 @@ export default function TeacherManagementPage() {
         </Button>
       </div>
 
-      {/* 🔥 SECTION */}
+      {/* SECTION */}
       <div>
         <h1 className="text-2xl font-semibold">Manage Teachers</h1>
-        <p className="text-muted-foreground text-sm">
-          View and manage faculty members
-        </p>
+        <p className="text-chart-2 text-sm">View and manage faculty members</p>
       </div>
 
-      {/* 🔥 FILTER */}
-      <FilterBar value={filter} onFilterChange={setFilter} />
+      {/* FILTER */}
+      <FilterBar
+        onSearch={v => {
+          setSearch(v);
+          setPage(1);
+        }}
+        onSubjectChange={v => {
+          setSubjectId(v || undefined);
+          setPage(1);
+        }}
+        onGradeChange={v => {
+          setGradeId(v);
+          setClassId(undefined); // 🔥 สำคัญมาก
+          setPage(1);
+        }}
+        onClassroomChange={v => {
+          setClassId(v);
+          setPage(1);
+        }}
+      />
 
-      {/* 🔥 LIST */}
+      {/* LIST */}
       <TeacherList
-        teachers={filteredTeachers}
-        onDelete={handleDelete}
-        onUpdate={handleUpdate}
+        search={debouncedSearch}
+        subjectId={subjectId}
+        gradeId={gradeId} //
+        classId={classId}
+        page={page}
+        setPage={setPage}
       />
     </div>
   );

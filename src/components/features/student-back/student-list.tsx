@@ -23,7 +23,6 @@ export default function StudentsList({
     search,
     grade: grade === 'all' ? undefined : grade,
   });
-  console.log('data', data?.meta);
 
   // คำนวณ pagination
   const total = data?.meta.total ?? 0;

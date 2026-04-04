@@ -1,30 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SearchInput from '@/components/shared/search-input';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AttendanceHeader from '@/components/features/checkin/attendance-header';
 import StudentRow from '@/components/features/checkin/student-row';
-
-const students = [
-  { id: '1', name: 'Alex Johnson' },
-  { id: '2', name: 'Marcus Reed' },
-  { id: '3', name: 'Sarah Miller' },
-  { id: '4', name: 'David Chen' },
-];
+import { takeAttendance } from '@/lib/api/attendance/attendance.service';
+import { AttendanceState } from './types';
+import { useStudents } from '@/lib/api/student/hooks/useStudents';
 
 export default function CheckInPage() {
   const [search, setSearch] = useState('');
-  const [attendance, setAttendance] = useState<{
-    [key: string]: 'present' | 'absent';
-  }>({});
-  const [finalPresent, setFinalPresent] = useState(0);
+  const [attendance, setAttendance] = useState<AttendanceState>({});
+  const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [classId, setClassId] = useState('');
 
-  // 👉 เลือกสถานะ
+  // 🔥 ดึง student จาก backend
+  const { data, isLoading } = useStudents({ classId });
+
+  const students = data || [];
+
+  // 🔥 reset ทุกครั้งที่เปลี่ยนห้อง
+  useEffect(() => {
+    setAttendance({});
+    setIsSubmitted(false);
+  }, [classId]);
+
   const handleSelect = (id: string, value: 'present' | 'absent') => {
-    if (isSubmitted) return; // 🔒 กันแก้หลัง submit
+    if (isSubmitted) return;
+
     setAttendance(prev => ({
       ...prev,
       [id]: value,
@@ -39,63 +45,85 @@ export default function CheckInPage() {
     v => v === 'present',
   ).length;
 
-  const absentCount = total - presentCount;
+  const absentCount = selectedCount - presentCount;
 
   const isComplete = selectedCount === total && total > 0;
 
-  // 🔍 filter
-  const filteredStudents = students.filter(s =>
-    s.name.toLowerCase().includes(search.toLowerCase()),
+  const filteredStudents = students.filter((s: any) =>
+    `${s.firstName} ${s.lastName}`.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const handleSubmit = async () => {
+    setLoading(true);
+
+    try {
+      const records = Object.entries(attendance).map(([studentId, status]) => ({
+        studentId,
+        status,
+      }));
+
+      await takeAttendance({ records });
+
+      setIsSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save attendance');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
+    <div className="space-y-6">
       <SearchInput onSearch={setSearch} />
 
-      {/* Header */}
+      {/* 🔥 เลือกห้อง → ยิง API */}
       <AttendanceHeader
         showUpdated
         total={total}
-        present={isSubmitted ? finalPresent : 0}
-        absent={isSubmitted ? absentCount : 0}
+        present={presentCount}
+        absent={absentCount}
+        onClassChange={setClassId}
       />
 
-      {/* Progress */}
       <p className="text-sm text-muted-foreground text-center">
         {selectedCount}/{total} students selected
       </p>
 
-      {/* List */}
       <div className="space-y-4">
-        {filteredStudents.map(s => (
-          <StudentRow
-            key={s.id}
-            student={s}
-            selected={attendance[s.id] || null}
-            onSelect={handleSelect}
-          />
-        ))}
+        {isLoading && <p className="text-center">Loading students...</p>}
 
-        {filteredStudents.length === 0 && (
-          <div className="text-sm text-muted-foreground text-center py-6">
-            No content
+        {!isLoading &&
+          filteredStudents.map((s: any) => (
+            <StudentRow
+              key={s.id}
+              student={{
+                id: s.id,
+                name: `${s.firstName} ${s.lastName}`,
+              }}
+              selected={attendance[s.id] || null}
+              onSelect={handleSelect}
+            />
+          ))}
+
+        {!isLoading && filteredStudents.length === 0 && (
+          <div className="text-center py-6 text-muted-foreground">
+            No students found
           </div>
         )}
       </div>
 
-      {/* Button */}
-      <div className="flex justify-center items-center pt-2">
+      <div className="flex justify-center">
         <Button
-          disabled={!isComplete || isSubmitted}
-          className={
-            !isComplete || isSubmitted ? 'opacity-50 cursor-not-allowed' : ''
-          }
-          onClick={() => {
-            setFinalPresent(presentCount);
-            setIsSubmitted(true);
-          }}
+          disabled={!isComplete || loading || isSubmitted}
+          onClick={handleSubmit}
         >
-          Complete Attendance <ArrowRight />
+          {loading
+            ? 'Saving...'
+            : isSubmitted
+              ? 'Saved ✔'
+              : 'Complete Attendance'}{' '}
+          <ArrowRight />
         </Button>
       </div>
     </div>

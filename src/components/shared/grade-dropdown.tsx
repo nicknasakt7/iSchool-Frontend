@@ -1,0 +1,32 @@
+import FilterDropdown from '@/components/shared/filter-dropdown';
+
+type Grade = {
+  id: string;
+  name: string;
+};
+
+type GradeDropdownProps = {
+  value?: string;
+  onChange?: (value: string) => void;
+  grades?: Grade[];
+};
+
+export default function GradeDropdown({
+  value,
+  onChange,
+  grades,
+}: GradeDropdownProps) {
+  const options = grades?.map(g => ({
+    label: g.name,
+    value: g.id,
+  }));
+
+  return (
+    <FilterDropdown
+      label="Grade"
+      value={value}
+      options={options}
+      onChange={onChange}
+    />
+  );
+}
