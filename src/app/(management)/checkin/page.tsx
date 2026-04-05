@@ -18,14 +18,19 @@ export default function CheckInPage() {
   const [attendance, setAttendance] = useState<AttendanceState>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const { data, isLoading } = useStudents({
-    classId: classId || undefined,
-  });
+  const shouldFetch = !!classId;
+
+  const { data, isLoading } = useStudents(
+    { classId: classId || undefined },
+    { enabled: shouldFetch },
+  );
   const students = data?.data ?? [];
 
   const { mutate: submitAttendance, isPending } = useAttendance();
-  const { data: summary, refetch: refetchSummary } =
-    useAttendanceSummary(classId);
+  const { data: summary, refetch: refetchSummary } = useAttendanceSummary(
+    classId,
+    { enabled: shouldFetch },
+  );
 
   const handleClassChange = (id: string) => {
     setClassId(id);
@@ -92,6 +97,7 @@ export default function CheckInPage() {
         present={displayPresent}
         absent={displayAbsent}
         onClassChange={handleClassChange}
+        hasClassroom={shouldFetch}
       />
 
       <SearchInput onSearch={setSearch} />

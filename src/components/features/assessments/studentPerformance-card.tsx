@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 
 type ScoreItem = {
   label: string;
@@ -17,7 +16,7 @@ type StudentPerformanceCardProps = {
   nickname?: string;
   scores: ScoreItem[];
   total: number;
-  gpa: number;
+  grade: string;
 
   studentIndex: number;
   onScoreChange: (
@@ -32,7 +31,7 @@ export default function StudentPerformanceCard({
   nickname,
   scores,
   total,
-  gpa,
+  grade,
   onScoreChange,
   studentIndex,
 }: StudentPerformanceCardProps) {
@@ -125,17 +124,10 @@ export default function StudentPerformanceCard({
             <p className="text-lg font-bold text-new-blue-500">{total}/100</p>
           </div>
           <div className="flex flex-col items-center text-lg font-bold">
-            Subject Grade
-            <p className="text-lg font-bold text-new-blue-500">{gpa}</p>
+            Grade
+            <p className="text-lg font-bold text-new-blue-500">{grade}</p>
           </div>
         </div>
-
-        {/* Comment */}
-        <Textarea
-          placeholder="Enter feedback..."
-          readOnly={!isEditing}
-          className="min-h-25 max-h-40 resize-none overflow-y-auto"
-        />
 
         {/* Buttons */}
         <div className="flex gap-4">

@@ -47,6 +47,8 @@ export default function StudentsPage() {
         grades={grades}
         isLoadingGrades={isLoadingGrades}
         classrooms={classrooms}
+        gradeValue={grade}
+        classValue={classId}
       />
 
       <StudentsList

@@ -12,6 +12,7 @@ type AttendanceHeaderProps = {
   present: number;
   absent: number;
   onClassChange: (classId: string) => void;
+  hasClassroom: boolean;
 };
 
 export default function AttendanceHeader({
@@ -19,6 +20,7 @@ export default function AttendanceHeader({
   present,
   absent,
   onClassChange,
+  hasClassroom,
 }: AttendanceHeaderProps) {
   const [time, setTime] = useState('');
   const [gradeId, setGradeId] = useState<string | undefined>(undefined);
@@ -67,7 +69,13 @@ export default function AttendanceHeader({
           </p>
         </div>
 
-        <AttendanceStats total={total} present={present} absent={absent} />
+        {hasClassroom ? (
+          <AttendanceStats total={total} present={present} absent={absent} />
+        ) : (
+          <p className="text-sm text-muted-foreground self-center">
+            Please select a classroom to view summary
+          </p>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

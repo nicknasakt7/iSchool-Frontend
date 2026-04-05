@@ -11,6 +11,8 @@ type StudentsHeaderProps = {
   grades?: Grade[];
   classrooms?: Classroom[] | null;
   isLoadingGrades?: boolean;
+  gradeValue?: string;
+  classValue?: string;
 };
 
 export default function StudentsHeader({
@@ -20,6 +22,8 @@ export default function StudentsHeader({
   grades,
   classrooms,
   isLoadingGrades,
+  gradeValue,
+  classValue,
 }: StudentsHeaderProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -31,9 +35,14 @@ export default function StudentsHeader({
             grades={grades}
             onChange={onGradeChange}
             isLoading={isLoadingGrades}
+            value={gradeValue}
           />
 
-          <ClassroomDropdown classrooms={classrooms} onChange={onClassChange} />
+          <ClassroomDropdown
+            classrooms={classrooms}
+            onChange={onClassChange}
+            value={classValue}
+          />
         </div>
 
         <SearchInput
