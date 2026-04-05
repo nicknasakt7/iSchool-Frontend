@@ -10,20 +10,15 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { userSchema } from '@/validation/validate';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-import { MdArrowRightAlt } from 'react-icons/md';
 import { motion } from 'motion/react';
 import { useTransition } from 'react';
 import { login } from '@/lib/actions/auth.action';
-import { LoginInput } from '@/lib/schemas/auth.schema';
+import { LoginInput, loginSchema } from '@/lib/schemas/auth.schema';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-
-type RegisterInput = z.infer<typeof userSchema>;
+import { ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const {
@@ -31,7 +26,7 @@ export default function Login() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterInput>({ resolver: zodResolver(userSchema) });
+  } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
   const router = useRouter();
   const { update } = useSession();
@@ -76,13 +71,13 @@ export default function Login() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="Enter you email"
                     {...register('email')}
                     autoComplete="name"
                     className=" rounded-xl"
                   />
                   {errors.email && (
-                    <p className="text-red-500 text-[10px] text-left">
+                    <p className="text-red-500 text-md text-left">
                       {errors.email.message}
                     </p>
                   )}
@@ -97,9 +92,10 @@ export default function Login() {
                     {...register('password')}
                     autoComplete="email"
                     className=" rounded-xl"
+                    placeholder="Enter you password"
                   />
                   {errors.password && (
-                    <p className="text-red-500 text-[10px] text-left">
+                    <p className="text-red-500 text-md text-left">
                       {errors.password.message}
                     </p>
                   )}
@@ -110,9 +106,10 @@ export default function Login() {
               <Button
                 type="submit"
                 className="w-full rounded-full hover:animate-pulse active:scale-95 bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all"
+                disabled={isPending}
               >
                 {isSubmitting ? 'Loading....' : 'Login'}
-                <MdArrowRightAlt />
+                <ArrowRight />
               </Button>
             </CardFooter>
           </form>

@@ -10,6 +10,8 @@ const getStudents = (
     page?: number;
     limit?: number;
     search?: string;
+    gradeId?: string;
+    classId?: string;
   },
   token?: string,
 ) => apiClient.get<StudentListResponse>('/students', params, token);

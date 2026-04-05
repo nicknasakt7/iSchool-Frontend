@@ -1,103 +1,163 @@
 'use client';
 
 import { useState } from 'react';
-import SearchInput from '@/components/shared/search-input';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import SearchInput from '@/components/shared/search-input';
 import AttendanceHeader from '@/components/features/checkin/attendance-header';
 import StudentRow from '@/components/features/checkin/student-row';
-
-const students = [
-  { id: '1', name: 'Alex Johnson' },
-  { id: '2', name: 'Marcus Reed' },
-  { id: '3', name: 'Sarah Miller' },
-  { id: '4', name: 'David Chen' },
-];
+import { useStudents } from '@/lib/api/student/hooks/useStudents';
+import { useAttendance } from '@/lib/api/attendance/hooks/useAttendance';
+import { useAttendanceSummary } from '@/lib/api/attendance/hooks/useAttendanceSummary';
+import { AttendanceStatus } from '@/lib/api/attendance/attendance.type';
+import { AttendanceState } from './types.ts/attendance.type';
 
 export default function CheckInPage() {
   const [search, setSearch] = useState('');
-  const [attendance, setAttendance] = useState<{
-    [key: string]: 'present' | 'absent';
-  }>({});
-  const [finalPresent, setFinalPresent] = useState(0);
+  const [classId, setClassId] = useState('');
+  const [attendance, setAttendance] = useState<AttendanceState>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // 👉 เลือกสถานะ
-  const handleSelect = (id: string, value: 'present' | 'absent') => {
-    if (isSubmitted) return; // 🔒 กันแก้หลัง submit
-    setAttendance(prev => ({
-      ...prev,
-      [id]: value,
-    }));
+  const shouldFetch = !!classId;
+
+  const { data, isLoading } = useStudents(
+    { classId: classId || undefined },
+    { enabled: shouldFetch },
+  );
+  const students = data?.data ?? [];
+
+  const { mutate: submitAttendance, isPending } = useAttendance();
+  const { data: summary, refetch: refetchSummary } = useAttendanceSummary(
+    classId,
+    { enabled: shouldFetch },
+  );
+
+  const handleClassChange = (id: string) => {
+    setClassId(id);
+    setAttendance({});
+    setIsSubmitted(false);
   };
 
-  const total = students.length;
+  const handleSelect = (id: string, status: AttendanceStatus) => {
+    if (isSubmitted) return;
+    setAttendance(prev => ({ ...prev, [id]: status }));
+  };
 
   const selectedCount = Object.keys(attendance).length;
-
   const presentCount = Object.values(attendance).filter(
-    v => v === 'present',
+    v => v === 'PRESENT',
+  ).length;
+  const absentCount = Object.values(attendance).filter(
+    v => v === 'ABSENT',
   ).length;
 
-  const absentCount = total - presentCount;
+  // All students must have a non-null status before submitting
+  const isComplete =
+    students.length > 0 && students.every(s => attendance[s.id] != null);
 
-  const isComplete = selectedCount === total && total > 0;
-
-  // 🔍 filter
   const filteredStudents = students.filter(s =>
-    s.name.toLowerCase().includes(search.toLowerCase()),
+    `${s.firstName} ${s.lastName}`.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const handleSubmit = () => {
+    const records = Object.entries(attendance).map(([studentId, status]) => ({
+      studentId,
+      status,
+    }));
+
+    submitAttendance(
+      { records },
+      {
+        onSuccess: () => {
+          setIsSubmitted(true);
+          refetchSummary();
+        },
+        onError: () => {
+          alert('Failed to save attendance');
+        },
+      },
+    );
+  };
+
+  // After submit, show backend-confirmed counts; during selection show live counts
+  const displayTotal = isSubmitted
+    ? (summary?.total ?? students.length)
+    : students.length;
+  const displayPresent = isSubmitted
+    ? (summary?.present ?? presentCount)
+    : presentCount;
+  const displayAbsent = isSubmitted
+    ? (summary?.absent ?? absentCount)
+    : absentCount;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
-      <SearchInput onSearch={setSearch} />
-
-      {/* Header */}
       <AttendanceHeader
-        showUpdated
-        total={total}
-        present={isSubmitted ? finalPresent : 0}
-        absent={isSubmitted ? absentCount : 0}
+        total={displayTotal}
+        present={displayPresent}
+        absent={displayAbsent}
+        onClassChange={handleClassChange}
+        hasClassroom={shouldFetch}
       />
 
-      {/* Progress */}
-      <p className="text-sm text-muted-foreground text-center">
-        {selectedCount}/{total} students selected
-      </p>
+      <SearchInput onSearch={setSearch} />
 
-      {/* List */}
+      {classId && (
+        <p className="text-sm text-muted-foreground text-center">
+          {selectedCount}/{students.length} students selected
+        </p>
+      )}
+
       <div className="space-y-4">
-        {filteredStudents.map(s => (
-          <StudentRow
-            key={s.id}
-            student={s}
-            selected={attendance[s.id] || null}
-            onSelect={handleSelect}
-          />
-        ))}
+        {!classId && (
+          <p className="text-center py-6 text-muted-foreground">
+            Select a grade and classroom to begin
+          </p>
+        )}
 
-        {filteredStudents.length === 0 && (
-          <div className="text-sm text-muted-foreground text-center py-6">
-            No content
-          </div>
+        {classId && isLoading && (
+          <p className="text-center">Loading students...</p>
+        )}
+
+        {classId &&
+          !isLoading &&
+          filteredStudents.map(s => (
+            <StudentRow
+              key={s.id}
+              student={{
+                id: s.id,
+                name: `${s.firstName} ${s.lastName}`,
+                studentCode: s.studentCode,
+                profileImageUrl: s.profileImageUrl,
+              }}
+              selected={attendance[s.id] ?? null}
+              onSelect={handleSelect}
+              disabled={isSubmitted}
+            />
+          ))}
+
+        {classId && !isLoading && filteredStudents.length === 0 && (
+          <p className="text-center py-6 text-muted-foreground">
+            No students found
+          </p>
         )}
       </div>
 
-      {/* Button */}
-      <div className="flex justify-center items-center pt-2">
-        <Button
-          disabled={!isComplete || isSubmitted}
-          className={
-            !isComplete || isSubmitted ? 'opacity-50 cursor-not-allowed' : ''
-          }
-          onClick={() => {
-            setFinalPresent(presentCount);
-            setIsSubmitted(true);
-          }}
-        >
-          Complete Attendance <ArrowRight />
-        </Button>
-      </div>
+      {classId && (
+        <div className="flex justify-center">
+          <Button
+            disabled={!isComplete || isPending || isSubmitted}
+            onClick={handleSubmit}
+          >
+            {isPending
+              ? 'Saving...'
+              : isSubmitted
+                ? 'Saved ✔'
+                : 'Complete Attendance'}
+            <ArrowRight />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

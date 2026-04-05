@@ -1,61 +1,59 @@
 'use client';
 
-import FilterDropdown from '@/components/shared/filter-dropdown';
+import GradeDropdown from '@/components/shared/grade-dropdown';
+import ClassroomDropdown from '@/components/shared/classroom.dropdown';
 import SearchInput from '@/components/shared/search-input';
 import SubjectDropdown from '@/components/shared/subject-dropdown';
+import { Grade } from '@/lib/api/grade/grade.type';
+import { Classroom } from '@/lib/api/classroom/classroom.type';
 
-type assessmentsHeaderProps = {
+type AssessmentsHeaderProps = {
   onGradeChange?: (value: string) => void;
   onClassroomChange?: (value: string) => void;
   onSubjectChange?: (value: string) => void;
   onSearch?: (value: string) => void;
-
   grade?: string;
   classroom?: string;
   subject?: string;
+  grades?: Grade[];
+  classrooms?: Classroom[] | null;
+  isLoadingGrades?: boolean;
 };
 
 export default function AssessmentsHeader({
   onSearch,
-  classroom,
-  grade,
-  onSubjectChange,
-  subject,
   onGradeChange,
   onClassroomChange,
-}: assessmentsHeaderProps) {
-  const grades = [
-    { label: 'P.1', value: '2' },
-    { label: 'P.2', value: '10' },
-  ];
-
-  const classrooms = [{ label: '1', value: '1' }];
-
+  onSubjectChange,
+  grade,
+  classroom,
+  subject,
+  grades,
+  classrooms,
+  isLoadingGrades,
+}: AssessmentsHeaderProps) {
   return (
     <div className="flex flex-col gap-4">
-      {/*  TOP */}
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-bold">Assessments</h1>
       </div>
+
       <SearchInput
         placeholder="Find student by name or student ID..."
         onSearch={onSearch}
       />
 
-      {/*  FILTER ROW */}
       <div className="flex flex-wrap gap-4">
-        {/* Grade */}
-        <FilterDropdown
-          label="Select Grade"
-          options={grades}
+        <GradeDropdown
           value={grade}
+          grades={grades}
           onChange={onGradeChange}
+          isLoading={isLoadingGrades}
         />
 
-        <FilterDropdown
-          label="Select Classroom"
-          options={classrooms}
+        <ClassroomDropdown
           value={classroom}
+          classrooms={classrooms}
           onChange={onClassroomChange}
         />
 

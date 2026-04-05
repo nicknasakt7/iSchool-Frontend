@@ -1,46 +1,53 @@
-'use client';
-
-import FilterDropdown from '@/components/shared/filter-dropdown';
+import ClassroomDropdown from '@/components/shared/classroom.dropdown';
+import GradeDropdown from '@/components/shared/grade-dropdown';
 import SearchInput from '@/components/shared/search-input';
+import { Classroom } from '@/lib/api/classroom/classroom.type';
+import { Grade } from '@/lib/api/grade/grade.type';
 
 type StudentsHeaderProps = {
   onGradeChange?: (value: string) => void;
-  onClassroomChange?: (value: string) => void;
-  onSubjectChange?: (value: string) => void;
-  subject?: string;
+  onClassChange?: (value: string) => void;
   onSearch?: (value: string) => void;
+  grades?: Grade[];
+  classrooms?: Classroom[] | null;
+  isLoadingGrades?: boolean;
+  gradeValue?: string;
+  classValue?: string;
 };
-
-const grades = [
-  { label: 'All Grades', value: 'all' },
-  { label: 'P.1', value: 'P.1' },
-  { label: 'P.2', value: 'P.2' },
-];
 
 export default function StudentsHeader({
   onSearch,
   onGradeChange,
+  onClassChange,
+  grades,
+  classrooms,
+  isLoadingGrades,
+  gradeValue,
+  classValue,
 }: StudentsHeaderProps) {
-  const classrooms = null;
-
   return (
     <div className="flex flex-col gap-4">
-      {/* 🔥 TOP */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-4xl font-bold">Student Directory</h1>
 
         <div className="flex gap-3">
-          <FilterDropdown
-            label="All Grades"
-            options={grades}
+          <GradeDropdown
+            grades={grades}
             onChange={onGradeChange}
+            isLoading={isLoadingGrades}
+            value={gradeValue}
           />
-          <FilterDropdown label="All Classrooms" options={classrooms} />
+
+          <ClassroomDropdown
+            classrooms={classrooms}
+            onChange={onClassChange}
+            value={classValue}
+          />
         </div>
-        {/* 🔥 SEARCH */}
+
         <SearchInput
           placeholder="Search students..."
-          className="md:w-80"
+          className="md:w-70"
           onSearch={onSearch}
         />
       </div>

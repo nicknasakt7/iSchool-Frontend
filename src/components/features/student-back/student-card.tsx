@@ -5,7 +5,8 @@ type StudentCardProps = {
   id: string;
   name: string;
   nickname: string;
-  grade: string;
+
+  studentCode: string;
   image?: string;
 };
 
@@ -13,7 +14,8 @@ export default function StudentCard({
   id,
   name,
   nickname,
-  grade,
+
+  studentCode,
   image,
 }: StudentCardProps) {
   return (
@@ -37,13 +39,8 @@ export default function StudentCard({
           <div>
             <p className="font-medium">{name}</p>
             <p className="text-sm text-gray-500">{nickname}</p>
+            <p className="text-xs text-gray-400">Student code: {studentCode}</p>
           </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-            {grade}
-          </span>
         </div>
       </div>
     </Link>
