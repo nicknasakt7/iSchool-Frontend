@@ -12,7 +12,11 @@ type Params = {
   classId?: string;
 };
 
-export const useStudents = (params: Params) => {
+type Options = {
+  enabled?: boolean;
+};
+
+export const useStudents = (params: Params, options?: Options) => {
   const { data: session } = useSession();
 
   return useQuery({
@@ -31,7 +35,6 @@ export const useStudents = (params: Params) => {
       );
       return res;
     },
-    enabled: !!session?.user?.accessToken,
-    // enabled: !!params.classId,
+    enabled: !!session?.user?.accessToken && (options?.enabled ?? true),
   });
 };

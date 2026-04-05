@@ -23,18 +23,22 @@ export default function StudentsHeader({
 }: StudentsHeaderProps) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-4xl font-bold">Student Directory</h1>
 
         <div className="flex gap-3">
-          <GradeDropdown grades={grades} onChange={onGradeChange} isLoading={isLoadingGrades} />
+          <GradeDropdown
+            grades={grades}
+            onChange={onGradeChange}
+            isLoading={isLoadingGrades}
+          />
 
           <ClassroomDropdown classrooms={classrooms} onChange={onClassChange} />
         </div>
 
         <SearchInput
           placeholder="Search students..."
-          className="md:w-80"
+          className="md:w-70"
           onSearch={onSearch}
         />
       </div>

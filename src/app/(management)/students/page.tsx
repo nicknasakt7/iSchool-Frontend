@@ -13,6 +13,7 @@ export default function StudentsPage() {
   const [classId, setClassId] = useState('all');
 
   const debouncedSearch = useDebounce(search, 500);
+  const shouldFetch = classId !== 'all';
 
   const { data: grades, isLoading: isLoadingGrades } = useGrades();
 
@@ -54,6 +55,7 @@ export default function StudentsPage() {
         page={page}
         setPage={setPage}
         classId={classId}
+        shouldFetch={shouldFetch}
       />
     </div>
   );

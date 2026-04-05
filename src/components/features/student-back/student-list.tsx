@@ -1,6 +1,5 @@
 'use client';
 
-import { Grade } from '@/lib/api/grade/grade.type';
 import { useStudents } from '@/lib/api/student/hooks/useStudents';
 import StudentCard from './student-card';
 
@@ -10,7 +9,7 @@ type StudentsListProps = {
   page: number;
   setPage: (page: number) => void;
   classId: string;
-  grades?: Grade[];
+  shouldFetch: boolean;
 };
 
 export default function StudentsList({
@@ -19,20 +18,27 @@ export default function StudentsList({
   page,
   setPage,
   classId,
+  shouldFetch,
 }: StudentsListProps) {
-  const { data, isLoading, isError } = useStudents({
-    page,
-    limit: 10,
-    search,
-    gradeId: grade === 'all' ? undefined : grade,
-    classId: classId === 'all' ? undefined : classId,
-  });
+  const { data, isLoading, isError } = useStudents(
+    {
+      page,
+      limit: 10,
+      search,
+      gradeId: grade === 'all' ? undefined : grade,
+      classId: classId === 'all' ? undefined : classId,
+    },
+    { enabled: shouldFetch },
+  );
 
-  const total = data?.meta.total ?? 0;
-  const limit = data?.meta.limit ?? 10;
-  const hasNext = page * limit < total;
+  if (!shouldFetch)
+    return (
+      <p className="text-center text-muted-foreground py-10">
+        Please select a classroom to view students
+      </p>
+    );
 
-  if (isLoading) return <p className="text-center">Loading... </p>;
+  if (isLoading) return <p className="text-center">Loading...</p>;
 
   if (isError)
     return <p className="text-center text-destructive">Something went wrong</p>;
@@ -40,21 +46,23 @@ export default function StudentsList({
   if (!data?.data.length)
     return <p className="text-center text-gray-500 mt-10">No students found</p>;
 
+  const total = data.meta.total;
+  const limit = data.meta.limit;
+  const hasNext = page * limit < total;
+
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {data.data.map(s => {
-          return (
-            <StudentCard
-              key={s.id}
-              id={s.id}
-              name={`${s.firstName} ${s.lastName}`}
-              nickname={s.nickName}
-              studentCode={s.studentCode}
-              image={s.profileImageUrl ?? '/user.png'}
-            />
-          );
-        })}
+        {data.data.map(s => (
+          <StudentCard
+            key={s.id}
+            id={s.id}
+            name={`${s.firstName} ${s.lastName}`}
+            nickname={s.nickName}
+            studentCode={s.studentCode}
+            image={s.profileImageUrl ?? '/user.png'}
+          />
+        ))}
       </div>
 
       {/* pagination */}

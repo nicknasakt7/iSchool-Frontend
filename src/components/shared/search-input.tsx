@@ -32,7 +32,7 @@ export default function SearchInput({
       <Input
         value={value}
         placeholder={placeholder}
-        className="pl-10 bg-card rounded-full h-10"
+        className="pl-10 bg-card rounded-full h-9"
         onChange={e => setValue(e.target.value)}
       />
     </div>
