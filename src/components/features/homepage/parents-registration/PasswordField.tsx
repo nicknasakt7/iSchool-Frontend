@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 type PasswordFieldProps = {
   label: string;
@@ -9,6 +9,7 @@ type PasswordFieldProps = {
   placeholder: string;
   value: string;
   onChange: (v: string) => void;
+  error?: string;
 };
 
 export default function PasswordField({
@@ -17,6 +18,7 @@ export default function PasswordField({
   placeholder,
   value,
   onChange,
+  error,
 }: PasswordFieldProps) {
   const [show, setShow] = useState(false);
 
@@ -28,14 +30,17 @@ export default function PasswordField({
 
       <div className="relative">
         <input
-          type={show ? 'text' : 'password'}
+          type={show ? "text" : "password"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full border rounded-lg p-3 bg-gray-50 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`w-full rounded-lg p-3 bg-gray-50 pr-10 focus:outline-none focus:ring-2 ${
+            error
+              ? "border border-red-500 focus:ring-red-500"
+              : "border focus:ring-blue-500"
+          }`}
         />
 
-        {/* 🔥 ICON BUTTON */}
         <button
           type="button"
           onClick={() => setShow(!show)}
@@ -44,6 +49,8 @@ export default function PasswordField({
           {show ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
+
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 }

@@ -1,5 +1,7 @@
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
 
+export type Role = "TEACHER";
+
 export type Teacher = {
   id: string;
   email: string;
