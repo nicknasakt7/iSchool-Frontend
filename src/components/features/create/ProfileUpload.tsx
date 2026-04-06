@@ -1,12 +1,20 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Upload } from "lucide-react";
 import Image from "next/image";
 
-export default function ProfileUpload() {
+type ProfileUploadProps = {
+  preview: File | null;
+  setPreview: Dispatch<SetStateAction<File | null>>;
+};
+
+export default function ProfileUpload({
+  preview,
+  setPreview,
+}: ProfileUploadProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  // const [preview, setPreview] = useState<string | null>(null);
 
   const handleClick = () => {
     inputRef.current?.click();
@@ -16,7 +24,7 @@ export default function ProfileUpload() {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setPreview(url);
+      setPreview(file);
     }
   };
 
@@ -28,7 +36,7 @@ export default function ProfileUpload() {
       >
         {preview ? (
           <Image
-            src={preview}
+            src={URL.createObjectURL(preview)}
             alt="profile"
             width={50}
             height={50}

@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader } from "lucide-react";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -58,9 +58,23 @@ export default function NewTeacherForm() {
 
   const [isPending, startTransition] = useTransition();
 
+  const [preview, setPreview] = useState<File | null>(null);
+
   const onSubmit = (data: FormValues) => {
     startTransition(async () => {
-      await createTeacher(data);
+      const formdata = new FormData();
+      formdata.append("email", data.email);
+      formdata.append("password", data.password);
+      formdata.append("gender", data.gender);
+      formdata.append("firstName", data.firstName);
+      formdata.append("lastName", data.lastName);
+
+      // Check if preview is not null before appending it
+      if (preview) {
+        formdata.append("profileImage", preview);
+      }
+
+      await createTeacher(formdata);
       reset();
     });
   };
@@ -101,7 +115,7 @@ export default function NewTeacherForm() {
 
   return (
     <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl space-y-6">
-      <ProfileUpload />
+      <ProfileUpload preview={preview} setPreview={setPreview} />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup className="gap-6">

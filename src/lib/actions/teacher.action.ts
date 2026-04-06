@@ -5,7 +5,7 @@ import { teacherService } from "../api/teacher/teacher.service";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const createTeacher = async (input: FormValues) => {
+export const createTeacher = async (input: FormData) => {
   try {
     await teacherService.createTeacher(input);
     revalidatePath("/admin-managements/teachers/teacher-managements");

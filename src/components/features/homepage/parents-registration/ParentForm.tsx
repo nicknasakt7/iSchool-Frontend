@@ -14,6 +14,7 @@ import { createParent } from "@/lib/actions/parent.action";
 
 const schema = z
   .object({
+    token: z.string(),
     firstName: z.string().min(1, "Required"),
     lastName: z.string().min(1, "Required"),
     email: z.email("Invalid email"),
@@ -29,7 +30,7 @@ const schema = z
 
 export type ParentFormValues = z.infer<typeof schema>;
 
-export default function ParentForm() {
+export default function ParentForm({ token }: { token: string }) {
   const {
     control,
     handleSubmit,
@@ -38,14 +39,18 @@ export default function ParentForm() {
   } = useForm<ParentFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
+      token,
       firstName: "",
       lastName: "",
       email: "",
       password: "",
+      confirmPassword: "",
       lineId: "",
       tel: "",
     },
   });
+
+  console.log("errors", errors);
 
   const [isPending, startTransition] = useTransition();
 

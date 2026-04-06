@@ -64,7 +64,12 @@ const superAdminRoutes = [
   // super admin only
   "/create/new-admin",
 ];
-const parents = ['/parents/student-info', 'parents/payment']
+const parents = [
+  "/",
+  "/parents/student-info",
+  "/parents-registration", //ใส่มาแค่ตอน dev เอาออกด้วย
+  "parents/payment",
+];
 
 const ROLE = {
   SUPER_ADMIN: "SUPER_ADMIN",
@@ -78,13 +83,12 @@ export const proxy = auth((req) => {
   const isAuthenticated = !!req.auth;
   const role = req.auth?.user?.role;
 
-  if (!isAuthenticated ) {
-    if(!publicRoutes.includes(pathname)) {
+  if (!isAuthenticated) {
+    if (!publicRoutes.includes(pathname)) {
       return NextResponse.redirect(new URL("/", req.url));
-    }else{
-      return NextResponse.next()
+    } else {
+      return NextResponse.next();
     }
-    
   }
 
   if (pathname === "/login" && isAuthenticated) {
@@ -113,23 +117,22 @@ export const proxy = auth((req) => {
   }
 
   //super_admin
-  const isSuperAdminRoutes = superAdminRoutes.some((el) => 
-    el === "/" ? pathname === el : pathname.startsWith(el)
-  )
+  const isSuperAdminRoutes = superAdminRoutes.some((el) =>
+    el === "/" ? pathname === el : pathname.startsWith(el),
+  );
 
-  if(isSuperAdminRoutes && role === ROLE.SUPER_ADMIN){
+  if (isSuperAdminRoutes && role === ROLE.SUPER_ADMIN) {
     return NextResponse.next();
   }
 
   //PARENTS
-  const isParentsRoutes = parents.some((el) => 
-    el === "/" ? pathname === el : pathname.startsWith(el)
-  )
+  const isParentsRoutes = parents.some((el) =>
+    el === "/" ? pathname === el : pathname.startsWith(el),
+  );
 
-  if(isParentsRoutes && role === ROLE.PARENTS){
-    return NextResponse.next()
+  if (isParentsRoutes && role === ROLE.PARENTS) {
+    return NextResponse.next();
   }
-
 
   if (role === ROLE.PARENTS) {
     return NextResponse.redirect(new URL("/parents/student-info", req.url));
