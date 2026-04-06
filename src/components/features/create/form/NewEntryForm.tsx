@@ -72,8 +72,6 @@ export default function NewEntryForm() {
     },
   });
 
-  console.log("errors", errors);
-
   const [isPending, startTransition] = useTransition();
 
   const [preview, setPreview] = useState<File | null>(null);

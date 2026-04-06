@@ -40,8 +40,8 @@ const adminRoutes = [
 const superAdminRoutes = [
   "/dashboard",
   "/students",
-  "/students/[id]",
-  "/students/[id]/edit",
+  "/students/[student-id]",
+  "/students/[student-id]/[edit-student-id]",
   "/assessments",
   "/checkin",
   "/create/new-entry",

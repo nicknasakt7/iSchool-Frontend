@@ -4,7 +4,7 @@ import { Teacher, TeacherListResponse } from "./teacher.type";
 import { api } from "../api-server";
 import { apiClient } from "../client";
 
-const createTeacher = (input: FormValues) =>
+const createTeacher = (input: FormData) =>
   api.post<Teacher>("/teachers", input);
 
 const getTeachers = (
