@@ -13,12 +13,12 @@ import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'motion/react';
-import { useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import { login } from '@/lib/actions/auth.action';
 import { LoginInput, loginSchema } from '@/lib/schemas/auth.schema';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import Logo from '@/components/shared/logo';
 
@@ -30,7 +30,17 @@ export default function Login() {
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
   const router = useRouter();
-  const { update } = useSession();
+  const { update, data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+    const role = session?.user?.role;
+    if (role === 'TEACHER') router.push('/students');
+    else if (role === 'ADMIN' || role === 'SUPER_ADMIN')
+      router.push('/dashboard');
+    else if (role === 'PARENTS') router.push('/parents/student-info');
+    else router.push('/dashboard');
+  }, [status, session, router]);
 
   const [isPending, startTransition] = useTransition();
   const onSubmit = (data: LoginInput) => {
@@ -41,7 +51,6 @@ export default function Login() {
         return;
       }
       update();
-      router.push('/dashboard');
     });
   };
 
@@ -55,18 +64,21 @@ export default function Login() {
       transition={{ duration: 0.5 }}
     >
       <div className="flex justify-center items-cente px-3">
-        <Card className="w-120 max-w-sm shadow-2xl rounded-4xl px-2 ">
+        <Card className="w-120 max-w-sm shadow-2xl rounded-4xl px-2 bg-linear-to-b from-blue-500 via-blue-100 to-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardHeader className="mt-3">
               <CardTitle className="font-bold">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 ">
                   <div className="flex justify-center text-md">
                     <Logo />
                   </div>
-                  <div className="text-xl">AI Insight</div>
+                  <div className="flex flex-col gap-2 text-xl items-center text-center">
+                    <p className="text-primary">Login to iSchool</p>
+                    <p className="mb-2">AI Insight</p>
+                  </div>
                 </div>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-foreground">
                 Welcome back to the Future of Learning
               </CardDescription>
             </CardHeader>
@@ -108,14 +120,10 @@ export default function Login() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex-col gap-2 mt-6 mb-5 bg-white border-none ">
-              <Button
-                type="submit"
-                className="w-full rounded-full hover:animate-pulse active:scale-95 bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all"
-                disabled={isPending}
-              >
-                {isSubmitting ? 'Loading....' : 'Login'}
-                <ArrowRight />
+            <CardFooter className="flex flex-col justify-center gap-4 mt-8 mb-4">
+              <Button type="submit" className="w-80" disabled={isPending}>
+                {isSubmitting ? <Loader className="animate-spin" /> : 'Login'}
+                <ArrowRight className="font-semibold" />
               </Button>
             </CardFooter>
           </form>
