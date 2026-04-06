@@ -1,9 +1,11 @@
 'use client';
 
+import Logo from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
+import { PATH } from '@/constants/path.constant';
 import { logout } from '@/lib/actions/auth.action';
-import { GraduationCap } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -15,21 +17,22 @@ export default function Headers() {
     <nav className="flex items-center justify-between px-6 py-3 border-b bg-background">
       {/* LEFT: LOGO */}
       <Link href="/" className="flex items-center gap-3 group">
-        <div className="w-9 h-9 rounded-full bg-linear-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-md">
-          <GraduationCap className="w-5 h-5 text-white" />
+        <Logo />
+        <div>
+          <span className="text-xl font-bold text-primary group-hover:opacity-80 transition">
+            iSchool
+          </span>
+          <p>AI INSIGHT</p>
         </div>
-        <span className="text-lg font-bold text-primary group-hover:opacity-80 transition">
-          iSchool
-        </span>
       </Link>
 
       {/* CENTER: MENU */}
       <div className="flex items-center gap-6">
         <Link
           href="/parents/student-info"
-          className={`text-sm font-medium transition ${
+          className={`text-lg font-semibold transition ${
             pathName === '/parents/student-info'
-              ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
+              ? 'text-blue-600 border-b-2 border-blue-600 pb-1 '
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -38,10 +41,10 @@ export default function Headers() {
 
         <Link
           href="/parents/payment"
-          className={`text-sm font-medium transition ${
+          className={`text-lg font-semibold transition ${
             pathName === '/parents/payment'
               ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
-              : 'text-muted-foreground hover:text-foreground'
+              : 'text-muted-foreground hover:text-foreground '
           }`}
         >
           Payment
@@ -63,8 +66,8 @@ export default function Headers() {
         <Button
           variant="destructive"
           size="sm"
-          className="rounded-lg"
-          onClick={logout}
+          className="rounded-lg font-semibold border-2"
+          onClick={() => signOut({ callbackUrl: PATH.HOME })}
         >
           Logout
         </Button>

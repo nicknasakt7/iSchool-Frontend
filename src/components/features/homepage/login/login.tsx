@@ -64,7 +64,7 @@ export default function Login() {
       transition={{ duration: 0.5 }}
     >
       <div className="flex justify-center items-cente px-3">
-        <Card className="w-120 max-w-sm shadow-2xl rounded-4xl px-2 bg-linear-to-b from-blue-500 via-blue-100 to-white">
+        <Card className="w-120 max-w-sm shadow-2xl rounded-4xl px-2 bg-linear-to-b from-blue-400 via-blue-100 to-white">
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardHeader className="mt-3">
               <CardTitle className="font-bold">
@@ -78,7 +78,7 @@ export default function Login() {
                   </div>
                 </div>
               </CardTitle>
-              <CardDescription className="text-foreground">
+              <CardDescription className="flex text-foreground justify-center">
                 Welcome back to the Future of Learning
               </CardDescription>
             </CardHeader>
@@ -92,7 +92,7 @@ export default function Login() {
                     placeholder="Enter you email"
                     {...register('email')}
                     autoComplete="name"
-                    className=" rounded-xl"
+                    className="rounded-xl bg-accent"
                   />
                   {errors.email && (
                     <p className="text-red-500 text-md text-left">
@@ -109,7 +109,7 @@ export default function Login() {
                     type="password"
                     {...register('password')}
                     autoComplete="email"
-                    className=" rounded-xl"
+                    className="rounded-xl bg-accent"
                     placeholder="Enter you password"
                   />
                   {errors.password && (

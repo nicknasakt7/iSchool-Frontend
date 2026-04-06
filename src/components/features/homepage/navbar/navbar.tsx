@@ -38,8 +38,8 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="flex gap-4 items-center ">
-        {!isLoginPath && (
-          status === 'loading' ? (
+        {!isLoginPath &&
+          (status === 'loading' ? (
             <div className="h-9 w-36 rounded-full bg-gray-200 animate-pulse" />
           ) : authButton ? (
             <Link href={authButton.href}>
@@ -65,8 +65,7 @@ export default function Navbar() {
                 <ArrowRight size={16} />
               </Button>
             </>
-          )
-        )}
+          ))}
       </div>
     </nav>
   );
