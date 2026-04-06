@@ -1,17 +1,24 @@
 'use client';
 
+// Using TanStack Query for mutation lifecycle (loading, error, success)
+// API calls are abstracted in service layer
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useUpdateScoreItem } from '@/lib/api/assessment/hooks/useUpdateScoreItem';
 
 type ScoreItem = {
+  // scoreItemId is the backend ScoreItem.id — required by PATCH /score-item.
+  // It remains undefined until a GET /scores endpoint populates it.
+  scoreItemId?: string;
   label: string;
   score: number;
   max: number;
 };
 
 type StudentPerformanceCardProps = {
+  studentId: string;
   name: string;
   nickname?: string;
   scores: ScoreItem[];
@@ -27,6 +34,7 @@ type StudentPerformanceCardProps = {
 };
 
 export default function StudentPerformanceCard({
+  studentId,
   name,
   nickname,
   scores,
@@ -35,23 +43,54 @@ export default function StudentPerformanceCard({
   onScoreChange,
   studentIndex,
 }: StudentPerformanceCardProps) {
+  void studentId; // reserved for future GET /scores endpoint to populate scoreItemIds
   const [isEditing, setIsEditing] = useState(false);
   const [localScores, setLocalScores] = useState(scores);
+
+  // Mutation for persisting a single student score item to the backend
+  // Backend: PATCH /score-item — expects { scoreItemId, value }
+  const { mutate: saveScore, isPending: isSaving } = useUpdateScoreItem();
 
   useEffect(() => {
     setLocalScores(scores);
   }, [scores]);
 
   const handleChange = (index: number, value: number) => {
+    // Optimistic local update — UI reflects change immediately
     setLocalScores(prev => {
       const updated = [...prev];
-      updated[index].score = value;
+      updated[index] = { ...updated[index], score: value };
       return updated;
     });
+    onScoreChange(studentIndex, index, value);
   };
 
   const handleSave = () => {
-    setIsEditing(false);
+    // Persist each score item that has a known backend scoreItemId.
+    // Items without scoreItemId are saved locally only until a GET /scores
+    // endpoint is added to populate scoreItemId after apply.
+    const itemsToSave = localScores.filter(item => item.scoreItemId);
+
+    if (itemsToSave.length === 0) {
+      // No backend ids available yet — just close edit mode
+      setIsEditing(false);
+      return;
+    }
+
+    let completed = 0;
+    itemsToSave.forEach(item => {
+      saveScore(
+        { scoreItemId: item.scoreItemId!, value: item.score },
+        {
+          onSuccess: () => {
+            completed++;
+            if (completed === itemsToSave.length) {
+              setIsEditing(false);
+            }
+          },
+        },
+      );
+    });
   };
 
   const handleDiscard = () => {
@@ -81,31 +120,20 @@ export default function StudentPerformanceCard({
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
           {localScores.map((item, i) => (
             <div key={i} className="bg-muted rounded-xl p-3 space-y-2">
-              {/* เลขลำดับ */}
               <p className="text-xs font-semibold text-muted-foreground">
                 {i + 1}.
               </p>
-              {/* label (ล็อก) */}
               <Input value={item.label} readOnly className="h-7 text-xs" />
 
-              {/* score */}
               <div className="flex items-center gap-1">
                 <Input
                   type="number"
                   value={item.score}
                   readOnly={!isEditing}
-                  onChange={e => {
-                    const value = Number(e.target.value);
-
-                    handleChange(i, value);
-                    onScoreChange(studentIndex, i, value);
-                  }}
+                  onChange={e => handleChange(i, Number(e.target.value))}
                   className="w-12 h-7 text-center px-1 text-sm"
                 />
-
                 <span className="text-xs">/</span>
-
-                {/* max (ล็อก) */}
                 <Input
                   type="number"
                   value={item.max}
@@ -137,8 +165,14 @@ export default function StudentPerformanceCard({
             </Button>
           ) : (
             <>
-              <Button onClick={handleSave}>Save</Button>
-              <Button variant="outline" onClick={handleDiscard}>
+              <Button onClick={handleSave} disabled={isSaving}>
+                {isSaving ? 'Saving...' : 'Save'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleDiscard}
+                disabled={isSaving}
+              >
                 Discard
               </Button>
             </>
