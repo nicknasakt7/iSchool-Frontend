@@ -7,7 +7,6 @@ import {
   CheckSquare,
   Settings,
   LogOut,
-  GraduationCap,
   SquarePlus,
   ShieldPlus,
   Laptop,
@@ -64,28 +63,29 @@ export default function Sidebar() {
         </SidebarSection>
 
         {/* ADMIN SECTION */}
-        <SidebarSection title="ADMINISTRATION">
-          <SidebarItem
-            name="New Entry"
-            href="/create/new-entry"
-            icon={SquarePlus}
-          />
-          {isSuperAdmin && (
+        {canAccessAdmin && (
+          <SidebarSection title="ADMINISTRATION">
             <SidebarItem
-              name="New Admin"
-              href="/create/new-admin"
-              icon={ShieldPlus}
+              name="New Entry"
+              href="/create/new-entry"
+              icon={SquarePlus}
             />
-          )}
 
-          {canAccessAdmin && (
+            {isSuperAdmin && (
+              <SidebarItem
+                name="New Admin"
+                href="/create/new-admin"
+                icon={ShieldPlus}
+              />
+            )}
+
             <SidebarItem
               name="Admin Management"
               href="/admin-managements/enrollments"
               icon={Laptop}
             />
-          )}
-        </SidebarSection>
+          </SidebarSection>
+        )}
       </div>
 
       {/* BOTTOM */}

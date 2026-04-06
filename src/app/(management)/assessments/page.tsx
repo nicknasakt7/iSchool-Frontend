@@ -40,8 +40,8 @@ const getCurrentTerm = () => {
 };
 
 const DEFAULT_TEMPLATE: ScoreTemplateItem[] = [
-  { label: 'Homework', max: 10 },
-  { label: 'Quiz', max: 20 },
+  { label: 'Midterm', max: 30 },
+  { label: 'Final', max: 30 },
 ];
 
 /* ================= PAGE ================= */
@@ -59,9 +59,8 @@ export default function AssessmentsPage() {
 
   // Local template — editable by the user before config exists on the server.
   // Once configExists is true, the server template (configTemplate) takes over.
-  const [localTemplate, setLocalTemplate] = useState<ScoreTemplateItem[]>(
-    DEFAULT_TEMPLATE,
-  );
+  const [localTemplate, setLocalTemplate] =
+    useState<ScoreTemplateItem[]>(DEFAULT_TEMPLATE);
 
   // True after user successfully applies config in this session.
   // On page refresh, configExists from the server takes over.
@@ -139,7 +138,8 @@ export default function AssessmentsPage() {
   const { mutate: upsertConfig, isPending: isUpserting } = useUpsertConfig();
 
   // Step 2: apply the saved config to the class (creates per-student score records)
-  const { mutate: applyAssessment, isPending: isApplying } = useApplyAssessment();
+  const { mutate: applyAssessment, isPending: isApplying } =
+    useApplyAssessment();
 
   // Delete a single score config item (and all linked student score records)
   const { mutate: deleteConfig } = useDeleteConfig();
@@ -389,7 +389,9 @@ export default function AssessmentsPage() {
                 <Input
                   value={item.label}
                   disabled={templateApplied}
-                  onChange={e => handleTemplateChange(i, 'label', e.target.value)}
+                  onChange={e =>
+                    handleTemplateChange(i, 'label', e.target.value)
+                  }
                 />
 
                 <Input
@@ -437,7 +439,11 @@ export default function AssessmentsPage() {
                   !subjectAssignmentId
                 }
               >
-                {isSaving ? 'Saving...' : justApplied ? 'Applied ✔' : 'Apply to Class'}
+                {isSaving
+                  ? 'Saving...'
+                  : justApplied
+                    ? 'Applied ✔'
+                    : 'Apply to Class'}
               </Button>
             </div>
           )}
@@ -469,7 +475,10 @@ export default function AssessmentsPage() {
                       // returns ScoreItem.id per student — required by PATCH /score-item
                       scoreItemId: undefined as string | undefined,
                     }));
-                    const total = scores.reduce((sum, item) => sum + item.score, 0);
+                    const total = scores.reduce(
+                      (sum, item) => sum + item.score,
+                      0,
+                    );
                     return (
                       <StudentPerformanceCard
                         key={s.id}

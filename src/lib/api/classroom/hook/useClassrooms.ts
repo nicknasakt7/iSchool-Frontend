@@ -27,6 +27,6 @@ export const useClassrooms = (params?: UseClassroomsParams) => {
         },
         session?.user?.accessToken,
       ),
-    enabled: !!session?.user?.accessToken,
+    enabled: !!params?.gradeId && !!session?.user?.accessToken,
   });
 };

@@ -6,10 +6,9 @@ const clientEnvSchema = z.object({
 
 const clientResult = clientEnvSchema.safeParse(process.env);
 if (!clientResult.success) {
-  console.error(
-    'Invalid client environment variables: \n',
-    z.prettifyError(clientResult.error),
+  throw new Error(
+    `Invalid client environment variables:\n${z.prettifyError(clientResult.error)}`,
   );
-  process.exit(1);
 }
+
 export const clientEnv = clientResult.data;
