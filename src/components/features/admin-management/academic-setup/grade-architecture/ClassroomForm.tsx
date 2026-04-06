@@ -1,10 +1,11 @@
 'use client';
 
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { z } from 'zod';
 import { ArrowRight, ChevronDown, Loader } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,14 +36,28 @@ import {
   updateClassroomAction,
 } from '@/lib/actions/classroom.action';
 
+// ─── Create schema ────────────────────────────────────────────────────────────
+// year / term are strings from the Select, transformed to number | null
 const createSchema = z.object({
   gradeId: z.string().min(1, 'Grade is required'),
   roomNumber: z
     .number()
     .int('Room number must be a whole number')
     .positive('Room number must be positive'),
+  year: z
+    .string()
+    .optional()
+    .transform((val) => (val && val !== '' ? Number(val) : null)),
+  term: z
+    .string()
+    .optional()
+    .transform((val) => (val && val !== '' ? Number(val) : null)),
 });
 
+type CreateClassroomFormInput = z.input<typeof createSchema>;
+type CreateClassroomFormOutput = z.output<typeof createSchema>;
+
+// ─── Update schema ────────────────────────────────────────────────────────────
 const updateSchema = z.object({
   roomNumber: z
     .number()
@@ -51,9 +66,9 @@ const updateSchema = z.object({
   isActive: z.boolean(),
 });
 
-type CreateClassroomFormValues = z.infer<typeof createSchema>;
 type UpdateClassroomFormValues = z.infer<typeof updateSchema>;
 
+// ─── Shared types ─────────────────────────────────────────────────────────────
 export type ClassroomWithGrade = Classroom & { gradeId: string };
 
 type ClassroomFormProps = {
@@ -62,10 +77,7 @@ type ClassroomFormProps = {
   onSuccess?: () => void;
 };
 
-function buildClassroomName(gradeLevel: number, roomNumber: number): string {
-  return `${gradeLevel}/${roomNumber}`;
-}
-
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function parseRoomNumber(name: string): number | undefined {
   const parts = name.split('/');
   if (parts.length === 2) {
@@ -75,6 +87,14 @@ function parseRoomNumber(name: string): number | undefined {
   return undefined;
 }
 
+function buildPreviewName(gradeLevel: number, roomNumber: number): string {
+  return `${gradeLevel}/${roomNumber}`;
+}
+
+const CURRENT_YEAR = new Date().getFullYear();
+const YEAR_OPTIONS = [CURRENT_YEAR - 1, CURRENT_YEAR, CURRENT_YEAR + 1];
+
+// ─── Create form ──────────────────────────────────────────────────────────────
 function ClassroomCreateForm({
   grades,
   onSuccess,
@@ -82,25 +102,22 @@ function ClassroomCreateForm({
   grades: Grade[];
   onSuccess?: () => void;
 }) {
-  const {
-    handleSubmit,
-    control,
-    watch,
-    reset,
-    setError,
-  } = useForm<CreateClassroomFormValues>({
-    resolver: zodResolver(createSchema),
-    defaultValues: { gradeId: '', roomNumber: undefined },
-  });
+  const queryClient = useQueryClient();
+
+  const { handleSubmit, control, reset, setError } =
+    useForm<CreateClassroomFormInput, unknown, CreateClassroomFormOutput>({
+      resolver: zodResolver(createSchema),
+      defaultValues: { gradeId: '', roomNumber: undefined, year: '', term: '' },
+    });
+
+  const watchedGradeId = useWatch({ control, name: 'gradeId' });
+  const watchedRoomNumber = useWatch({ control, name: 'roomNumber' });
+  const selectedGrade = grades.find((g) => g.id === watchedGradeId);
 
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
 
-  const watchedGradeId = watch('gradeId');
-  const watchedRoomNumber = watch('roomNumber');
-  const selectedGrade = grades.find((g) => g.id === watchedGradeId);
-
-  const onSubmit = (data: CreateClassroomFormValues) => {
+  const onSubmit = (data: CreateClassroomFormOutput) => {
     const grade = grades.find((g) => g.id === data.gradeId);
     if (!grade) return;
 
@@ -118,13 +135,23 @@ function ClassroomCreateForm({
     setServerError(undefined);
     startTransition(async () => {
       const result = await createClassroomAction({
-        gradeId: data.gradeId,
-        name: buildClassroomName(grade.level, data.roomNumber),
+        gradeName: grade.name,
+        name: String(data.roomNumber),
+        year: data.year ?? null,
+        term: data.term ?? null,
       });
+      console.log('payload:', {
+        gradeName: grade.name,
+        name: String(data.roomNumber),
+        year: data.year ?? null,
+        term: data.term ?? null,
+      });
+      console.log('response:', result);
       if (result.error) {
         setServerError(result.error);
         return;
       }
+      await queryClient.invalidateQueries({ queryKey: ['grades'] });
       reset();
       onSuccess?.();
     });
@@ -179,16 +206,85 @@ function ClassroomCreateForm({
               </Field>
             )}
           />
+
+          <Controller
+            control={control}
+            name="year"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>
+                  Year{' '}
+                  <span className="font-normal text-muted-foreground">
+                    (optional)
+                  </span>
+                </FieldLabel>
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={(v) =>
+                    field.onChange(v === '__clear__' ? '' : v)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All years" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__clear__">All years</SelectItem>
+                    {YEAR_OPTIONS.map((y) => (
+                      <SelectItem key={y} value={String(y)}>
+                        {y}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="term"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>
+                  Term{' '}
+                  <span className="font-normal text-muted-foreground">
+                    (optional)
+                  </span>
+                </FieldLabel>
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={(v) =>
+                    field.onChange(v === '__clear__' ? '' : v)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All terms" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__clear__">All terms</SelectItem>
+                    <SelectItem value="1">Term 1</SelectItem>
+                    <SelectItem value="2">Term 2</SelectItem>
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </div>
 
-        {selectedGrade && watchedRoomNumber > 0 ? (
+        {selectedGrade && watchedRoomNumber > 0 && (
           <p className="text-sm text-muted-foreground">
             Classroom name:{' '}
             <span className="font-medium text-foreground">
-              {buildClassroomName(selectedGrade.level, watchedRoomNumber)}
+              {buildPreviewName(selectedGrade.level, watchedRoomNumber)}
             </span>
           </p>
-        ) : null}
+        )}
 
         {serverError && (
           <p className="text-sm text-destructive">{serverError}</p>
@@ -216,6 +312,7 @@ function ClassroomCreateForm({
   );
 }
 
+// ─── Update form ──────────────────────────────────────────────────────────────
 function ClassroomUpdateForm({
   classroom,
   grades,
@@ -225,6 +322,7 @@ function ClassroomUpdateForm({
   grades: Grade[];
   onSuccess?: () => void;
 }) {
+  const queryClient = useQueryClient();
   const parentGrade = grades.find((g) => g.id === classroom.gradeId);
   const currentRoomNumber = parseRoomNumber(classroom.name);
 
@@ -233,26 +331,29 @@ function ClassroomUpdateForm({
     .map((c) => parseRoomNumber(c.name))
     .filter((n): n is number => n !== undefined);
 
-  const {
-    handleSubmit,
-    control,
-    watch,
-    setError,
-  } = useForm<UpdateClassroomFormValues>({
-    resolver: zodResolver(updateSchema),
-    defaultValues: {
-      roomNumber: currentRoomNumber ?? 0,
+  const { handleSubmit, control, reset, setError } =
+    useForm<UpdateClassroomFormValues>({
+      resolver: zodResolver(updateSchema),
+      defaultValues: {
+        roomNumber: currentRoomNumber ?? 0,
+        isActive: classroom.isActive ?? true,
+      },
+    });
+
+  useEffect(() => {
+    reset({
+      roomNumber: parseRoomNumber(classroom.name) ?? 0,
       isActive: classroom.isActive ?? true,
-    },
-  });
+    });
+  }, [classroom.id, classroom.name, classroom.isActive, reset]);
+
+  const watchedRoomNumber = useWatch({ control, name: 'roomNumber' });
 
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
   const [deactivatePending, startDeactivateTransition] = useTransition();
   const [deactivateError, setDeactivateError] = useState<string | undefined>();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const watchedRoomNumber = watch('roomNumber');
 
   const onSubmit = (data: UpdateClassroomFormValues) => {
     if (
@@ -269,15 +370,15 @@ function ClassroomUpdateForm({
     setServerError(undefined);
     startTransition(async () => {
       const result = await updateClassroomAction(classroom.id, {
-        roomNumber: data.roomNumber !== currentRoomNumber
-          ? data.roomNumber
-          : undefined,
+        roomNumber:
+          data.roomNumber !== currentRoomNumber ? data.roomNumber : undefined,
         isActive: data.isActive,
       });
       if (result.error) {
         setServerError(result.error);
         return;
       }
+      await queryClient.invalidateQueries({ queryKey: ['grades'] });
       onSuccess?.();
     });
   };
@@ -293,6 +394,7 @@ function ClassroomUpdateForm({
         setDeactivateError(result.error);
         return;
       }
+      await queryClient.invalidateQueries({ queryKey: ['grades'] });
       onSuccess?.();
     });
   };
@@ -323,19 +425,21 @@ function ClassroomUpdateForm({
                 min={1}
                 placeholder="e.g. 101"
                 value={field.value ?? ''}
-                onChange={(e) => field.onChange(e.target.value)}
+                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
               />
               {fieldState.invalid && (
                 <FieldError errors={[fieldState.error]} />
               )}
-              {parentGrade && watchedRoomNumber > 0 && watchedRoomNumber !== currentRoomNumber && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  New name:{' '}
-                  <span className="font-medium text-foreground">
-                    {buildClassroomName(parentGrade.level, watchedRoomNumber)}
-                  </span>
-                </p>
-              )}
+              {parentGrade &&
+                watchedRoomNumber > 0 &&
+                watchedRoomNumber !== currentRoomNumber && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    New name:{' '}
+                    <span className="font-medium text-foreground">
+                      {buildPreviewName(parentGrade.level, watchedRoomNumber)}
+                    </span>
+                  </p>
+                )}
             </Field>
           )}
         />
@@ -350,7 +454,9 @@ function ClassroomUpdateForm({
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
-              <FieldLabel htmlFor="classroom-isActive-update">Active</FieldLabel>
+              <FieldLabel htmlFor="classroom-isActive-update">
+                Active
+              </FieldLabel>
             </Field>
           )}
         />
@@ -407,6 +513,7 @@ function ClassroomUpdateForm({
   );
 }
 
+// ─── Entry point ──────────────────────────────────────────────────────────────
 export default function ClassroomForm({
   classroom,
   grades,

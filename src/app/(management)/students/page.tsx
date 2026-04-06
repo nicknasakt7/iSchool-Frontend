@@ -19,7 +19,7 @@ export default function StudentsPage() {
 
   //  ยิงเฉพาะตอนเลือก grade
   const { data: classrooms } = useClassrooms(
-    grade === 'all' ? undefined : grade,
+    grade === 'all' ? undefined : { gradeId: grade },
   );
 
   const handleSearch = (value: string) => {

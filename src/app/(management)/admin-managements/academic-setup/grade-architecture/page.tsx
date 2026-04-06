@@ -35,11 +35,11 @@ const filterSchema = z.object({
   year: z
     .string()
     .optional()
-    .transform((val) => (val && val !== '' ? Number(val) : null)),
+    .transform(val => (val && val !== '' ? Number(val) : null)),
   term: z
     .string()
     .optional()
-    .transform((val) => (val && val !== '' ? Number(val) : null)),
+    .transform(val => (val && val !== '' ? Number(val) : null)),
 });
 
 type FilterInput = z.input<typeof filterSchema>;
@@ -69,10 +69,12 @@ export default function GradeArchitecturePage() {
     ClassroomWithGrade | undefined
   >();
 
-  const { handleSubmit, control } = useForm<FilterInput, unknown, FilterOutput>({
-    resolver: zodResolver(filterSchema),
-    defaultValues: { year: '', term: '' },
-  });
+  const { handleSubmit, control } = useForm<FilterInput, unknown, FilterOutput>(
+    {
+      resolver: zodResolver(filterSchema),
+      defaultValues: { year: '', term: '' },
+    },
+  );
 
   const watchedYear = useWatch({ control, name: 'year' });
 
@@ -80,6 +82,7 @@ export default function GradeArchitecturePage() {
     year: activeFilter.year ?? null,
     term: activeFilter.term ?? null,
   });
+  console.log('gradessssssssssssมามั้ยนะะะะ', grades);
 
   const onFilterSubmit = (data: FilterOutput) => {
     setActiveFilter({ year: data.year ?? null, term: data.term ?? null });
@@ -129,14 +132,16 @@ export default function GradeArchitecturePage() {
                 </FieldLabel>
                 <Select
                   value={field.value ?? ''}
-                  onValueChange={(v) => field.onChange(v === '__clear__' ? '' : v)}
+                  onValueChange={v =>
+                    field.onChange(v === '__clear__' ? '' : v)
+                  }
                 >
                   <SelectTrigger className="w-full rounded-xl bg-white">
                     <SelectValue placeholder="All years" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="__clear__">All years</SelectItem>
-                    {YEAR_OPTIONS.map((y) => (
+                    {YEAR_OPTIONS.map(y => (
                       <SelectItem key={y} value={String(y)}>
                         {y}
                       </SelectItem>
@@ -163,7 +168,9 @@ export default function GradeArchitecturePage() {
                 </FieldLabel>
                 <Select
                   value={field.value ?? ''}
-                  onValueChange={(v) => field.onChange(v === '__clear__' ? '' : v)}
+                  onValueChange={v =>
+                    field.onChange(v === '__clear__' ? '' : v)
+                  }
                 >
                   <SelectTrigger className="w-full rounded-xl bg-white">
                     <SelectValue placeholder="All terms" />
@@ -206,7 +213,7 @@ export default function GradeArchitecturePage() {
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
             <div className="space-y-2">
-              {(grades ?? []).map((grade) => (
+              {(grades ?? []).map(grade => (
                 <div
                   key={grade.id}
                   className="flex items-center justify-between rounded-lg bg-muted px-4 py-3"
@@ -218,7 +225,7 @@ export default function GradeArchitecturePage() {
                     </span>
                     {!grade.isActive && (
                       <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
-                        Inactive
+                        In active
                       </span>
                     )}
                   </div>
@@ -247,8 +254,8 @@ export default function GradeArchitecturePage() {
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
             <div className="space-y-2">
-              {(grades ?? []).flatMap((grade) =>
-                (grade.classrooms ?? []).map((classroom) => (
+              {(grades ?? []).flatMap(grade =>
+                (grade.classrooms ?? []).map(classroom => (
                   <div
                     key={classroom.id}
                     className="flex items-center justify-between rounded-lg bg-muted px-4 py-3"

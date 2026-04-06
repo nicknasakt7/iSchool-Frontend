@@ -2,9 +2,10 @@
 
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { z } from 'zod';
 import { ArrowRight, Loader } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,11 +42,8 @@ type GradeFormProps = {
 };
 
 function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
-  const {
-    handleSubmit,
-    control,
-    reset,
-  } = useForm<CreateGradeFormValues>({
+  const queryClient = useQueryClient();
+  const { handleSubmit, control, reset } = useForm<CreateGradeFormValues>({
     resolver: zodResolver(createSchema),
     defaultValues: { name: '', level: 1, isActive: true },
   });
@@ -61,6 +59,7 @@ function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
         setServerError(result.error);
         return;
       }
+      await queryClient.invalidateQueries({ queryKey: ['grades'] });
       reset();
       onSuccess?.();
     });
@@ -153,10 +152,15 @@ function GradeUpdateForm({
   grade: Grade;
   onSuccess?: () => void;
 }) {
-  const { handleSubmit, control } = useForm<UpdateGradeFormValues>({
+  const queryClient = useQueryClient();
+  const { handleSubmit, control, reset } = useForm<UpdateGradeFormValues>({
     resolver: zodResolver(updateSchema),
     defaultValues: { isActive: grade.isActive },
   });
+
+  useEffect(() => {
+    reset({ isActive: grade.isActive });
+  }, [grade.id, grade.isActive, reset]);
 
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
@@ -169,6 +173,7 @@ function GradeUpdateForm({
         setServerError(result.error);
         return;
       }
+      await queryClient.invalidateQueries({ queryKey: ['grades'] });
       onSuccess?.();
     });
   };

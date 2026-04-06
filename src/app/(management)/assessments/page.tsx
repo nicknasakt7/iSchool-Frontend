@@ -78,7 +78,7 @@ export default function AssessmentsPage() {
   const { data: grades, isLoading: isLoadingGrades } = useGrades();
 
   const { data: classrooms } = useClassrooms(
-    gradeId === 'all' ? undefined : gradeId,
+    gradeId === 'all' ? undefined : { gradeId },
   );
 
   const shouldFetch = classroomId !== 'all';

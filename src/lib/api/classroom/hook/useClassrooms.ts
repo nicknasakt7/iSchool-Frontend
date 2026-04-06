@@ -1,10 +1,32 @@
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { classroomService } from '../classroom.service';
 
-export const useClassrooms = (gradeId?: string) => {
+type UseClassroomsParams = {
+  gradeId?: string;
+  year?: number | null;
+  term?: number | null;
+};
+
+export const useClassrooms = (params?: UseClassroomsParams) => {
+  const { data: session } = useSession();
+
   return useQuery({
-    queryKey: ['classrooms', gradeId],
-    queryFn: () => classroomService.getClassrooms(gradeId!),
-    enabled: !!gradeId, //
+    queryKey: [
+      'classrooms',
+      params?.gradeId ?? null,
+      params?.year ?? null,
+      params?.term ?? null,
+    ],
+    queryFn: () =>
+      classroomService.getClassrooms(
+        {
+          gradeId: params?.gradeId,
+          year: params?.year ?? null,
+          term: params?.term ?? null,
+        },
+        session?.user?.accessToken,
+      ),
+    enabled: !!session?.user?.accessToken,
   });
 };

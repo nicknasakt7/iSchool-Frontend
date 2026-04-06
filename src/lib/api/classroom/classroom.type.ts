@@ -6,8 +6,10 @@ export type Classroom = {
 };
 
 export type CreateClassroomPayload = {
-  name: string;
-  gradeId: string;
+  gradeName: string;
+  name: string; // room number as string, e.g. "4"
+  year: number | null;
+  term: number | null;
 };
 
 export type UpdateClassroomPayload = {
