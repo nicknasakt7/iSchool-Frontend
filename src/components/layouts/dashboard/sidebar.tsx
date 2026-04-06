@@ -16,6 +16,8 @@ import SidebarSection from './sidebar-section';
 import SidebarItem from './sidebar-item';
 import { logout } from '@/lib/actions/auth.action';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import Logo from '@/components/shared/logo';
 
 export default function Sidebar() {
   const { data } = useSession();
@@ -27,23 +29,23 @@ export default function Sidebar() {
     <aside className="fixed w-64 md:w-64 h-full md:h-screen border-r bg-primary-foreground backdrop-blur flex flex-col justify-between">
       {/* TOP */}
       <div>
-        {/* LOGO */}
-        <div className="px-6 py-6 flex items-center gap-4">
-          {/* ICON */}
-          <div className="w-12 h-12 rounded-full bg-linear-to-br from-blue-700 to-blue-400 flex items-center justify-center shadow-md shadow-blue-500/20">
-            <GraduationCap className="w-6 h-6 text-white" />
-          </div>
+        <Link href="/">
+          <div className="px-6 py-6 flex items-center gap-4">
+            {/* LOGO */}
 
-          {/* TEXT */}
-          <div className="flex flex-col">
-            <span className="text-2xl font-bold bg-linear-to-br from-blue-700 to-blue-400 leading-none bg-clip-text text-transparent">
-              iSchool
-            </span>
-            <span className="text-xs tracking-[0.2em] text-muted-foreground mt-1">
-              AI INSIGHT LAYER
-            </span>
+            <Logo />
+
+            {/* TEXT */}
+            <div className="flex flex-col">
+              <span className="text-2xl font-bold bg-linear-to-br from-blue-700 to-blue-400 leading-none bg-clip-text text-transparent">
+                iSchool
+              </span>
+              <span className="text-xs tracking-[0.2em] text-muted-foreground mt-1">
+                AI INSIGHT LAYER
+              </span>
+            </div>
           </div>
-        </div>
+        </Link>
 
         {/* MAIN MENU */}
         <SidebarSection>

@@ -18,6 +18,11 @@ export default function CheckInPage() {
   const [attendance, setAttendance] = useState<AttendanceState>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const todayKey = (id: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    return `attendance_submitted_${id}_${today}`;
+  };
+
   const shouldFetch = !!classId;
 
   const { data, isLoading } = useStudents(
@@ -35,7 +40,9 @@ export default function CheckInPage() {
   const handleClassChange = (id: string) => {
     setClassId(id);
     setAttendance({});
-    setIsSubmitted(false);
+    setIsSubmitted(
+      id ? localStorage.getItem(todayKey(id)) === 'true' : false,
+    );
   };
 
   const handleSelect = (id: string, status: AttendanceStatus) => {
@@ -69,6 +76,7 @@ export default function CheckInPage() {
       { records },
       {
         onSuccess: () => {
+          localStorage.setItem(todayKey(classId), 'true');
           setIsSubmitted(true);
           refetchSummary();
         },
