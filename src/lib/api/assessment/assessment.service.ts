@@ -9,6 +9,8 @@ import {
   UpsertAssessmentConfigDto,
   ApplyConfigDto,
   UpdateScoreItemDto,
+  FindSubjectAssignmentParams,
+  SubjectAssignmentItem,
 } from './assessment.type';
 
 // API calls are abstracted in service layer — consumed by TanStack Query hooks
@@ -22,14 +24,22 @@ export const assessmentService = {
   getAssessmentConfig: (params: GetAssessmentConfigParams, token?: string) =>
     apiClient.get<AssessmentConfigItem[]>('/assessment-config', params, token),
 
-  // POST /assessment-config — creates or updates config items (preserve mode)
+  // POST /assessment-config/create — creates or updates config items (preserve mode)
   // Returns the full updated list sorted by order
   createOrUpdateConfig: (input: UpsertAssessmentConfigDto, token?: string) =>
-    apiClient.post<AssessmentConfigItem[]>('/assessment-config', input, token),
+    apiClient.post<AssessmentConfigItem[]>(
+      '/assessment-config/create',
+      input,
+      token,
+    ),
 
-  // POST /assessment/apply — upserts Score + ScoreItem records for every student
+  // POST /assessment-config/apply — upserts Score + ScoreItem records for every student
   applyAssessment: (input: ApplyConfigDto, token?: string) =>
-    apiClient.post<ApplyConfigResult>('/assessment/apply', input, token),
+    apiClient.post<ApplyConfigResult>(
+      '/assessment-config/apply',
+      input,
+      token,
+    ),
 
   // DELETE /assessment-config/:configId — removes config + all linked score items
   deleteAssessmentConfig: (configId: string, token?: string) =>
@@ -38,4 +48,16 @@ export const assessmentService = {
   // PATCH /score-item — updates a single student score item by its id
   updateScoreItem: (input: UpdateScoreItemDto, token?: string) =>
     apiClient.patch('/score-item', input, token),
+
+  // GET /subject-assignments/find?classroomId=&subjectId=
+  // Returns the subjectAssignment id for a given classroom + subject pair
+  findSubjectAssignment: (
+    params: FindSubjectAssignmentParams,
+    token?: string,
+  ) =>
+    apiClient.get<SubjectAssignmentItem>(
+      '/subject-assignments/find',
+      params,
+      token,
+    ),
 };

@@ -1,4 +1,4 @@
-import { StudentFormValues } from '@/components/features/create/form/NewEntryForm';
+import { StudentFormValues } from '@/lib/schemas/student.schema';
 import { apiClient } from '../client';
 import { Student, StudentListResponse } from './student.type';
 

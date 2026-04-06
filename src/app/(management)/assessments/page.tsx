@@ -18,6 +18,7 @@ import { useAssessmentConfig } from '@/lib/api/assessment/hooks/useAssessmentCon
 import { useUpsertConfig } from '@/lib/api/assessment/hooks/useUpsertConfig';
 import { useApplyAssessment } from '@/lib/api/assessment/hooks/useApplyAssessment';
 import { useDeleteConfig } from '@/lib/api/assessment/hooks/useDeleteConfig';
+import { useSubjectAssignment } from '@/lib/api/assessment/hooks/useSubjectAssignment';
 
 /* ================= HELPERS ================= */
 
@@ -97,6 +98,12 @@ export default function AssessmentsPage() {
     shouldFetchConfig ? { classroomId, subjectId, term, year } : null,
   );
 
+  // Fetch subjectAssignmentId as soon as classroom + subject are selected,
+  // even before any config exists (fixes greyed-out Apply button on first setup)
+  const { data: subjectAssignmentData } = useSubjectAssignment(
+    shouldFetchConfig ? { classroomId, subjectId } : null,
+  );
+
   /* ================= DERIVED FROM SERVER DATA ================= */
   // These are derived directly — no useEffect / no setState needed.
 
@@ -104,10 +111,10 @@ export default function AssessmentsPage() {
   const configExists = (configData?.length ?? 0) > 0;
 
   // subjectAssignmentId is required for upsert and apply mutations.
-  // Derived from the first config item returned by the server.
-  // NOTE: stays null on fresh setups (no config yet), which disables Apply
-  // until a GET /subject-assignment endpoint is added to the backend.
-  const subjectAssignmentId = configData?.[0]?.subjectAssignmentId ?? null;
+  // Prefer the value from configData (already loaded), fallback to the
+  // dedicated find endpoint for fresh setups where no config exists yet.
+  const subjectAssignmentId =
+    configData?.[0]?.subjectAssignmentId ?? subjectAssignmentData?.id ?? null;
 
   // Template derived from server config — read-only, used when configExists
   const configTemplate = useMemo(

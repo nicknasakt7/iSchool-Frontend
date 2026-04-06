@@ -87,3 +87,15 @@ export type UpdateScoreItemDto = {
   scoreItemId: string;
   value: number;
 };
+
+// ─── GET /subject-assignments/find ────────────────────────────────────────
+export type FindSubjectAssignmentParams = {
+  classroomId: string;
+  subjectId: string;
+};
+
+export type SubjectAssignmentItem = {
+  id: string;
+  classId: string;
+  subjectId: string;
+};
