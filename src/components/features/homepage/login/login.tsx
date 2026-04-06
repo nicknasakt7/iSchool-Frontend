@@ -19,12 +19,13 @@ import { LoginInput, loginSchema } from '@/lib/schemas/auth.schema';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ArrowRight } from 'lucide-react';
+import { toast } from 'sonner';
+import Logo from '@/components/shared/logo';
 
 export default function Login() {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
@@ -36,11 +37,9 @@ export default function Login() {
     startTransition(async () => {
       const res = await login(data);
       if (!res.success) {
-        setError('root', {
-          message: 'The email or password you entered is incorrect',
-        });
+        toast.error('Username or password is incorrect');
+        return;
       }
-      // router.refresh()
       update();
       router.push('/dashboard');
     });
@@ -56,10 +55,17 @@ export default function Login() {
       transition={{ duration: 0.5 }}
     >
       <div className="flex justify-center items-cente px-3">
-        <Card className="w-95 max-w-sm shadow-2xl rounded-4xl px-2 ">
+        <Card className="w-120 max-w-sm shadow-2xl rounded-4xl px-2 ">
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardHeader className="mt-3">
-              <CardTitle className="font-bold">AI Insight</CardTitle>
+              <CardTitle className="font-bold">
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-center text-md">
+                    <Logo />
+                  </div>
+                  <div className="text-xl">AI Insight</div>
+                </div>
+              </CardTitle>
               <CardDescription>
                 Welcome back to the Future of Learning
               </CardDescription>
