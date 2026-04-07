@@ -1,11 +1,12 @@
 'use client';
 
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTransition } from 'react';
-import { ArrowRight, Loader } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useTransition } from "react";
+import { ArrowRight, Loader } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Field,
   FieldError,
@@ -55,16 +56,51 @@ export default function NewEntryForm() {
 
   const [isPending, startTransition] = useTransition();
 
+  const [preview, setPreview] = useState<File | null>(null);
+
   const onSubmit = (data: StudentFormValues) => {
     startTransition(async () => {
-      await createStudent(data);
+      const formdata = new FormData();
+
+      // Append form data as key-value pairs
+      formdata.append("gender", data.gender);
+      formdata.append("gradeId", data.gradeId);
+      formdata.append("firstName", data.firstName);
+      formdata.append("lastName", data.lastName);
+      formdata.append("dob", data.dob); // Add date of birth
+      formdata.append("parentsEmail", data.parentsEmail); // Add parents' email
+      formdata.append("parentsFirstName", data.parentsFirstName); // Add parents' first name
+      formdata.append("parentsLastName", data.parentsLastName); // Add parents' last name
+
+      if (data.classId) {
+        formdata.append("classId", data.classId); // Add classId
+      }
+
+      if (data.favorite) {
+        formdata.append("favorite", data.favorite); // Add favorite activity
+      }
+
+      if (data.healthNote) {
+        formdata.append("healthNote", data.healthNote); // Optional field for health note
+      }
+
+      if (data.nickName) {
+        formdata.append("nickName", data.nickName); // Optional field for nickname
+      }
+
+      if (preview) {
+        formdata.append("profileImage", preview);
+      }
+
+      // Submit the formdata to createStudent
+      await createStudent(formdata);
       reset();
     });
   };
 
   return (
     <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
-      <ProfileUpload />
+      <ProfileUpload preview={preview} setPreview={setPreview} />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup className="gap-5">

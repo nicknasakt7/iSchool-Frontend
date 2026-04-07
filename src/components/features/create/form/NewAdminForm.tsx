@@ -141,10 +141,10 @@
 
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowRight, Loader } from 'lucide-react';
-import { useTransition } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowRight, Loader } from "lucide-react";
+import { useState, useTransition } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from '@/components/ui/button';
 import {
@@ -186,17 +186,32 @@ export default function NewAdminForm() {
     },
   });
 
+  const [preview, setPreview] = useState<File | null>(null);
+
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (data: AdminFormValues) => {
     startTransition(async () => {
-      await createAdmin(data);
+      const formdata = new FormData();
+
+      formdata.append("email", data.email);
+      formdata.append("password", data.password);
+      formdata.append("role", data.role);
+      formdata.append("gender", data.gender);
+
+      if (preview) {
+        formdata.append("profileImage", preview);
+      }
+
+      await createAdmin(formdata);
       reset();
     });
   };
 
   return (
     <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+      <ProfileUpload preview={preview} setPreview={setPreview} />
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup className="gap-5">
           <div className="grid grid-cols-2 gap-5">
