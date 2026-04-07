@@ -14,7 +14,7 @@ import {
 import SidebarSection from './sidebar-section';
 import SidebarItem from './sidebar-item';
 import { logout } from '@/lib/actions/auth.action';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Logo from '@/components/shared/logo';
 
@@ -97,7 +97,7 @@ export default function Sidebar() {
 
         <button
           className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-card transition "
-          onClick={logout}
+          onClick={() => signOut({ callbackUrl: '/' })}
         >
           <LogOut className="w-5 h-5" />
           Logout

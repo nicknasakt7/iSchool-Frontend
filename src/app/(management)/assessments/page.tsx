@@ -500,7 +500,7 @@ export default function AssessmentsPage() {
                 )}
               </div>
 
-              <ClassPerformanceSummary />
+              <ClassPerformanceSummary classroomId={classroomId} term={term} year={year} />
             </>
           )}
         </>

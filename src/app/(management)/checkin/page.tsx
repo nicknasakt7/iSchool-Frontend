@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Check, Loader } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SearchInput from '@/components/shared/search-input';
 import AttendanceHeader from '@/components/features/checkin/attendance-header';
@@ -40,9 +40,7 @@ export default function CheckInPage() {
   const handleClassChange = (id: string) => {
     setClassId(id);
     setAttendance({});
-    setIsSubmitted(
-      id ? localStorage.getItem(todayKey(id)) === 'true' : false,
-    );
+    setIsSubmitted(id ? localStorage.getItem(todayKey(id)) === 'true' : false);
   };
 
   const handleSelect = (id: string, status: AttendanceStatus) => {
@@ -157,12 +155,17 @@ export default function CheckInPage() {
             disabled={!isComplete || isPending || isSubmitted}
             onClick={handleSubmit}
           >
-            {isPending
-              ? 'Saving...'
-              : isSubmitted
-                ? 'Saved ✔'
-                : 'Complete Attendance'}
-            <ArrowRight />
+            {isPending ? (
+              <>
+                Saving... <Loader className="animate-spin" />
+              </>
+            ) : isSubmitted ? (
+              <>
+                Saved <Check />
+              </>
+            ) : (
+              'Complete Attendance'
+            )}
           </Button>
         </div>
       )}
