@@ -70,7 +70,7 @@ export default function ClassPerformanceSummary({
               </p>
             ) : (
               <p className="text-sm opacity-60 mt-1">
-                กด Generate เพื่อวิเคราะห์ผลการเรียนของชั้นเรียน
+                Click to Analyze Classroom Performance
               </p>
             )}
           </div>
@@ -123,31 +123,31 @@ export default function ClassPerformanceSummary({
         {data && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-white/20">
             <div className="bg-white/10 rounded-xl p-4 space-y-1">
-              <div className="flex items-center gap-2 text-sm font-semibold text-green-200">
+              <div className="flex items-center gap-2 text-lg font-semibold text-green-200">
                 <CheckCircle size={15} />
                 จุดแข็ง
               </div>
-              <p className="text-sm opacity-90 leading-relaxed">
+              <p className="text-md opacity-90 leading-relaxed">
                 {data.strength}
               </p>
             </div>
 
             <div className="bg-white/10 rounded-xl p-4 space-y-1">
-              <div className="flex items-center gap-2 text-sm font-semibold text-red-200">
+              <div className="flex items-center gap-2 text-lg font-semibold text-red-200">
                 <AlertCircle size={15} />
                 จุดอ่อน
               </div>
-              <p className="text-sm opacity-90 leading-relaxed">
+              <p className="text-md opacity-90 leading-relaxed">
                 {data.weakness}
               </p>
             </div>
 
             <div className="bg-white/10 rounded-xl p-4 space-y-1">
-              <div className="flex items-center gap-2 text-sm font-semibold text-yellow-200">
+              <div className="flex items-center gap-2 text-lg font-semibold text-yellow-200">
                 <Info size={15} />
                 ข้อเสนอแนะ
               </div>
-              <p className="text-sm opacity-90 leading-relaxed">
+              <p className="text-md opacity-90 leading-relaxed">
                 {data.suggestion}
               </p>
             </div>

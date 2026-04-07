@@ -488,6 +488,9 @@ export default function AssessmentsPage() {
                         scores={scores}
                         total={total}
                         grade={computeGrade(total)}
+                        subjectId={subjectId}
+                        term={term}
+                        year={year}
                         studentIndex={i}
                         onScoreChange={handleScoreChange}
                       />

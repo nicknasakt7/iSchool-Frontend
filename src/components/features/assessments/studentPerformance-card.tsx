@@ -6,7 +6,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { useUpdateScoreItem } from '@/lib/api/assessment/hooks/useUpdateScoreItem';
+import { useGetTeacherComment } from '@/lib/api/teacher-comment/hooks/useGetTeacherComment';
+import { useUpsertTeacherComment } from '@/lib/api/teacher-comment/hooks/useUpsertTeacherComment';
+import { Loader } from 'lucide-react';
 
 type ScoreItem = {
   // scoreItemId is the backend ScoreItem.id — required by PATCH /score-item.
@@ -24,7 +28,9 @@ type StudentPerformanceCardProps = {
   scores: ScoreItem[];
   total: number;
   grade: string;
-
+  subjectId: string;
+  term: number;
+  year: number;
   studentIndex: number;
   onScoreChange: (
     studentIndex: number,
@@ -40,23 +46,39 @@ export default function StudentPerformanceCard({
   scores,
   total,
   grade,
+  subjectId,
+  term,
+  year,
   onScoreChange,
   studentIndex,
 }: StudentPerformanceCardProps) {
-  void studentId; // reserved for future GET /scores endpoint to populate scoreItemIds
   const [isEditing, setIsEditing] = useState(false);
   const [localScores, setLocalScores] = useState(scores);
+  const [comment, setComment] = useState('');
+  const [isEditingComment, setIsEditingComment] = useState(false);
 
-  // Mutation for persisting a single student score item to the backend
-  // Backend: PATCH /score-item — expects { scoreItemId, value }
   const { mutate: saveScore, isPending: isSaving } = useUpdateScoreItem();
+  const { data: commentData } = useGetTeacherComment({
+    studentId,
+    subjectId,
+    term,
+    year,
+  });
+  const { mutate: saveComment, isPending: isSavingComment } =
+    useUpsertTeacherComment();
 
   useEffect(() => {
     setLocalScores(scores);
   }, [scores]);
 
+  // Sync comment from server
+  useEffect(() => {
+    if (commentData?.content !== undefined) {
+      setComment(commentData.content);
+    }
+  }, [commentData]);
+
   const handleChange = (index: number, value: number) => {
-    // Optimistic local update — UI reflects change immediately
     setLocalScores(prev => {
       const updated = [...prev];
       updated[index] = { ...updated[index], score: value };
@@ -66,13 +88,9 @@ export default function StudentPerformanceCard({
   };
 
   const handleSave = () => {
-    // Persist each score item that has a known backend scoreItemId.
-    // Items without scoreItemId are saved locally only until a GET /scores
-    // endpoint is added to populate scoreItemId after apply.
     const itemsToSave = localScores.filter(item => item.scoreItemId);
 
     if (itemsToSave.length === 0) {
-      // No backend ids available yet — just close edit mode
       setIsEditing(false);
       return;
     }
@@ -96,6 +114,19 @@ export default function StudentPerformanceCard({
   const handleDiscard = () => {
     setLocalScores(scores);
     setIsEditing(false);
+  };
+
+  const handleSaveComment = () => {
+    if (!comment.trim()) return;
+    saveComment(
+      { studentId, subjectId, term, year, content: comment.trim() },
+      { onSuccess: () => setIsEditingComment(false) },
+    );
+  };
+
+  const handleDiscardComment = () => {
+    setComment(commentData?.content ?? '');
+    setIsEditingComment(false);
   };
 
   return (
@@ -145,7 +176,7 @@ export default function StudentPerformanceCard({
           ))}
         </div>
 
-        {/* Total */}
+        {/* Total + Grade */}
         <div className="flex items-center gap-6">
           <div className="flex flex-col text-xl items-center font-bold">
             Total
@@ -157,7 +188,7 @@ export default function StudentPerformanceCard({
           </div>
         </div>
 
-        {/* Buttons */}
+        {/* Score Edit Buttons */}
         <div className="flex gap-4">
           {!isEditing ? (
             <Button variant="outline" onClick={() => setIsEditing(true)}>
@@ -176,6 +207,47 @@ export default function StudentPerformanceCard({
                 Discard
               </Button>
             </>
+          )}
+        </div>
+
+        {/* Teacher Comment */}
+        <div className="space-y-2 border-t pt-4">
+          <p className="text-sm font-semibold text-muted-foreground">
+            Teacher Comment
+          </p>
+          <Textarea
+            value={comment}
+            onChange={e => {
+              setComment(e.target.value);
+              if (!isEditingComment) setIsEditingComment(true);
+            }}
+            placeholder="write the comment to this student ...."
+            className="resize-none text-sm min-h-20"
+          />
+          {isEditingComment && (
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                onClick={handleSaveComment}
+                disabled={isSavingComment || !comment.trim()}
+              >
+                {isSavingComment ? (
+                  <>
+                    Saving... <Loader className="animate-spin" />
+                  </>
+                ) : (
+                  'Save Comment'
+                )}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleDiscardComment}
+                disabled={isSavingComment}
+              >
+                Discard
+              </Button>
+            </div>
           )}
         </div>
       </CardContent>
