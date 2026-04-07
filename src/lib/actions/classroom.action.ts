@@ -2,7 +2,10 @@
 
 import { api } from '../api/api-server';
 import { ApiError } from '../api/api.error';
-import { CreateGradePayload, UpdateGradePayload } from '../api/grade/grade.type';
+import {
+  CreateClassroomPayload,
+  UpdateClassroomPayload,
+} from '../api/classroom/classroom.type';
 import { revalidatePath } from 'next/cache';
 
 type ActionResult = { error?: string };
@@ -10,12 +13,12 @@ type ActionResult = { error?: string };
 const REVALIDATE_PATH =
   '/admin-managements/academic-setup/grade-architecture';
 
-export const createGradeAction = async (
-  payload: CreateGradePayload,
+export const createClassroomAction = async (
+  payload: CreateClassroomPayload,
 ): Promise<ActionResult> => {
   console.log('payload:', payload);
   try {
-    const result = await api.post('/classrooms/grades', payload);
+    const result = await api.post('/classrooms', payload);
     console.log('response:', result);
     revalidatePath(REVALIDATE_PATH);
     return {};
@@ -25,13 +28,13 @@ export const createGradeAction = async (
   }
 };
 
-export const updateGradeAction = async (
+export const updateClassroomAction = async (
   id: string,
-  payload: UpdateGradePayload,
+  payload: UpdateClassroomPayload,
 ): Promise<ActionResult> => {
   console.log('payload:', payload);
   try {
-    const result = await api.patch(`/classrooms/grades/${id}`, payload);
+    const result = await api.patch(`/classrooms/${id}`, payload);
     console.log('response:', result);
     revalidatePath(REVALIDATE_PATH);
     return {};

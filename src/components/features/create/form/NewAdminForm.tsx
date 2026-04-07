@@ -139,39 +139,38 @@
 //   );
 // }
 
-"use client";
+'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Loader } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
-import { createAdmin } from "@/lib/actions/admin.action";
-import { z } from "zod";
-import ProfileUpload from "../ProfileUpload";
+import { createAdmin } from '@/lib/actions/admin.action';
+import { z } from 'zod';
+import ProfileUpload from '../ProfileUpload';
 
 const schema = z.object({
   email: z.email(),
   password: z.string().min(6),
-  gender: z.enum(["MALE", "FEMALE", "OTHER"]),
-
-  role: z.literal("ADMIN"), // 🔥 fix ให้เป็น admin เท่านั้น
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
+  role: z.literal('ADMIN'), //  fix ให้เป็น admin เท่านั้น
 });
 
 export type AdminFormValues = z.infer<typeof schema>;
@@ -180,10 +179,10 @@ export default function NewAdminForm() {
   const { handleSubmit, control, reset } = useForm<AdminFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "",
-      password: "",
-      role: "ADMIN",
-      gender: "OTHER",
+      email: '',
+      password: '',
+      role: 'ADMIN',
+      gender: 'OTHER',
     },
   });
 
@@ -216,36 +215,6 @@ export default function NewAdminForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup className="gap-5">
           <div className="grid grid-cols-2 gap-5">
-            {/* First Name */}
-            {/* <Controller
-              control={control}
-              name="firstName"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>First Name</FieldLabel>
-                  <Input {...field} placeholder="e.g. John" />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            /> */}
-
-            {/* Last Name */}
-            {/* <Controller
-              control={control}
-              name="lastName"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Last Name</FieldLabel>
-                  <Input {...field} placeholder="e.g. Doe" />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            /> */}
-
             {/* Email */}
             <Controller
               control={control}
@@ -276,7 +245,7 @@ export default function NewAdminForm() {
               )}
             />
 
-            {/* 🔥 Role (Dropdown: Admin only) */}
+            {/*  Role (Dropdown: Admin only) */}
             <Controller
               control={control}
               name="role"
@@ -305,7 +274,7 @@ export default function NewAdminForm() {
                     <Loader className="animate-spin" /> Adding...
                   </>
                 ) : (
-                  "Add New Admin"
+                  'Add New Admin'
                 )}
                 <ArrowRight />
               </Button>

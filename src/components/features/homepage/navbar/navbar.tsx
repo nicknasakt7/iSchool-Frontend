@@ -2,18 +2,28 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { IoSchoolOutline } from 'react-icons/io5';
-import { MdArrowRightAlt } from 'react-icons/md';
 import { usePathname } from 'next/navigation';
 import { PATH } from '@/constants/path.constant';
 import Logo from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function Navbar() {
   const [, setSidsbaropen] = useState(false);
   const path = usePathname();
   const isLoginPath = path === PATH.LOGIN || path === PATH.CONTENT;
+  const { data: session, status } = useSession();
+  const role = session?.user?.role;
+
+  const authButton =
+    role === 'TEACHER'
+      ? { label: 'Back to My Student', href: '/students' }
+      : role === 'ADMIN' || role === 'SUPER_ADMIN'
+        ? { label: 'Back to Dashboard', href: '/dashboard' }
+        : role === 'PARENTS'
+          ? { label: 'Back to My Student', href: '/parents/student-info' }
+          : null;
 
   return (
     <nav className="flex justify-between items-center px-4 sm:px-12 lg:px-24 xl:px-40 py-4 sticky top-0 z-20 backdrop-blur-lg font-medium bg-white/50 dark:bg-gray-900/70 ">
@@ -28,25 +38,34 @@ export default function Navbar() {
         </Link>
       </div>
       <div className="flex gap-4 items-center ">
-        {!isLoginPath && (
-          <Link href={PATH.LOGIN}>
-            <div className=" hover:bg-gray-50 px-4 py-1 rounded-2xl animate-pulse">
-              <button className="font-extralight">Login</button>
-            </div>
-          </Link>
-        )}
-        {!isLoginPath && (
-          <div className="flex gap-2 items-center bg-linear-to-r from-[#1d4ed8] to-[#38bdf8] shadow-lg hover:opacity-90 transition-all px-5 py-1.5 rounded-2xl text-white">
-            <a
-              onClick={() => setSidsbaropen(false)}
-              href="#contect"
-              className=" hover:scale-105"
-            >
-              Form Regiter
-            </a>
-            <ArrowRight size={16} />
-          </div>
-        )}
+        {!isLoginPath &&
+          (status === 'loading' ? (
+            <div className="h-9 w-36 rounded-full bg-gray-200 animate-pulse" />
+          ) : authButton ? (
+            <Link href={authButton.href}>
+              <Button className="font-semibold">
+                {authButton.label} <ArrowRight size={16} />
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link href={PATH.LOGIN}>
+                <div className=" hover:bg-gray-50 px-4 py-1 rounded-2xl animate-pulse">
+                  <Button className="font-semibold">Login</Button>
+                </div>
+              </Link>
+              <Button variant="outline">
+                <a
+                  onClick={() => setSidsbaropen(false)}
+                  href="#contect"
+                  className=" hover:scale-105"
+                >
+                  Form Regiter
+                </a>
+                <ArrowRight size={16} />
+              </Button>
+            </>
+          ))}
       </div>
     </nav>
   );

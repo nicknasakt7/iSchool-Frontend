@@ -1,122 +1,18 @@
 'use client';
 
-// 'use client';
+import { useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Pen, Plus } from 'lucide-react';
 
-// import ClassroomMapping from '@/components/features/admin-management/academic-setup/grade-architecture/classroom-mapping';
-// import GradeLevels from '@/components/features/admin-management/academic-setup/grade-architecture/grade-levels';
-// import { useState } from 'react';
-
-// type Mapping = {
-//   grade: string;
-//   classroom: string;
-// };
-
-// export default function GradeArchitecturePage() {
-//   const [year, setYear] = useState('2024');
-//   const [term, setTerm] = useState('Term 1');
-//   const [isSaved, setIsSaved] = useState(false);
-
-//   const [grades, setGrades] = useState(['P.1', 'P.2', 'P.3', 'P.4']);
-
-//   const [mappings, setMappings] = useState<Mapping[]>([
-//     { grade: 'P.1', classroom: 'ห้อง 1' },
-//     { grade: 'P.2', classroom: 'ห้อง 2' },
-//   ]);
-
-//   // grade
-//   const addGrade = () => {
-//     const next = `P.${grades.length + 1}`;
-//     setGrades([...grades, next]);
-//   };
-
-//   const removeGrade = (g: string) => {
-//     setGrades(grades.filter((x) => x !== g));
-//     setMappings(mappings.filter((m) => m.grade !== g));
-//   };
-
-//   // mapping
-//   const addMapping = () => {
-//     setMappings([...mappings, { grade: grades[0], classroom: '' }]);
-//   };
-
-//   const updateMapping = (index: number, key: keyof Mapping, value: string) => {
-//     const copy = [...mappings];
-//     copy[index][key] = value;
-//     setMappings(copy);
-//   };
-
-//   const removeMapping = (index: number) => {
-//     setMappings(mappings.filter((_, i) => i !== index));
-//   };
-
-//   const handleSave = () => {
-//     console.log({ year, term, grades, mappings });
-//     setIsSaved(true);
-//   };
-
-//   const handleEdit = () => {
-//     setIsSaved(false);
-//   };
-
-//   return (
-//     <div className="p-8 space-y-8">
-//       {/* HEADER */}
-//       <div>
-//         <h2 className="text-3xl font-semibold mb-2">Grade Architecture</h2>
-//         <p className="text-sm text-muted-foreground">
-//           Define grade levels and map classrooms for each level.
-//         </p>
-//       </div>
-
-//       {/* YEAR / TERM */}
-//       <div className="grid grid-cols-2 gap-6">
-//         <select
-//           disabled={isSaved}
-//           value={year}
-//           onChange={(e) => setYear(e.target.value)}
-//           className="p-4 border rounded-xl"
-//         >
-//           <option>2024</option>
-//           <option>2025</option>
-//         </select>
-
-//         <select
-//           disabled={isSaved}
-//           value={term}
-//           onChange={(e) => setTerm(e.target.value)}
-//           className="p-4 border rounded-xl"
-//         >
-//           <option>Term 1</option>
-//           <option>Term 2</option>
-//         </select>
-//       </div>
-
-//       {/* MAIN */}
-//       <div className="grid grid-cols-2 gap-6">
-//         <GradeLevels
-//           grades={grades}
-//           onAdd={addGrade}
-//           onRemove={removeGrade}
-//           disabled={isSaved}
-//         />
-
-//         <ClassroomMapping
-//           grades={grades}
-//           mappings={mappings}
-//           onAdd={addMapping}
-//           onUpdate={updateMapping}
-//           onDelete={removeMapping}
-//           onSave={handleSave}
-//           onEdit={handleEdit}
-//           isSaved={isSaved}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
-
-import ClassroomMapping from '@/components/features/admin-management/academic-setup/grade-architecture/classroom-mapping';
-import GradeLevels from '@/components/features/admin-management/academic-setup/grade-architecture/grade-levels';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -124,106 +20,96 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-// import { getGrade } from '@/lib/actions/grade.action';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 
-import { useEffect, useState } from 'react';
+import GradeForm from '@/components/features/admin-management/academic-setup/grade-architecture/GradeForm';
+import ClassroomForm, {
+  ClassroomWithGrade,
+} from '@/components/features/admin-management/academic-setup/grade-architecture/ClassroomForm';
 
-type Mapping = {
-  grade: string;
-  classroom: string;
-};
+import { useGrades } from '@/lib/api/grade/hooks/useGrade';
+import { Grade } from '@/lib/api/grade/grade.type';
+import { Classroom } from '@/lib/api/classroom/classroom.type';
+
+const filterSchema = z.object({
+  year: z
+    .string()
+    .optional()
+    .transform(val => (val && val !== '' ? Number(val) : null)),
+  term: z
+    .string()
+    .optional()
+    .transform(val => (val && val !== '' ? Number(val) : null)),
+});
+
+type FilterInput = z.input<typeof filterSchema>;
+type FilterOutput = z.output<typeof filterSchema>;
+
+const CURRENT_YEAR = new Date().getFullYear();
+const YEAR_OPTIONS = [CURRENT_YEAR - 1, CURRENT_YEAR, CURRENT_YEAR + 1];
+
+function getTermLabel(year: string, term: '1' | '2'): string {
+  const y = Number(year);
+  if (!y) return term === '1' ? 'Term 1' : 'Term 2';
+  if (term === '1') return `Term 1 (${y})`;
+  return `Term 2 (${y + 1})`;
+}
 
 export default function GradeArchitecturePage() {
-  // 🔥 Academic logic
-  const [year, setYear] = useState('2026'); // Academic Year
-  const [term, setTerm] = useState('1'); // "1" | "2"
+  const [activeFilter, setActiveFilter] = useState<FilterOutput>({
+    year: null,
+    term: null,
+  });
 
-  const [isSaved, setIsSaved] = useState(false);
+  const [gradeDialogOpen, setGradeDialogOpen] = useState(false);
+  const [editingGrade, setEditingGrade] = useState<Grade | undefined>();
 
-  const [grades, setGrades] = useState(['P.1', 'P.2', 'P.3', 'P.4']);
+  const [classroomDialogOpen, setClassroomDialogOpen] = useState(false);
+  const [editingClassroom, setEditingClassroom] = useState<
+    ClassroomWithGrade | undefined
+  >();
 
-  const [mappings, setMappings] = useState<Mapping[]>([
-    { grade: 'P.1', classroom: 'ห้อง 1' },
-    { grade: 'P.2', classroom: 'ห้อง 2' },
-  ]);
+  const { handleSubmit, control } = useForm<FilterInput, unknown, FilterOutput>(
+    {
+      resolver: zodResolver(filterSchema),
+      defaultValues: { year: '', term: '' },
+    },
+  );
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // หรือ external API
-  //       const json = await getGrade();
-  //       console.log('jjjjjjjjjjsonn', json);
-  //       setMappings(json);
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //     }
-  //   };
+  const watchedYear = useWatch({ control, name: 'year' });
 
-  // fetchData();
-  // }, []);
+  const { data: grades, isLoading } = useGrades({
+    year: activeFilter.year ?? null,
+    term: activeFilter.term ?? null,
+  });
+  console.log('gradessssssssssssมามั้ยนะะะะ', grades);
 
-  // 🔥 helper: show correct year per term
-  const getTermLabel = (year: string, term: string) => {
-    if (!year) return '';
-
-    const y = Number(year);
-
-    if (term === '1') return `Term 1 (${y})`;
-    if (term === '2') return `Term 2 (${y + 1})`;
-
-    return '';
+  const onFilterSubmit = (data: FilterOutput) => {
+    setActiveFilter({ year: data.year ?? null, term: data.term ?? null });
   };
 
-  // grade
-  const addGrade = () => {
-    const next = `P.${grades.length + 1}`;
-    setGrades([...grades, next]);
+  const openCreateGrade = () => {
+    setEditingGrade(undefined);
+    setGradeDialogOpen(true);
   };
 
-  const removeGrade = (g: string) => {
-    setGrades(grades.filter((x) => x !== g));
-    setMappings(mappings.filter((m) => m.grade !== g));
+  const openEditGrade = (grade: Grade) => {
+    setEditingGrade(grade);
+    setGradeDialogOpen(true);
   };
 
-  const handleSaveGrades = () => {
-    console.log('Saved grades:', grades);
-
-    // 🔥 ล็อก UI
-    setIsSaved(true);
+  const openCreateClassroom = () => {
+    setEditingClassroom(undefined);
+    setClassroomDialogOpen(true);
   };
 
-  // mapping
-  const addMapping = () => {
-    setMappings([...mappings, { grade: grades[0], classroom: '' }]);
-  };
-
-  const updateMapping = (index: number, key: keyof Mapping, value: string) => {
-    const copy = [...mappings];
-    copy[index][key] = value;
-    setMappings(copy);
-  };
-
-  const removeMapping = (index: number) => {
-    setMappings(mappings.filter((_, i) => i !== index));
-  };
-
-  const handleSave = () => {
-    console.log({
-      academicYear: year,
-      term,
-      grades,
-      mappings,
-    });
-    setIsSaved(true);
-  };
-
-  const handleEdit = () => {
-    setIsSaved(false);
+  const openEditClassroom = (classroom: Classroom, gradeId: string) => {
+    setEditingClassroom({ ...classroom, gradeId });
+    setClassroomDialogOpen(true);
   };
 
   return (
     <div className="p-8 space-y-8">
-      {/* 🔥 HEADER */}
       <div>
         <h2 className="text-3xl font-semibold mb-2">Grade Architecture</h2>
         <p className="text-sm text-muted-foreground">
@@ -231,63 +117,203 @@ export default function GradeArchitecturePage() {
         </p>
       </div>
 
-      {/* 🔥 ACADEMIC YEAR / TERM */}
-      <div className="grid grid-cols-2 gap-6">
-        {/* Academic Year */}
-        <div className="space-y-1">
-          <label className="text-sm text-gray-500">Academic Year</label>
+      <form onSubmit={handleSubmit(onFilterSubmit)}>
+        <div className="grid grid-cols-2 gap-6 items-end">
+          <Controller
+            control={control}
+            name="year"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="text-sm text-gray-500">
+                  Academic Year
+                  <span className="ml-1 text-muted-foreground font-normal">
+                    (optional)
+                  </span>
+                </FieldLabel>
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={v =>
+                    field.onChange(v === '__clear__' ? '' : v)
+                  }
+                >
+                  <SelectTrigger className="w-full rounded-xl bg-white">
+                    <SelectValue placeholder="All years" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__clear__">All years</SelectItem>
+                    {YEAR_OPTIONS.map(y => (
+                      <SelectItem key={y} value={String(y)}>
+                        {y}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-          <Select value={year} onValueChange={setYear} disabled={isSaved}>
-            <SelectTrigger className="w-full p-4 rounded-xl bg-white">
-              <SelectValue placeholder="Select Year" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem value="2025">2025</SelectItem>
-              <SelectItem value="2026">2026</SelectItem>
-              <SelectItem value="2027">2027</SelectItem>
-            </SelectContent>
-          </Select>
+          <Controller
+            control={control}
+            name="term"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel className="text-sm text-gray-500">
+                  Academic Term
+                  <span className="ml-1 text-muted-foreground font-normal">
+                    (optional)
+                  </span>
+                </FieldLabel>
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={v =>
+                    field.onChange(v === '__clear__' ? '' : v)
+                  }
+                >
+                  <SelectTrigger className="w-full rounded-xl bg-white">
+                    <SelectValue placeholder="All terms" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__clear__">All terms</SelectItem>
+                    <SelectItem value="1">
+                      {getTermLabel(watchedYear ?? '', '1')}
+                    </SelectItem>
+                    <SelectItem value="2">
+                      {getTermLabel(watchedYear ?? '', '2')}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </div>
 
-        {/* Academic Term */}
-        <div className="space-y-1">
-          <label className="text-sm text-gray-500">Academic Term</label>
+        <div className="flex justify-end mt-3">
+          <Button type="submit" variant="outline" size="sm">
+            Apply Filter
+          </Button>
+        </div>
+      </form>
 
-          <Select value={term} onValueChange={setTerm} disabled={isSaved}>
-            <SelectTrigger className="w-full p-4 rounded-xl bg-white">
-              <SelectValue placeholder="Select Term" />
-            </SelectTrigger>
+      <div className="grid grid-cols-2 gap-6">
+        <div className="border rounded-2xl p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg">Grade Levels</h3>
+            <Button size="sm" onClick={openCreateGrade}>
+              <Plus size={16} /> Add Grade
+            </Button>
+          </div>
 
-            <SelectContent>
-              <SelectItem value="1">{getTermLabel(year, '1')}</SelectItem>
-              <SelectItem value="2">{getTermLabel(year, '2')}</SelectItem>
-            </SelectContent>
-          </Select>
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          ) : (
+            <div className="space-y-2">
+              {(grades ?? []).map(grade => (
+                <div
+                  key={grade.id}
+                  className="flex items-center justify-between rounded-lg bg-muted px-4 py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium">{grade.name}</span>
+                    <span className="text-sm text-muted-foreground">
+                      Level {grade.level}
+                    </span>
+                    {!grade.isActive && (
+                      <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
+                        In active
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openEditGrade(grade)}
+                  >
+                    <Pen size={14} />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="border rounded-2xl p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg">Classrooms</h3>
+            <Button size="sm" onClick={openCreateClassroom}>
+              <Plus size={16} /> Add Classroom
+            </Button>
+          </div>
+
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          ) : (
+            <div className="space-y-2">
+              {(grades ?? []).flatMap(grade =>
+                (grade.classrooms ?? []).map(classroom => (
+                  <div
+                    key={classroom.id}
+                    className="flex items-center justify-between rounded-lg bg-muted px-4 py-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium">{classroom.name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {grade.name}
+                      </span>
+                      {classroom.isActive === false && (
+                        <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs text-destructive">
+                          Inactive
+                        </span>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openEditClassroom(classroom, grade.id)}
+                    >
+                      <Pen size={14} />
+                    </Button>
+                  </div>
+                )),
+              )}
+            </div>
+          )}
         </div>
       </div>
-      {/* 🔥 MAIN */}
-      <div className="grid grid-cols-2 gap-6">
-        {/* =========================== */}
-        <GradeLevels
-          grades={grades}
-          onAdd={addGrade}
-          onRemove={removeGrade}
-          onSave={handleSaveGrades} // 🔥 เพิ่มตรงนี้
-          disabled={isSaved}
-        />
-        {/* =========================== */}
-        <ClassroomMapping
-          grades={grades}
-          mappings={mappings}
-          onAdd={addMapping}
-          onUpdate={updateMapping}
-          onDelete={removeMapping}
-          onSave={handleSave}
-          onEdit={handleEdit}
-          isSaved={isSaved}
-        />
-      </div>
+
+      <Dialog open={gradeDialogOpen} onOpenChange={setGradeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingGrade ? 'Edit Grade' : 'Add Grade'}
+            </DialogTitle>
+          </DialogHeader>
+          <GradeForm
+            grade={editingGrade}
+            onSuccess={() => setGradeDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={classroomDialogOpen} onOpenChange={setClassroomDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingClassroom ? 'Edit Classroom' : 'Add Classroom'}
+            </DialogTitle>
+          </DialogHeader>
+          <ClassroomForm
+            classroom={editingClassroom}
+            grades={grades ?? []}
+            onSuccess={() => setClassroomDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

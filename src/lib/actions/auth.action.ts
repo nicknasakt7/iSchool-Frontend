@@ -14,5 +14,5 @@ export const login = async (input: LoginInput): Promise<ActionResult> => {
 };
 
 export const logout = async () => {
-  await signOut({ redirectTo: '/login' });
+  await signOut({ redirectTo: '/' });
 };

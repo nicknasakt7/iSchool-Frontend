@@ -2,12 +2,21 @@ import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { gradeService } from '../grade.service';
 
-export const useGrades = () => {
+type UseGradesParams = {
+  year?: number | null;
+  term?: number | null;
+};
+
+export const useGrades = (params?: UseGradesParams) => {
   const { data: session } = useSession();
 
   return useQuery({
-    queryKey: ['grades'],
-    queryFn: () => gradeService.getGrades(session?.user?.accessToken),
+    queryKey: ['grades', params?.year ?? null, params?.term ?? null],
+    queryFn: () =>
+      gradeService.getGrades(
+        { year: params?.year ?? null, term: params?.term ?? null },
+        session?.user?.accessToken,
+      ),
     enabled: !!session?.user?.accessToken,
   });
 };

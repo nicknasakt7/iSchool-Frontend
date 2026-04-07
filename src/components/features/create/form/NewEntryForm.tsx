@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,39 +12,21 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
+} from '@/components/ui/field';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
-import { z } from "zod";
-import ProfileUpload from "../ProfileUpload";
-import { createStudent } from "@/lib/actions/student.action";
-
-const schema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  nickName: z.string().optional(),
-  dob: z.string().min(1),
-  gender: z.enum(["MALE", "FEMALE", "OTHER"]),
-
-  // NEW: Parent fields
-  parentsFirstName: z.string().min(1),
-  parentsLastName: z.string().min(1),
-  parentsEmail: z.email(),
-
-  gradeId: z.string().min(1),
-  classId: z.string().min(1).optional(),
-
-  favorite: z.string().optional(),
-  healthNote: z.string().optional(),
-});
-
-export type StudentFormValues = z.infer<typeof schema>;
+import ProfileUpload from '../ProfileUpload';
+import { createStudent } from '@/lib/actions/student.action';
+import {
+  createStudentschema,
+  StudentFormValues,
+} from '@/lib/schemas/student.schema';
 
 export default function NewEntryForm() {
   const {
@@ -53,22 +35,22 @@ export default function NewEntryForm() {
     reset,
     formState: { errors },
   } = useForm<StudentFormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(createStudentschema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      nickName: "",
-      dob: "",
-      gender: "MALE",
+      firstName: '',
+      lastName: '',
+      nickName: '',
+      dob: '',
+      gender: 'MALE',
 
-      parentsFirstName: "",
-      parentsLastName: "",
-      parentsEmail: "",
+      parentsFirstName: '',
+      parentsLastName: '',
+      parentsEmail: '',
 
-      gradeId: "",
-      classId: "",
-      favorite: "",
-      healthNote: "",
+      gradeId: '',
+      classId: '',
+      favorite: '',
+      healthNote: '',
     },
   });
 
@@ -158,7 +140,7 @@ export default function NewEntryForm() {
               render={({ field }) => (
                 <Field>
                   <FieldLabel>Nickname</FieldLabel>
-                  <Input {...field} placeholder="Optional" />
+                  <Input {...field} />
                 </Field>
               )}
             />
@@ -177,7 +159,7 @@ export default function NewEntryForm() {
               )}
             />
 
-            {/* 🔥 Parent (NEW) */}
+            {/* Parent (NEW) */}
             <Controller
               control={control}
               name="parentsFirstName"
@@ -249,33 +231,6 @@ export default function NewEntryForm() {
               />
 
               {/* Grade */}
-              {/* <Controller
-                control={control}
-                name="grade"
-                render={({ field, fieldState }) => (
-                  <Field
-                    className="w-full flex flex-col"
-                    data-invalid={fieldState.invalid}
-                  >
-                    <FieldLabel>Grade</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">Grade 1</SelectItem>
-                        <SelectItem value="2">Grade 2</SelectItem>
-                        <SelectItem value="3">Grade 3</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              /> */}
-
-              {/* Grade */}
               <Controller
                 control={control}
                 name="gradeId"
@@ -300,35 +255,8 @@ export default function NewEntryForm() {
                   </Field>
                 )}
               />
-
-              {/* Classroom */}
-              {/* <Controller
-                control={control}
-                name="classroom"
-                render={({ field, fieldState }) => (
-                  <Field
-                    className="w-full flex flex-col"
-                    data-invalid={fieldState.invalid}
-                  >
-                    <FieldLabel>Classroom</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select classroom" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="01">Room 1</SelectItem>
-                        <SelectItem value="02">Room 2</SelectItem>
-                        <SelectItem value="03">Room 3</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              /> */}
             </div>
-            {/* 🔥 Classroom dropdown (UPDATED) */}
+            {/*  Classroom dropdown (UPDATED) */}
             <Controller
               control={control}
               name="classId"
@@ -385,7 +313,7 @@ export default function NewEntryForm() {
                     <Loader className="animate-spin" /> Adding...
                   </>
                 ) : (
-                  "Add New Entry"
+                  'Add New Entry'
                 )}
                 <ArrowRight />
               </Button>

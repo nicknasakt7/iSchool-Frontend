@@ -27,7 +27,7 @@ export default function AttendanceHeader({
   const [classroomId, setClassroomId] = useState<string>('all');
 
   const { data: grades } = useGrades();
-  const { data: classrooms } = useClassrooms(gradeId);
+  const { data: classrooms } = useClassrooms(gradeId ? { gradeId } : undefined);
 
   useEffect(() => {
     const updateTime = () => {

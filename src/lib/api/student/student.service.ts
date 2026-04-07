@@ -1,6 +1,6 @@
-import { StudentFormValues } from "@/components/features/create/form/NewEntryForm";
-import { apiClient } from "../client";
-import { Student, StudentListResponse } from "./student.type";
+import { StudentFormValues } from '@/lib/schemas/student.schema';
+import { apiClient } from '../client';
+import { Student, StudentListResponse } from './student.type';
 
 const createStudent = (input: FormData, token?: string) =>
   apiClient.post<Student>("/students", input, token);
