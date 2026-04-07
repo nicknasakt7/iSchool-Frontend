@@ -5,7 +5,7 @@ import { studentService } from "../api/student/student.service";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const createStudent = async (input: StudentFormValues) => {
+export const createStudent = async (input: FormData) => {
   try {
     await studentService.createStudent(input);
     revalidatePath("/create/new-entry");

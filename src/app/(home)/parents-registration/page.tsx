@@ -1,6 +1,11 @@
-import ParentForm from '@/components/features/homepage/parents-registration/ParentForm';
+import ParentForm from "@/components/features/homepage/parents-registration/ParentForm";
 
-export default function ParentRegisterPage() {
+export default async function ParentRegisterPage(
+  props: PageProps<"/parents-registration">,
+) {
+  const { token } = await props.searchParams;
+  console.log("token", token);
+
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm p-8 space-y-6">
@@ -11,7 +16,7 @@ export default function ParentRegisterPage() {
           </p>
         </div>
 
-        <ParentForm />
+        <ParentForm token={String(token)} />
 
         <p className="text-center text-sm text-gray-500">
           SECURE REGISTRATION | SSL ENCRYPTED
