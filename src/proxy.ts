@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth/auth';
 import { NextResponse } from 'next/server';
 
 // const protectedRoutes = ['/dashboard', '/students', '/assessments', '/checkin' ,'/create/new-entry' , '/create/new-admin'];
-const publicRoutes = ['/', '/login'];
+const publicRoutes = ["/", "/login", "/reset-password"];
 const teacherRoutes = [
   '/dashboard',
   '/students',
@@ -11,6 +11,13 @@ const teacherRoutes = [
   '/assessments',
   '/checkin',
   '/create/new-entry',
+  "/dashboard",
+  "/students",
+  "/students/[student-id]",
+  "/students/undefined/edit",
+  "/assessments",
+  "/checkin",
+  "/create/new-entry",
 ];
 const adminRoutes = [
   '/',
@@ -21,6 +28,13 @@ const adminRoutes = [
   '/assessments',
   '/checkin',
   '/create/new-entry',
+  "/dashboard",
+  "/students",
+  "/students/[student-id]",
+  "/students/[student-id]/[edit-student-id]",
+  "/assessments",
+  "/checkin",
+  "/create/new-entry",
 
   // admin-management
   '/admin-managements/enrollments',
@@ -45,6 +59,13 @@ const superAdminRoutes = [
   '/assessments',
   '/checkin',
   '/create/new-entry',
+  "/dashboard",
+  "/students",
+  "/students/[student-id]",
+  "/students/[student-id]/[edit-student-id]",
+  "/assessments",
+  "/checkin",
+  "/create/new-entry",
 
   // admin-management
   '/admin-managements/enrollments',
@@ -64,6 +85,7 @@ const superAdminRoutes = [
   '/create/new-admin',
 ];
 const parents = ['/', '/parents/student-info', '/parents/payment'];
+const parents = ["/parents/student-info", "parents/payment"];
 
 const ROLE = {
   SUPER_ADMIN: 'SUPER_ADMIN',
@@ -80,6 +102,11 @@ export const proxy = auth(req => {
   if (!isAuthenticated) {
     if (!publicRoutes.includes(pathname)) {
       return NextResponse.redirect(new URL('/', req.url));
+    } else {
+      return NextResponse.next();
+  if (!isAuthenticated) {
+    if (!publicRoutes.includes(pathname)) {
+      return NextResponse.redirect(new URL("/", req.url));
     } else {
       return NextResponse.next();
     }
@@ -114,7 +141,11 @@ export const proxy = auth(req => {
   const isSuperAdminRoutes = superAdminRoutes.some(el =>
     el === '/' ? pathname === el : pathname.startsWith(el),
   );
+  const isSuperAdminRoutes = superAdminRoutes.some((el) =>
+    el === "/" ? pathname === el : pathname.startsWith(el),
+  );
 
+  if (isSuperAdminRoutes && role === ROLE.SUPER_ADMIN) {
   if (isSuperAdminRoutes && role === ROLE.SUPER_ADMIN) {
     return NextResponse.next();
   }
@@ -123,7 +154,12 @@ export const proxy = auth(req => {
   const isParentsRoutes = parents.some(el =>
     el === '/' ? pathname === el : pathname.startsWith(el),
   );
+  const isParentsRoutes = parents.some((el) =>
+    el === "/" ? pathname === el : pathname.startsWith(el),
+  );
 
+  if (isParentsRoutes && role === ROLE.PARENTS) {
+    return NextResponse.next();
   if (isParentsRoutes && role === ROLE.PARENTS) {
     return NextResponse.next();
   }
