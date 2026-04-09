@@ -35,3 +35,57 @@ export type StudentListResponse = {
     limit: number;
   };
 };
+
+// ========================
+// Student Detail (with scores + comments)
+// ========================
+
+export type SubjectInDetail = {
+  id: string;
+  name: string;
+};
+
+export type TeacherInDetail = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
+export type ScoreInDetail = {
+  id: string;
+  subjectId: string;
+  totalScore: number;
+  subjectGrade: number;
+  term: number;
+  year: number;
+  subject: SubjectInDetail;
+};
+
+export type CommentInDetail = {
+  id: string;
+  content: string;
+  subjectId: string;
+  teacherId: string;
+  term: number;
+  year: number;
+  createdAt: string;
+  subject: SubjectInDetail;
+  teacher: TeacherInDetail;
+};
+
+export type GradeInDetail = {
+  id: string;
+  name: string;
+};
+
+export type ClassroomInDetail = {
+  id: string;
+  name: string;
+};
+
+export type StudentDetail = Student & {
+  grade?: GradeInDetail | null;
+  classroom?: ClassroomInDetail | null;
+  scores: ScoreInDetail[];
+  comments: CommentInDetail[];
+};

@@ -8,7 +8,13 @@ type SummaryCardProps = {
 
 export default function SummaryCard({ title, value, color }: SummaryCardProps) {
   return (
-    <div className="flex items-center justify-between bg-card p-6 rounded-3xl shadow-sm w-full">
+    <div
+      className={`flex items-center justify-between p-6 rounded-3xl shadow-lg w-full ${
+        color === 'green'
+          ? 'bg-linear-to-br from-emerald-500 to-teal-700'
+          : 'bg-linear-to-br from-rose-500 to-red-700'
+      }`}
+    >
       {/* LEFT */}
       <div className="flex items-center gap-5">
         {/* 🔥 DOUBLE CIRCLE */}
@@ -35,12 +41,12 @@ export default function SummaryCard({ title, value, color }: SummaryCardProps) {
 
         {/* TEXT */}
         <div>
-          <p className="text-base font-medium text-muted-foreground">{title}</p>
+          <p className="text-base font-medium text-white/80">{title}</p>
 
           <div className="flex items-end gap-3">
-            <p className="text-4xl font-bold">{value.toLocaleString()}</p>
+            <p className="text-4xl font-bold text-white">{value.toLocaleString()}</p>
 
-            <span className="text-lg text-muted-foreground">
+            <span className="text-lg text-white/70">
               {color === 'green' ? '/ 1,248' : ''}
             </span>
           </div>

@@ -2,6 +2,7 @@
 
 import Logo from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/shared/mode-toggle';
 import { PATH } from '@/constants/path.constant';
 import { logout } from '@/lib/actions/auth.action';
 
@@ -62,6 +63,8 @@ export default function Headers() {
             {data?.user?.role}
           </p>
         </div>
+
+        <ModeToggle />
 
         <Button
           variant="destructive"

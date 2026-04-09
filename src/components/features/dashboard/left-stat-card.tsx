@@ -6,31 +6,31 @@ type LeftStatCardProps = {
 
 export default function LeftStatCard({ total }: LeftStatCardProps) {
   return (
-    <div className="bg-card rounded-4xl p-6 shadow-sm h-full w-full flex flex-col">
+    <div className="bg-linear-to-br from-blue-600 to-indigo-800 rounded-4xl p-6 shadow-lg h-full w-full flex flex-col">
       {/* ================== TOP ================== */}
       <div className="flex items-center justify-between mb-6">
         {/* ICON */}
-        <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-          <Users className="w-6 h-6 text-blue-600" />
+        <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+          <Users className="w-6 h-6 text-white" />
         </div>
       </div>
 
       {/* ================== TITLE ================== */}
-      <p className="text-muted-foreground text-sm mb-2">Total Students</p>
+      <p className="text-blue-200 text-sm mb-2">Total Students</p>
 
       {/* ================== NUMBER ================== */}
       <div className="flex items-end gap-2 flex-wrap">
-        <h2 className="text-4xl md:text-5xl font-bold">
+        <h2 className="text-4xl md:text-5xl font-bold text-white">
           {total.toLocaleString()}
         </h2>
-        <span className="text-muted-foreground text-sm mb-1">Enrolled</span>
+        <span className="text-blue-200 text-sm mb-1">Enrolled</span>
       </div>
 
       {/* ================== DIVIDER ================== */}
-      <div className="border-t my-6" />
+      <div className="border-t border-white/20 my-6" />
 
       {/* ================== GRADE TITLE ================== */}
-      <p className="text-xs tracking-widest text-muted-foreground mb-4">
+      <p className="text-xs tracking-widest text-blue-200 mb-4">
         GRADE DISTRIBUTION (PRIMARY)
       </p>
 
@@ -47,10 +47,10 @@ export default function LeftStatCard({ total }: LeftStatCardProps) {
         ].map(item => (
           <div
             key={item.label}
-            className="flex flex-col items-center justify-center bg-muted rounded-full w-full aspect-square"
+            className="flex flex-col items-center justify-center bg-white/15 rounded-full w-full aspect-square"
           >
-            <span className="text-xs text-muted-foreground">{item.label}</span>
-            <span className="text-sm font-semibold">{item.value}</span>
+            <span className="text-base text-blue-200">{item.label}</span>
+            <span className="text-2xl font-semibold text-white">{item.value}</span>
           </div>
         ))}
       </div>

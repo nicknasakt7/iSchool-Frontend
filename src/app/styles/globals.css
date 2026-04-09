@@ -86,7 +86,7 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
+  --chart-1: oklch(100% 0.00011 271.152);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
@@ -119,9 +119,9 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(25.615% 0.00003 271.152);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(30.482% 0.00173 106.813);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -137,6 +137,7 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+  --muted-header: oklch(88.837% 0.0001 271.152 / 0.17);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -152,11 +153,13 @@
   --sidebar-ring: oklch(0.556 0 0);
   --gradient-start: oklch(60% 0.22 262);
   --gradient-end: oklch(70% 0.18 240);
+  --new-orange-400: oklch(35.634% 0.09838 45.285);
+  --new-orange-700: oklch(18.569% 0.0506 47.942);
 
   --btn-outline-color: oklch(80% 0.12 240);
   --btn-outline-hover-bg: oklch(80% 0.12 240 / 0.15);
-  --btn-destructive-color: oklch(70% 0.22 27);
-  --btn-destructive-hover-bg: oklch(70% 0.22 27 / 0.15);
+  --btn-destructive-color: oklch(60.186% 0.22799 27.597);
+  --btn-destructive-hover-bg: oklch(62.693% 0.22742 28.722 / 0.15);
 }
 
 @layer base {
