@@ -1,6 +1,6 @@
 'use client';
 
-import { Sparkles, TrendingUp, TrendingDown, Minus, Loader2 } from 'lucide-react';
+import { Sparkles, TrendingUp, TrendingDown, Minus, Loader2, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useGetStudentInsight } from '@/lib/api/ai-insight/hooks/useGetStudentInsight';
 import { useGenerateStudentInsight } from '@/lib/api/ai-insight/hooks/useGenerateStudentInsight';
@@ -13,88 +13,117 @@ type Props = {
 };
 
 const trendConfig: Record<Trend, { label: string; icon: React.ElementType; color: string }> = {
-  IMPROVED: { label: 'พัฒนาขึ้น', icon: TrendingUp, color: 'text-green-400' },
+  IMPROVED: { label: 'พัฒนาขึ้น', icon: TrendingUp, color: 'text-emerald-400' },
   DECLINED: { label: 'ถดถอย', icon: TrendingDown, color: 'text-red-400' },
-  STABLE: { label: 'คงที่', icon: Minus, color: 'text-yellow-400' },
+  STABLE: { label: 'คงที่', icon: Minus, color: 'text-amber-400' },
 };
 
-const riskColor: Record<RiskLevel, string> = {
-  LOW: 'text-green-300',
-  MEDIUM: 'text-yellow-300',
-  HIGH: 'text-red-300',
+const riskConfig: Record<RiskLevel, { label: string; color: string; bg: string }> = {
+  LOW: { label: 'ความเสี่ยงต่ำ', color: 'text-emerald-300', bg: 'bg-emerald-500/20' },
+  MEDIUM: { label: 'ความเสี่ยงปานกลาง', color: 'text-amber-300', bg: 'bg-amber-500/20' },
+  HIGH: { label: 'ความเสี่ยงสูง', color: 'text-red-300', bg: 'bg-red-500/20' },
 };
 
 export default function StudentAiInsight({ studentId, term, year }: Props) {
-  const { data: insight } = useGetStudentInsight(studentId, term, year);
+  const { data: insight, isLoading: isLoadingInsight } = useGetStudentInsight(studentId, term, year);
   const { mutate: generate, isPending } = useGenerateStudentInsight();
 
   const trend = insight ? trendConfig[insight.trend] : null;
+  const risk = insight ? riskConfig[insight.riskLevel] : null;
   const TrendIcon = trend?.icon;
 
   return (
-    <div className="bg-linear-to-r from-blue-900 to-indigo-900 text-white rounded-2xl p-6 flex flex-col md:flex-row justify-between gap-6 shadow-lg">
-      {/* LEFT */}
-      <div className="space-y-3 flex-1">
+    <div className="bg-linear-to-br from-blue-900 via-blue-800 to-indigo-900 text-white rounded-2xl shadow-lg overflow-hidden">
+      {/* Header bar */}
+      <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-white/10">
         <div className="flex items-center gap-2">
           <Sparkles className="size-5 text-blue-300" />
-          <h2 className="text-xl font-semibold">AI Student Insight</h2>
+          <h2 className="font-semibold text-lg">AI Student Insight</h2>
+          <span className="text-xs text-white/40 ml-1">เทอม {term}/{year}</span>
+        </div>
+
+        <div className="flex items-center gap-3">
           {trend && TrendIcon && (
-            <span className={cn('flex items-center gap-1 text-sm font-medium ml-auto', trend.color)}>
+            <span className={cn('flex items-center gap-1.5 text-sm font-medium', trend.color)}>
               <TrendIcon className="size-4" />
               {trend.label}
             </span>
           )}
+          <button
+            onClick={() => generate({ studentId, term, year })}
+            disabled={isPending || isLoadingInsight}
+            className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 disabled:opacity-50 border border-white/20 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+          >
+            {isPending ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Sparkles className="size-3.5" />
+            )}
+            {isPending ? 'กำลังวิเคราะห์...' : insight ? 'Regenerate' : 'Generate Insight'}
+          </button>
         </div>
+      </div>
 
-        {insight ? (
-          <>
-            <p className="text-gray-200 leading-relaxed">{insight.summary}</p>
+      {insight ? (
+        <div className="p-6 space-y-5">
+          {/* Summary */}
+          <p className="text-white/90 leading-relaxed">{insight.summary}</p>
 
-            <div className="grid sm:grid-cols-2 gap-3 text-sm">
-              <div className="bg-white/10 rounded-xl p-3 space-y-1">
-                <p className="text-xs text-gray-400 uppercase tracking-wide">จุดแข็ง</p>
-                <p className="text-gray-100">{insight.strength}</p>
-              </div>
-              <div className="bg-white/10 rounded-xl p-3 space-y-1">
-                <p className="text-xs text-gray-400 uppercase tracking-wide">จุดที่ต้องพัฒนา</p>
-                <p className="text-gray-100">{insight.weakness}</p>
-              </div>
+          {/* 3 content cards */}
+          <div className="grid sm:grid-cols-3 gap-3 text-sm">
+            <InsightCard label="จุดแข็ง" value={insight.strength} accent="emerald" />
+            <InsightCard label="จุดที่ต้องพัฒนา" value={insight.weakness} accent="amber" />
+            <InsightCard label="คำแนะนำสำหรับครู" value={insight.suggestion} accent="blue" />
+          </div>
+
+          {/* Risk badge */}
+          {risk && (
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="size-4 text-white/50" />
+              <span
+                className={cn(
+                  'text-xs font-medium px-2.5 py-1 rounded-full',
+                  risk.bg,
+                  risk.color,
+                )}
+              >
+                {risk.label}
+              </span>
+              <span className="text-xs text-white/40">
+                สร้างเมื่อ {new Date(insight.generatedAt).toLocaleDateString('th-TH')}
+              </span>
             </div>
-
-            <p className="text-sm text-gray-400">
-              แนะนำ: {insight.suggestion}
-            </p>
-          </>
-        ) : (
-          <p className="text-gray-400 text-sm">
-            ยังไม่มี insight — กด &ldquo;Generate&rdquo; เพื่อให้ AI วิเคราะห์นักเรียนคนนี้
-          </p>
-        )}
-      </div>
-
-      {/* RIGHT */}
-      <div className="bg-white/10 backdrop-blur rounded-2xl p-5 flex flex-col items-center justify-center gap-3 min-w-[160px]">
-        {insight && (
-          <>
-            <p className="text-xs text-gray-300 tracking-widest uppercase">Risk Level</p>
-            <p className={cn('text-2xl font-bold', riskColor[insight.riskLevel])}>
-              {insight.riskLevel}
-            </p>
-          </>
-        )}
-        <button
-          onClick={() => generate({ studentId, term, year })}
-          disabled={isPending}
-          className="flex items-center gap-2 bg-linear-to-r from-blue-500 to-cyan-400 hover:from-blue-600 hover:to-cyan-500 disabled:opacity-60 px-4 py-2 rounded-full text-sm font-medium transition-all"
-        >
-          {isPending ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Sparkles className="size-3.5" />
           )}
-          {insight ? 'Regenerate' : 'Generate'}
-        </button>
-      </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-10 gap-3 text-white/50">
+          <Sparkles className="size-8" />
+          <p className="text-sm">กด &ldquo;Generate Insight&rdquo; เพื่อให้ AI วิเคราะห์นักเรียนคนนี้</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InsightCard({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent: 'emerald' | 'amber' | 'blue';
+}) {
+  const borderColor = {
+    emerald: 'border-l-emerald-400',
+    amber: 'border-l-amber-400',
+    blue: 'border-l-blue-400',
+  }[accent];
+
+  return (
+    <div className={cn('bg-white/10 rounded-xl p-3.5 space-y-1 border-l-2', borderColor)}>
+      <p className="text-xs text-white/50 uppercase tracking-wide">{label}</p>
+      <p className="text-white/90 leading-snug">{value}</p>
     </div>
   );
 }

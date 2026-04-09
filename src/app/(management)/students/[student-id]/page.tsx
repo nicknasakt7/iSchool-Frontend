@@ -41,7 +41,7 @@ export default function StudentDetailPage({
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6 bg-background min-h-screen">
+    <div className="space-y-6">
       {/* Header: ชื่อ, ชื่อเล่น, student code, badges, action menu */}
       <StudentProfileHeader student={student} studentId={studentId} />
 
