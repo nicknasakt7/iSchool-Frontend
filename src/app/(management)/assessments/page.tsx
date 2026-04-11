@@ -330,6 +330,8 @@ export default function AssessmentsPage() {
         onClassroomChange={handleClassroomChange}
         onSubjectChange={handleSubjectChange}
         onSearch={setSearch}
+        term={term}
+        year={year}
       />
 
       {/* PLACEHOLDER — no classroom selected */}

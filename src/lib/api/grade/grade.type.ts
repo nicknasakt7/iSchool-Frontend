@@ -15,5 +15,7 @@ export type CreateGradePayload = {
 };
 
 export type UpdateGradePayload = {
-  isActive: boolean;
+  name?: string;
+  level?: number;
+  isActive?: boolean;
 };

@@ -2,26 +2,18 @@
 
 import { api } from '../api/api-server';
 import { ApiError } from '../api/api.error';
-import {
-  CreateClassroomPayload,
-  UpdateClassroomPayload,
-} from '../api/classroom/classroom.type';
-
-type CreateManyPayload = { classrooms: CreateClassroomPayload[] };
 import { revalidatePath } from 'next/cache';
 
 type ActionResult = { error?: string };
 
 const REVALIDATE_PATH =
-  '/admin-managements/academic-setup/grade-architecture';
+  '/admin-managements/academic-setup/create-subject';
 
-export const createClassroomAction = async (
-  payload: CreateClassroomPayload,
+export const createManySubjectsAction = async (
+  subjects: { name: string }[],
 ): Promise<ActionResult> => {
-  console.log('payload:', payload);
   try {
-    const result = await api.post('/classrooms', payload);
-    console.log('response:', result);
+    await api.post('/subjects/many', { subjects });
     revalidatePath(REVALIDATE_PATH);
     return {};
   } catch (err) {
@@ -30,27 +22,25 @@ export const createClassroomAction = async (
   }
 };
 
-export const createManyClassroomsAction = async (
-  payload: CreateManyPayload,
-): Promise<ActionResult> => {
-  try {
-    await api.post('/classrooms/many', payload);
-    revalidatePath(REVALIDATE_PATH);
-    return {};
-  } catch (err) {
-    if (err instanceof ApiError) return { error: err.message };
-    return { error: 'Something went wrong' };
-  }
-};
-
-export const updateClassroomAction = async (
+export const updateSubjectAction = async (
   id: string,
-  payload: UpdateClassroomPayload,
+  name: string,
 ): Promise<ActionResult> => {
-  console.log('payload:', payload);
   try {
-    const result = await api.patch(`/classrooms/${id}`, payload);
-    console.log('response:', result);
+    await api.patch(`/subjects/${id}`, { name });
+    revalidatePath(REVALIDATE_PATH);
+    return {};
+  } catch (err) {
+    if (err instanceof ApiError) return { error: err.message };
+    return { error: 'Something went wrong' };
+  }
+};
+
+export const deleteSubjectAction = async (
+  id: string,
+): Promise<ActionResult> => {
+  try {
+    await api.delete(`/subjects/${id}`);
     revalidatePath(REVALIDATE_PATH);
     return {};
   } catch (err) {

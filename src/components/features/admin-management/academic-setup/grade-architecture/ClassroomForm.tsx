@@ -1,6 +1,6 @@
 'use client';
 
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState, useTransition } from 'react';
 import { z } from 'zod';
@@ -33,123 +33,102 @@ import { Grade } from '@/lib/api/grade/grade.type';
 import { Classroom } from '@/lib/api/classroom/classroom.type';
 import {
   createClassroomAction,
+  createManyClassroomsAction,
   updateClassroomAction,
 } from '@/lib/actions/classroom.action';
 
-// ─── Create schema ────────────────────────────────────────────────────────────
-// year / term are strings from the Select, transformed to number | null
+// ─── Schemas ─────────────────────────────────────────────────────────────────
+
 const createSchema = z.object({
-  gradeId: z.string().min(1, 'Grade is required'),
-  roomNumber: z
-    .number()
-    .int('Room number must be a whole number')
-    .positive('Room number must be positive'),
+  gradeId: z.string().min(1, 'กรุณาเลือกระดับชั้น'),
+  name: z.string().min(1, 'กรุณาใส่ชื่อห้องเรียน'),
   year: z
     .string()
     .optional()
-    .transform((val) => (val && val !== '' ? Number(val) : null)),
+    .transform(val => (val && val !== '' ? Number(val) : null)),
   term: z
     .string()
     .optional()
-    .transform((val) => (val && val !== '' ? Number(val) : null)),
+    .transform(val => (val && val !== '' ? Number(val) : null)),
 });
 
-type CreateClassroomFormInput = z.input<typeof createSchema>;
-type CreateClassroomFormOutput = z.output<typeof createSchema>;
+type CreateInput = z.input<typeof createSchema>;
+type CreateOutput = z.output<typeof createSchema>;
 
-// ─── Update schema ────────────────────────────────────────────────────────────
 const updateSchema = z.object({
-  roomNumber: z
-    .number()
-    .int('Room number must be a whole number')
-    .positive('Room number must be positive'),
+  name: z.string().min(1, 'กรุณาใส่ชื่อห้องเรียน'),
   isActive: z.boolean(),
 });
 
-type UpdateClassroomFormValues = z.infer<typeof updateSchema>;
+type UpdateValues = z.infer<typeof updateSchema>;
 
 // ─── Shared types ─────────────────────────────────────────────────────────────
+
 export type ClassroomWithGrade = Classroom & { gradeId: string };
 
 type ClassroomFormProps = {
   classroom?: ClassroomWithGrade;
   grades: Grade[];
+  preselectedGradeId?: string;
+  defaultYear?: number | null;
+  defaultTerm?: number | null;
   onSuccess?: () => void;
 };
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function parseRoomNumber(name: string): number | undefined {
-  const parts = name.split('/');
-  if (parts.length === 2) {
-    const n = parseInt(parts[1], 10);
-    return isNaN(n) ? undefined : n;
-  }
-  return undefined;
-}
-
-function buildPreviewName(gradeLevel: number, roomNumber: number): string {
-  return `${gradeLevel}/${roomNumber}`;
-}
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = [CURRENT_YEAR - 1, CURRENT_YEAR, CURRENT_YEAR + 1];
 
 // ─── Create form ──────────────────────────────────────────────────────────────
+
 function ClassroomCreateForm({
   grades,
+  preselectedGradeId,
+  defaultYear,
+  defaultTerm,
   onSuccess,
 }: {
   grades: Grade[];
+  preselectedGradeId?: string;
+  defaultYear?: number | null;
+  defaultTerm?: number | null;
   onSuccess?: () => void;
 }) {
   const queryClient = useQueryClient();
 
-  const { handleSubmit, control, reset, setError } =
-    useForm<CreateClassroomFormInput, unknown, CreateClassroomFormOutput>({
-      resolver: zodResolver(createSchema),
-      defaultValues: { gradeId: '', roomNumber: undefined, year: '', term: '' },
-    });
+  const { handleSubmit, control, reset } = useForm<CreateInput, unknown, CreateOutput>({
+    resolver: zodResolver(createSchema),
+    defaultValues: {
+      gradeId: preselectedGradeId ?? '',
+      name: '',
+      year: defaultYear ? String(defaultYear) : String(CURRENT_YEAR),
+      term: defaultTerm ? String(defaultTerm) : '',
+    },
+  });
 
-  const watchedGradeId = useWatch({ control, name: 'gradeId' });
-  const watchedRoomNumber = useWatch({ control, name: 'roomNumber' });
-  const selectedGrade = grades.find((g) => g.id === watchedGradeId);
-
+  const [bothTerms, setBothTerms] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
 
-  const onSubmit = (data: CreateClassroomFormOutput) => {
-    const grade = grades.find((g) => g.id === data.gradeId);
-    if (!grade) return;
-
-    const existingRooms = (grade.classrooms ?? [])
-      .map((c) => parseRoomNumber(c.name))
-      .filter((n): n is number => n !== undefined);
-
-    if (existingRooms.includes(data.roomNumber)) {
-      setError('roomNumber', {
-        message: 'Room number already exists for this grade',
-      });
-      return;
-    }
-
+  const onSubmit = (data: CreateOutput) => {
     setServerError(undefined);
     startTransition(async () => {
-      const result = await createClassroomAction({
-        gradeName: grade.name,
-        name: String(data.roomNumber),
-        year: data.year ?? null,
-        term: data.term ?? null,
-      });
-      console.log('payload:', {
-        gradeName: grade.name,
-        name: String(data.roomNumber),
-        year: data.year ?? null,
-        term: data.term ?? null,
-      });
-      console.log('response:', result);
-      if (result.error) {
-        setServerError(result.error);
-        return;
+      if (bothTerms && data.year) {
+        // สร้างทั้ง 2 เทอมพร้อมกัน
+        const result = await createManyClassroomsAction({
+          classrooms: [
+            { gradeId: data.gradeId, name: data.name, year: data.year, term: 1 },
+            { gradeId: data.gradeId, name: data.name, year: data.year, term: 2 },
+          ],
+        });
+        if (result.error) { setServerError(result.error); return; }
+      } else {
+        const result = await createClassroomAction({
+          gradeId: data.gradeId,
+          name: data.name,
+          year: data.year ?? null,
+          term: data.term ?? null,
+        });
+        if (result.error) { setServerError(result.error); return; }
       }
       await queryClient.invalidateQueries({ queryKey: ['grades'] });
       reset();
@@ -160,19 +139,20 @@ function ClassroomCreateForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup className="gap-5">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-2 gap-4">
+          {/* Grade */}
           <Controller
             control={control}
             name="gradeId"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Grade</FieldLabel>
+                <FieldLabel>ระดับชั้น</FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select grade" />
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue placeholder="เลือกระดับชั้น" />
                   </SelectTrigger>
                   <SelectContent>
-                    {grades.map((g) => (
+                    {grades.map(g => (
                       <SelectItem key={g.id} value={g.id}>
                         {g.name}
                       </SelectItem>
@@ -186,19 +166,16 @@ function ClassroomCreateForm({
             )}
           />
 
+          {/* Name — free-form */}
           <Controller
             control={control}
-            name="roomNumber"
+            name="name"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Room Number</FieldLabel>
+                <FieldLabel>ชื่อห้องเรียน</FieldLabel>
                 <Input
                   {...field}
-                  type="number"
-                  min={1}
-                  placeholder="e.g. 101"
-                  value={field.value ?? ''}
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                  placeholder="เช่น 1/1, EP-1, ห้องเรียนพิเศษ"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -207,29 +184,30 @@ function ClassroomCreateForm({
             )}
           />
 
+          {/* Year */}
           <Controller
             control={control}
             name="year"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel>
-                  Year{' '}
-                  <span className="font-normal text-muted-foreground">
-                    (optional)
+                  ปีการศึกษา{' '}
+                  <span className="font-normal text-muted-foreground text-xs">
+                    (แนะนำให้ระบุ)
                   </span>
                 </FieldLabel>
                 <Select
                   value={field.value ?? ''}
-                  onValueChange={(v) =>
+                  onValueChange={v =>
                     field.onChange(v === '__clear__' ? '' : v)
                   }
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All years" />
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue placeholder="ไม่ระบุปี" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="__clear__">All years</SelectItem>
-                    {YEAR_OPTIONS.map((y) => (
+                    <SelectItem value="__clear__">ไม่ระบุปี</SelectItem>
+                    {YEAR_OPTIONS.map(y => (
                       <SelectItem key={y} value={String(y)}>
                         {y}
                       </SelectItem>
@@ -243,51 +221,71 @@ function ClassroomCreateForm({
             )}
           />
 
-          <Controller
-            control={control}
-            name="term"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>
-                  Term{' '}
-                  <span className="font-normal text-muted-foreground">
-                    (optional)
-                  </span>
-                </FieldLabel>
-                <Select
-                  value={field.value ?? ''}
-                  onValueChange={(v) =>
-                    field.onChange(v === '__clear__' ? '' : v)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All terms" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__clear__">All terms</SelectItem>
-                    <SelectItem value="1">Term 1</SelectItem>
-                    <SelectItem value="2">Term 2</SelectItem>
-                  </SelectContent>
-                </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+          {/* Term — ซ่อนเมื่อ bothTerms */}
+          {!bothTerms && (
+            <Controller
+              control={control}
+              name="term"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>
+                    เทอม{' '}
+                    <span className="font-normal text-muted-foreground text-xs">
+                      (ไม่บังคับ)
+                    </span>
+                  </FieldLabel>
+                  <Select
+                    value={field.value ?? ''}
+                    onValueChange={v =>
+                      field.onChange(v === '__clear__' ? '' : v)
+                    }
+                  >
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="ทุกเทอม" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__clear__">ทุกเทอม</SelectItem>
+                      <SelectItem value="1">เทอม 1</SelectItem>
+                      <SelectItem value="2">เทอม 2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          )}
+
+          {/* Both terms placeholder — กันไม่ให้ grid เบี้ยว */}
+          {bothTerms && (
+            <div className="flex items-end pb-1">
+              <span className="text-xs text-muted-foreground bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 w-full text-center">
+                เทอม 1 + เทอม 2
+              </span>
+            </div>
+          )}
         </div>
 
-        {selectedGrade && watchedRoomNumber > 0 && (
-          <p className="text-sm text-muted-foreground">
-            Classroom name:{' '}
-            <span className="font-medium text-foreground">
-              {buildPreviewName(selectedGrade.level, watchedRoomNumber)}
+        {/* Checkbox สร้างทั้ง 2 เทอม */}
+        <Field orientation="horizontal">
+          <Checkbox
+            id="both-terms"
+            checked={bothTerms}
+            onCheckedChange={v => setBothTerms(!!v)}
+          />
+          <FieldLabel htmlFor="both-terms" className="cursor-pointer">
+            สร้างทั้ง 2 เทอมพร้อมกัน
+            <span className="ml-2 text-xs text-muted-foreground font-normal">
+              (ต้องระบุปีการศึกษา)
             </span>
-          </p>
-        )}
+          </FieldLabel>
+        </Field>
 
         {serverError && (
-          <p className="text-sm text-destructive">{serverError}</p>
+          <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+            {serverError}
+          </p>
         )}
 
         <div className="flex justify-end">
@@ -298,11 +296,15 @@ function ClassroomCreateForm({
           >
             {isPending ? (
               <>
-                <Loader className="animate-spin" /> Adding...
+                <Loader className="animate-spin" /> กำลังบันทึก...
+              </>
+            ) : bothTerms ? (
+              <>
+                เพิ่ม 2 เทอม <ArrowRight />
               </>
             ) : (
               <>
-                Add Classroom <ArrowRight />
+                เพิ่มห้องเรียน <ArrowRight />
               </>
             )}
           </Button>
@@ -313,6 +315,7 @@ function ClassroomCreateForm({
 }
 
 // ─── Update form ──────────────────────────────────────────────────────────────
+
 function ClassroomUpdateForm({
   classroom,
   grades,
@@ -323,31 +326,22 @@ function ClassroomUpdateForm({
   onSuccess?: () => void;
 }) {
   const queryClient = useQueryClient();
-  const parentGrade = grades.find((g) => g.id === classroom.gradeId);
-  const currentRoomNumber = parseRoomNumber(classroom.name);
+  const parentGrade = grades.find(g => g.id === classroom.gradeId);
 
-  const existingRooms = (parentGrade?.classrooms ?? [])
-    .filter((c) => c.id !== classroom.id)
-    .map((c) => parseRoomNumber(c.name))
-    .filter((n): n is number => n !== undefined);
-
-  const { handleSubmit, control, reset, setError } =
-    useForm<UpdateClassroomFormValues>({
-      resolver: zodResolver(updateSchema),
-      defaultValues: {
-        roomNumber: currentRoomNumber ?? 0,
-        isActive: classroom.isActive ?? true,
-      },
-    });
+  const { handleSubmit, control, reset } = useForm<UpdateValues>({
+    resolver: zodResolver(updateSchema),
+    defaultValues: {
+      name: classroom.name,
+      isActive: classroom.isActive ?? true,
+    },
+  });
 
   useEffect(() => {
     reset({
-      roomNumber: parseRoomNumber(classroom.name) ?? 0,
+      name: classroom.name,
       isActive: classroom.isActive ?? true,
     });
   }, [classroom.id, classroom.name, classroom.isActive, reset]);
-
-  const watchedRoomNumber = useWatch({ control, name: 'roomNumber' });
 
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
@@ -355,23 +349,11 @@ function ClassroomUpdateForm({
   const [deactivateError, setDeactivateError] = useState<string | undefined>();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const onSubmit = (data: UpdateClassroomFormValues) => {
-    if (
-      parentGrade &&
-      data.roomNumber !== currentRoomNumber &&
-      existingRooms.includes(data.roomNumber)
-    ) {
-      setError('roomNumber', {
-        message: 'Room number already exists for this grade',
-      });
-      return;
-    }
-
+  const onSubmit = (data: UpdateValues) => {
     setServerError(undefined);
     startTransition(async () => {
       const result = await updateClassroomAction(classroom.id, {
-        roomNumber:
-          data.roomNumber !== currentRoomNumber ? data.roomNumber : undefined,
+        name: data.name !== classroom.name ? data.name : undefined,
         isActive: data.isActive,
       });
       if (result.error) {
@@ -402,44 +384,43 @@ function ClassroomUpdateForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup className="gap-5">
-        <div className="space-y-1 rounded-lg bg-muted p-4 text-sm text-muted-foreground">
-          <p>
-            <span className="font-medium text-foreground">Grade:</span>{' '}
-            {parentGrade?.name ?? classroom.gradeId}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Current name:</span>{' '}
-            {classroom.name}
-          </p>
+        {/* Info block */}
+        <div className="space-y-1.5 rounded-xl bg-muted/50 border p-4 text-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">ระดับชั้น</span>
+            <span className="font-medium">
+              {parentGrade?.name ?? classroom.gradeId}
+            </span>
+          </div>
+          {(classroom.year || classroom.term) && (
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">ปีการศึกษา</span>
+              <span className="font-medium">
+                {[
+                  classroom.year,
+                  classroom.term ? `เทอม ${classroom.term}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
+            </div>
+          )}
         </div>
 
+        {/* Name — free-form editable */}
         <Controller
           control={control}
-          name="roomNumber"
+          name="name"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Room Number</FieldLabel>
+              <FieldLabel>ชื่อห้องเรียน</FieldLabel>
               <Input
                 {...field}
-                type="number"
-                min={1}
-                placeholder="e.g. 101"
-                value={field.value ?? ''}
-                onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                placeholder="เช่น 1/1, EP-1, ห้องเรียนพิเศษ"
               />
               {fieldState.invalid && (
                 <FieldError errors={[fieldState.error]} />
               )}
-              {parentGrade &&
-                watchedRoomNumber > 0 &&
-                watchedRoomNumber !== currentRoomNumber && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    New name:{' '}
-                    <span className="font-medium text-foreground">
-                      {buildPreviewName(parentGrade.level, watchedRoomNumber)}
-                    </span>
-                  </p>
-                )}
             </Field>
           )}
         />
@@ -455,17 +436,21 @@ function ClassroomUpdateForm({
                 onCheckedChange={field.onChange}
               />
               <FieldLabel htmlFor="classroom-isActive-update">
-                Active
+                เปิดใช้งาน
               </FieldLabel>
             </Field>
           )}
         />
 
         {serverError && (
-          <p className="text-sm text-destructive">{serverError}</p>
+          <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+            {serverError}
+          </p>
         )}
         {deactivateError && (
-          <p className="text-sm text-destructive">{deactivateError}</p>
+          <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+            {deactivateError}
+          </p>
         )}
 
         <div className="flex items-center justify-between">
@@ -477,17 +462,19 @@ function ClassroomUpdateForm({
                 size="sm"
                 className="text-muted-foreground"
               >
-                More <ChevronDown size={14} />
+                เพิ่มเติม <ChevronDown size={14} />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-48 p-2" align="start">
+            <PopoverContent className="w-52 p-2" align="start">
               <button
                 type="button"
                 disabled={deactivatePending || classroom.isActive === false}
                 onClick={handleDeactivate}
                 className="w-full rounded px-3 py-2 text-left text-sm text-destructive hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {deactivatePending ? 'Deactivating...' : 'Deactivate'}
+                {deactivatePending
+                  ? 'กำลังปิดการใช้งาน...'
+                  : 'ปิดการใช้งานห้องเรียน'}
               </button>
             </PopoverContent>
           </Popover>
@@ -499,11 +486,11 @@ function ClassroomUpdateForm({
           >
             {isPending ? (
               <>
-                <Loader className="animate-spin" /> Saving...
+                <Loader className="animate-spin" /> กำลังบันทึก...
               </>
             ) : (
               <>
-                Save Changes <ArrowRight />
+                บันทึก <ArrowRight />
               </>
             )}
           </Button>
@@ -514,9 +501,13 @@ function ClassroomUpdateForm({
 }
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
+
 export default function ClassroomForm({
   classroom,
   grades,
+  preselectedGradeId,
+  defaultYear,
+  defaultTerm,
   onSuccess,
 }: ClassroomFormProps) {
   if (classroom?.id) {
@@ -528,5 +519,13 @@ export default function ClassroomForm({
       />
     );
   }
-  return <ClassroomCreateForm grades={grades} onSuccess={onSuccess} />;
+  return (
+    <ClassroomCreateForm
+      grades={grades}
+      preselectedGradeId={preselectedGradeId}
+      defaultYear={defaultYear}
+      defaultTerm={defaultTerm}
+      onSuccess={onSuccess}
+    />
+  );
 }

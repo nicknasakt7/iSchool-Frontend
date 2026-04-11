@@ -18,6 +18,8 @@ type AssessmentsHeaderProps = {
   grades?: Grade[];
   classrooms?: Classroom[] | null;
   isLoadingGrades?: boolean;
+  term?: number;
+  year?: number;
 };
 
 export default function AssessmentsHeader({
@@ -31,11 +33,23 @@ export default function AssessmentsHeader({
   grades,
   classrooms,
   isLoadingGrades,
+  term,
+  year,
 }: AssessmentsHeaderProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-4xl font-bold">Assessments</h1>
+        {term !== undefined && year !== undefined && (
+          <div className="flex items-center gap-2 rounded-xl border bg-muted/40 px-4 py-2 text-sm">
+            <span className="text-muted-foreground">ภาคเรียนที่</span>
+            <span className="font-semibold">{term}</span>
+            <span className="text-muted-foreground">/</span>
+            <span className="text-muted-foreground">ปี</span>
+            <span className="font-semibold">{year + 543}</span>
+            <span className="text-muted-foreground text-xs">({year})</span>
+          </div>
+        )}
       </div>
 
       <SearchInput

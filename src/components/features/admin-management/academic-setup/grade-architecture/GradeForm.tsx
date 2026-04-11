@@ -23,13 +23,29 @@ import {
   updateGradeAction,
 } from '@/lib/actions/grade.action';
 
+// ─── Schemas ──────────────────────────────────────────────────────────────────
+
 const createSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  level: z.number().int().positive('Level must be a positive integer'),
+  name: z.string().min(1, 'กรุณาใส่ชื่อระดับชั้น'),
+  level: z
+    .number({
+      required_error: 'กรุณาใส่ระดับ',
+      invalid_type_error: 'ระดับต้องเป็นตัวเลข',
+    })
+    .int('ระดับต้องเป็นจำนวนเต็ม')
+    .positive('ระดับต้องมากกว่า 0'),
   isActive: z.boolean(),
 });
 
 const updateSchema = z.object({
+  name: z.string().min(1, 'กรุณาใส่ชื่อระดับชั้น'),
+  level: z
+    .number({
+      required_error: 'กรุณาใส่ระดับ',
+      invalid_type_error: 'ระดับต้องเป็นตัวเลข',
+    })
+    .int('ระดับต้องเป็นจำนวนเต็ม')
+    .positive('ระดับต้องมากกว่า 0'),
   isActive: z.boolean(),
 });
 
@@ -40,6 +56,8 @@ type GradeFormProps = {
   grade?: Grade;
   onSuccess?: () => void;
 };
+
+// ─── Create form ──────────────────────────────────────────────────────────────
 
 function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
   const queryClient = useQueryClient();
@@ -68,14 +86,15 @@ function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup className="gap-5">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-2 gap-4">
+          {/* Name */}
           <Controller
             control={control}
             name="name"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Grade Name</FieldLabel>
-                <Input {...field} placeholder="e.g. P.1" />
+                <FieldLabel>ชื่อระดับชั้น</FieldLabel>
+                <Input {...field} placeholder="เช่น P.1, Grade 1, ม.1" />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -83,18 +102,24 @@ function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
             )}
           />
 
+          {/* Level */}
           <Controller
             control={control}
             name="level"
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Level</FieldLabel>
+                <FieldLabel>
+                  ระดับ{' '}
+                  <span className="font-normal text-muted-foreground text-xs">
+                    (ใช้เรียงลำดับ)
+                  </span>
+                </FieldLabel>
                 <Input
                   {...field}
                   type="number"
                   min={1}
-                  placeholder="e.g. 1"
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                  placeholder="เช่น 1"
+                  onChange={e => field.onChange(parseInt(e.target.value, 10))}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -114,13 +139,15 @@ function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
-              <FieldLabel htmlFor="grade-isActive">Active</FieldLabel>
+              <FieldLabel htmlFor="grade-isActive">เปิดใช้งาน</FieldLabel>
             </Field>
           )}
         />
 
         {serverError && (
-          <p className="text-sm text-destructive">{serverError}</p>
+          <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+            {serverError}
+          </p>
         )}
 
         <div className="flex justify-end">
@@ -131,11 +158,11 @@ function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
           >
             {isPending ? (
               <>
-                <Loader className="animate-spin" /> Adding...
+                <Loader className="animate-spin" /> กำลังบันทึก...
               </>
             ) : (
               <>
-                Add Grade <ArrowRight />
+                เพิ่มระดับชั้น <ArrowRight />
               </>
             )}
           </Button>
@@ -144,6 +171,8 @@ function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
     </form>
   );
 }
+
+// ─── Update form ──────────────────────────────────────────────────────────────
 
 function GradeUpdateForm({
   grade,
@@ -155,12 +184,16 @@ function GradeUpdateForm({
   const queryClient = useQueryClient();
   const { handleSubmit, control, reset } = useForm<UpdateGradeFormValues>({
     resolver: zodResolver(updateSchema),
-    defaultValues: { isActive: grade.isActive },
+    defaultValues: {
+      name: grade.name,
+      level: grade.level,
+      isActive: grade.isActive,
+    },
   });
 
   useEffect(() => {
-    reset({ isActive: grade.isActive });
-  }, [grade.id, grade.isActive, reset]);
+    reset({ name: grade.name, level: grade.level, isActive: grade.isActive });
+  }, [grade.id, grade.name, grade.level, grade.isActive, reset]);
 
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
@@ -168,7 +201,11 @@ function GradeUpdateForm({
   const onSubmit = (data: UpdateGradeFormValues) => {
     setServerError(undefined);
     startTransition(async () => {
-      const result = await updateGradeAction(grade.id, data);
+      const result = await updateGradeAction(grade.id, {
+        name: data.name !== grade.name ? data.name : undefined,
+        level: data.level !== grade.level ? data.level : undefined,
+        isActive: data.isActive,
+      });
       if (result.error) {
         setServerError(result.error);
         return;
@@ -181,15 +218,47 @@ function GradeUpdateForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup className="gap-5">
-        <div className="space-y-1 rounded-lg bg-muted p-4 text-sm text-muted-foreground">
-          <p>
-            <span className="font-medium text-foreground">Name:</span>{' '}
-            {grade.name}
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Level:</span>{' '}
-            {grade.level}
-          </p>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Name — now editable */}
+          <Controller
+            control={control}
+            name="name"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>ชื่อระดับชั้น</FieldLabel>
+                <Input {...field} placeholder="เช่น P.1, Grade 1, ม.1" />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          {/* Level — editable */}
+          <Controller
+            control={control}
+            name="level"
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>
+                  ระดับ{' '}
+                  <span className="font-normal text-muted-foreground text-xs">
+                    (ใช้เรียงลำดับ)
+                  </span>
+                </FieldLabel>
+                <Input
+                  {...field}
+                  type="number"
+                  min={1}
+                  placeholder="เช่น 1"
+                  onChange={e => field.onChange(parseInt(e.target.value, 10))}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
         </div>
 
         <Controller
@@ -202,13 +271,17 @@ function GradeUpdateForm({
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
-              <FieldLabel htmlFor="grade-isActive-update">Active</FieldLabel>
+              <FieldLabel htmlFor="grade-isActive-update">
+                เปิดใช้งาน
+              </FieldLabel>
             </Field>
           )}
         />
 
         {serverError && (
-          <p className="text-sm text-destructive">{serverError}</p>
+          <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+            {serverError}
+          </p>
         )}
 
         <div className="flex justify-end">
@@ -219,11 +292,11 @@ function GradeUpdateForm({
           >
             {isPending ? (
               <>
-                <Loader className="animate-spin" /> Saving...
+                <Loader className="animate-spin" /> กำลังบันทึก...
               </>
             ) : (
               <>
-                Save Changes <ArrowRight />
+                บันทึก <ArrowRight />
               </>
             )}
           </Button>
@@ -232,6 +305,8 @@ function GradeUpdateForm({
     </form>
   );
 }
+
+// ─── Entry point ──────────────────────────────────────────────────────────────
 
 export default function GradeForm({ grade, onSuccess }: GradeFormProps) {
   if (grade?.id) {

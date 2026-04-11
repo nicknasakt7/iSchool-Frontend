@@ -14,8 +14,10 @@ type GetClassroomsParams = {
 const getClassrooms = (params?: GetClassroomsParams, token?: string) => {
   const query: Record<string, string | number | boolean> = {};
   if (params?.gradeId) query.gradeId = params.gradeId;
-  if (params?.year !== null && params?.year !== undefined) query.year = params.year;
-  if (params?.term !== null && params?.term !== undefined) query.term = params.term;
+  if (params?.year !== null && params?.year !== undefined)
+    query.year = params.year;
+  if (params?.term !== null && params?.term !== undefined)
+    query.term = params.term;
   return apiClient.get<Classroom[]>(
     '/classrooms',
     Object.keys(query).length > 0 ? query : undefined,
