@@ -25,32 +25,27 @@ import {
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
+const levelSchema = z.coerce
+  .number({ error: 'ระดับต้องเป็นตัวเลข' })
+  .int('ระดับต้องเป็นจำนวนเต็ม')
+  .positive('ระดับต้องมากกว่า 0');
+
 const createSchema = z.object({
   name: z.string().min(1, 'กรุณาใส่ชื่อระดับชั้น'),
-  level: z
-    .number({
-      required_error: 'กรุณาใส่ระดับ',
-      invalid_type_error: 'ระดับต้องเป็นตัวเลข',
-    })
-    .int('ระดับต้องเป็นจำนวนเต็ม')
-    .positive('ระดับต้องมากกว่า 0'),
+  level: levelSchema,
   isActive: z.boolean(),
 });
 
 const updateSchema = z.object({
   name: z.string().min(1, 'กรุณาใส่ชื่อระดับชั้น'),
-  level: z
-    .number({
-      required_error: 'กรุณาใส่ระดับ',
-      invalid_type_error: 'ระดับต้องเป็นตัวเลข',
-    })
-    .int('ระดับต้องเป็นจำนวนเต็ม')
-    .positive('ระดับต้องมากกว่า 0'),
+  level: levelSchema,
   isActive: z.boolean(),
 });
 
-type CreateGradeFormValues = z.infer<typeof createSchema>;
-type UpdateGradeFormValues = z.infer<typeof updateSchema>;
+type CreateGradeInput = z.input<typeof createSchema>;
+type CreateGradeFormValues = z.output<typeof createSchema>;
+type UpdateGradeInput = z.input<typeof updateSchema>;
+type UpdateGradeFormValues = z.output<typeof updateSchema>;
 
 type GradeFormProps = {
   grade?: Grade;
@@ -61,7 +56,7 @@ type GradeFormProps = {
 
 function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
   const queryClient = useQueryClient();
-  const { handleSubmit, control, reset } = useForm<CreateGradeFormValues>({
+  const { handleSubmit, control, reset } = useForm<CreateGradeInput, unknown, CreateGradeFormValues>({
     resolver: zodResolver(createSchema),
     defaultValues: { name: '', level: 1, isActive: true },
   });
@@ -116,6 +111,7 @@ function GradeCreateForm({ onSuccess }: { onSuccess?: () => void }) {
                 </FieldLabel>
                 <Input
                   {...field}
+                  value={field.value as number}
                   type="number"
                   min={1}
                   placeholder="เช่น 1"
@@ -182,7 +178,7 @@ function GradeUpdateForm({
   onSuccess?: () => void;
 }) {
   const queryClient = useQueryClient();
-  const { handleSubmit, control, reset } = useForm<UpdateGradeFormValues>({
+  const { handleSubmit, control, reset } = useForm<UpdateGradeInput, unknown, UpdateGradeFormValues>({
     resolver: zodResolver(updateSchema),
     defaultValues: {
       name: grade.name,
@@ -248,6 +244,7 @@ function GradeUpdateForm({
                 </FieldLabel>
                 <Input
                   {...field}
+                  value={field.value as number}
                   type="number"
                   min={1}
                   placeholder="เช่น 1"
