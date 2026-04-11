@@ -1,6 +1,9 @@
+import { Lead } from '@/lib/api/lead/lead.type';
 import ActivityRow from './activity-row';
 
-export default function ActivityTable() {
+type Props = { leads: Lead[] };
+
+export default function ActivityTable({ leads }: Props) {
   return (
     <div className="rounded-xl overflow-hidden border">
       {/* Header */}
@@ -12,10 +15,15 @@ export default function ActivityTable() {
         <div className="text-right">ACTIONS</div>
       </div>
 
-      {/* Rows */}
-      <ActivityRow />
-      <ActivityRow />
-      <ActivityRow />
+      {leads.length === 0 && (
+        <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+          ยังไม่มีผู้สนใจสมัครเรียน
+        </div>
+      )}
+
+      {leads.map(lead => (
+        <ActivityRow key={lead.id} lead={lead} />
+      ))}
     </div>
   );
 }
