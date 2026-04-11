@@ -5,6 +5,7 @@ export type CreateAttendanceDto = {
     studentId: string;
     status: AttendanceStatus;
   }[];
+  date?: string; // YYYY-MM-DD
 };
 
 export type AttendanceSummary = {

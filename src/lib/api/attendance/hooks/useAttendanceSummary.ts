@@ -8,12 +8,12 @@ type Options = {
   enabled?: boolean;
 };
 
-export const useAttendanceSummary = (classId: string, options?: Options) => {
+export const useAttendanceSummary = (classId: string, date?: string, options?: Options) => {
   const { data: session } = useSession();
 
   return useQuery({
-    queryKey: ['attendance-summary', classId],
-    queryFn: () => getAttendanceSummary(classId, session?.user?.accessToken),
+    queryKey: ['attendance-summary', classId, date],
+    queryFn: () => getAttendanceSummary(classId, date, session?.user?.accessToken),
     enabled:
       !!session?.user?.accessToken && !!classId && (options?.enabled ?? true),
   });

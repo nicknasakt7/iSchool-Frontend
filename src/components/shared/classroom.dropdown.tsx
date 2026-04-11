@@ -7,6 +7,11 @@ type ClassroomDropdownProps = {
   classrooms?: Classroom[] | null;
 };
 
+function classroomLabel(c: Classroom): string {
+  if (!c.term) return c.name;
+  return `${c.name} · เทอม ${c.term}`;
+}
+
 export default function ClassroomDropdown({
   value,
   onChange,
@@ -15,12 +20,11 @@ export default function ClassroomDropdown({
   const options = [
     { label: 'All', value: 'all' },
     ...(classrooms ?? []).map(c => ({
-      label: c.name,
+      label: classroomLabel(c),
       value: c.id,
     })),
   ];
 
-  // ถ้ามีแค่ All (ไม่มี classroom จริง) → ไม่ต้องโชว์
   if (options.length <= 1) return null;
 
   return (
