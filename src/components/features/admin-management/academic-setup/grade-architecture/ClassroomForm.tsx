@@ -28,6 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 import { Grade } from '@/lib/api/grade/grade.type';
 import { Classroom } from '@/lib/api/classroom/classroom.type';
@@ -46,11 +47,9 @@ const createSchema = z.object({
     .string()
     .optional()
     .transform(val => (val && val !== '' ? Number(val) : null)),
-  term: z
-    .string()
-    .optional()
-    .transform(val => (val && val !== '' ? Number(val) : null)),
 });
+
+type TermMode = '1' | '2' | 'both';
 
 type CreateInput = z.input<typeof createSchema>;
 type CreateOutput = z.output<typeof createSchema>;
@@ -101,19 +100,20 @@ function ClassroomCreateForm({
       gradeId: preselectedGradeId ?? '',
       name: '',
       year: defaultYear ? String(defaultYear) : String(CURRENT_YEAR),
-      term: defaultTerm ? String(defaultTerm) : '',
     },
   });
 
-  const [bothTerms, setBothTerms] = useState(false);
+  const [termMode, setTermMode] = useState<TermMode>(
+    defaultTerm === 2 ? '2' : defaultTerm === 1 ? '1' : '1',
+  );
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | undefined>();
 
   const onSubmit = (data: CreateOutput) => {
     setServerError(undefined);
     startTransition(async () => {
-      if (bothTerms && data.year) {
-        // สร้างทั้ง 2 เทอมพร้อมกัน
+      if (termMode === 'both') {
+        if (!data.year) { setServerError('กรุณาระบุปีการศึกษาก่อนสร้างทั้ง 2 เทอม'); return; }
         const result = await createManyClassroomsAction({
           classrooms: [
             { gradeId: data.gradeId, name: data.name, year: data.year, term: 1 },
@@ -126,7 +126,7 @@ function ClassroomCreateForm({
           gradeId: data.gradeId,
           name: data.name,
           year: data.year ?? null,
-          term: data.term ?? null,
+          term: termMode === '1' ? 1 : 2,
         });
         if (result.error) { setServerError(result.error); return; }
       }
@@ -221,66 +221,29 @@ function ClassroomCreateForm({
             )}
           />
 
-          {/* Term — ซ่อนเมื่อ bothTerms */}
-          {!bothTerms && (
-            <Controller
-              control={control}
-              name="term"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>
-                    เทอม{' '}
-                    <span className="font-normal text-muted-foreground text-xs">
-                      (ไม่บังคับ)
-                    </span>
-                  </FieldLabel>
-                  <Select
-                    value={field.value ?? ''}
-                    onValueChange={v =>
-                      field.onChange(v === '__clear__' ? '' : v)
-                    }
-                  >
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="ทุกเทอม" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__clear__">ทุกเทอม</SelectItem>
-                      <SelectItem value="1">เทอม 1</SelectItem>
-                      <SelectItem value="2">เทอม 2</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+          {/* Term — segmented control */}
+          <Field>
+            <FieldLabel>เทอม</FieldLabel>
+            <div className="flex rounded-xl border overflow-hidden h-9">
+              {(['1', '2', 'both'] as TermMode[]).map(mode => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setTermMode(mode)}
+                  className={cn(
+                    'flex-1 text-sm font-medium transition-colors',
+                    'border-r last:border-r-0',
+                    termMode === mode
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-background text-muted-foreground hover:bg-muted',
                   )}
-                </Field>
-              )}
-            />
-          )}
-
-          {/* Both terms placeholder — กันไม่ให้ grid เบี้ยว */}
-          {bothTerms && (
-            <div className="flex items-end pb-1">
-              <span className="text-xs text-muted-foreground bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 w-full text-center">
-                เทอม 1 + เทอม 2
-              </span>
+                >
+                  {mode === '1' ? 'เทอม 1' : mode === '2' ? 'เทอม 2' : 'ทั้ง 2 เทอม'}
+                </button>
+              ))}
             </div>
-          )}
+          </Field>
         </div>
-
-        {/* Checkbox สร้างทั้ง 2 เทอม */}
-        <Field orientation="horizontal">
-          <Checkbox
-            id="both-terms"
-            checked={bothTerms}
-            onCheckedChange={v => setBothTerms(!!v)}
-          />
-          <FieldLabel htmlFor="both-terms" className="cursor-pointer">
-            สร้างทั้ง 2 เทอมพร้อมกัน
-            <span className="ml-2 text-xs text-muted-foreground font-normal">
-              (ต้องระบุปีการศึกษา)
-            </span>
-          </FieldLabel>
-        </Field>
 
         {serverError && (
           <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
@@ -298,7 +261,7 @@ function ClassroomCreateForm({
               <>
                 <Loader className="animate-spin" /> กำลังบันทึก...
               </>
-            ) : bothTerms ? (
+            ) : termMode === 'both' ? (
               <>
                 เพิ่ม 2 เทอม <ArrowRight />
               </>
