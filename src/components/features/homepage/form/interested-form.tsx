@@ -54,7 +54,7 @@ export default function InterestedForm() {
           <div className="text-5xl">🎉</div>
           <h2 className="text-2xl sm:text-3xl font-semibold">Thank You!</h2>
           <p className="text-sm opacity-90 max-w-md mx-auto">
-            We have received your application. Our team will contact you shortly.
+            We have received your application. Our school will reach out to you as soon as possible.
           </p>
           <button
             onClick={() => setSubmitted(false)}
