@@ -3,16 +3,18 @@ export type Classroom = {
   name: string;
   gradeId?: string;
   isActive?: boolean;
+  year?: number | null;
+  term?: number | null;
 };
 
 export type CreateClassroomPayload = {
-  gradeName: string;
-  name: string; // room number as string, e.g. "4"
+  gradeId: string;
+  name: string;
   year: number | null;
   term: number | null;
 };
 
 export type UpdateClassroomPayload = {
-  roomNumber?: number;
+  name?: string;
   isActive?: boolean;
 };

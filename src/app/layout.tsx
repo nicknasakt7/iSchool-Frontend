@@ -26,7 +26,7 @@ export default async function RootLayout({
   // const session = await auth()
 
   return (
-    <html lang="en" className={cn(`antialiased ${poppins.className}`)}>
+    <html lang="en" className={cn(`antialiased ${poppins.className}`)} suppressHydrationWarning>
       <body className={`antialiased ${poppins.className}`}>
         <Providers>
           {children}

@@ -1,14 +1,15 @@
+import { Button } from '@/components/ui/button';
 import { ArrowRightIcon } from 'lucide-react';
 
 type AlertCardProps = Record<string, never>;
 
 export default function AlertCard({}: AlertCardProps) {
   return (
-    <div className="w-full h-full rounded-4xl p-6 text-white bg-linear-to-r from-new-orange-400 to-new-orange-700/90 shadow-lg flex flex-col md:flex-row gap-6">
+    <div className="w-full h-full rounded-4xl p-6 text-chart-1 bg-linear-to-r from-new-orange-400 to-new-orange-700/90 shadow-lg flex flex-col md:flex-row gap-6">
       {/* LEFT */}
       <div className="flex-1 min-w-0">
         {' '}
-        {/* 🔥 สำคัญมาก */}
+        {/*  สำคัญมาก */}
         <p className="text-sm opacity-80 mb-2">⚠️ ACADEMIC ALERT</p>
         <h2 className="text-2xl md:text-3xl font-bold mb-3 wrap-break-word">
           3 students need attention
@@ -17,9 +18,12 @@ export default function AlertCard({}: AlertCardProps) {
           Predictive analysis indicates a high risk of academic decline in
           Mathematics.
         </p>
-        <button className="flex items-center gap-2 rounded-full bg-white text-red-500 font-bold px-4 py-2 text-sm hover:bg-gray-100">
+        <Button
+          variant="destructive"
+          className="flex items-center gap-2 rounded-full bg-white text-red-500 font-bold px-4 py-2 text-sm hover:bg-gray-100"
+        >
           Review Student Profiles <ArrowRightIcon />
-        </button>
+        </Button>
       </div>
 
       {/* RIGHT */}

@@ -1,9 +1,10 @@
 'use client';
 
-import { Menu, GraduationCap, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Menu, GraduationCap, Sparkles, Clock } from 'lucide-react';
+import { ModeToggle } from '@/components/shared/mode-toggle';
 import { useSession } from 'next-auth/react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { useEffect, useState } from 'react';
 
 type DashboardHeaderProps = {
   onOpenSidebar?: () => void;
@@ -11,11 +12,29 @@ type DashboardHeaderProps = {
 
 export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
   const session = useSession();
+  const [now, setNow] = useState(new Date());
 
-  console.log(session);
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const dateStr = now.toLocaleDateString('th-TH', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+  const timeStr = now.toLocaleTimeString('th-TH', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
   return (
     // <div className="flex flex-col gap-4 mb-6 bg-background shadow-sm rounded-xl p-4">
-    <div className="flex flex-col gap-4 px-4 md:px-6 py-4 border-b border-border/80 bg-muted-header">
+    <div className="flex flex-col gap-2 px-4 md:px-6 py-2 border-b border-border/80 bg-muted-header">
       {/*  TOP BAR (มือถือเท่านั้น) */}
       <div className="flex items-center justify-between md:hidden ">
         {/*  เพิ่ม: ปุ่ม hamburger */}
@@ -35,15 +54,41 @@ export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
       </div>
 
       {/* MAIN HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* RIGHT */}
-        <div className="flex items-center justify-between md:justify-end gap-4 flex-wrap order-1 md:order-2 w-full">
-          <Button>
-            <Sparkles /> AI Insight
-          </Button>
+      <div className="flex items-center gap-4 w-full">
+        {/* LEFT — AI Insight */}
+        <div className="bg-linear-to-r from-blue-600 via-sky-400 to-white/80 border border-blue-300/50 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-400/20 transition-all duration-200 cursor-pointer rounded-xl px-5 py-3 flex items-center gap-3 min-w-65 shrink-0">
+          <div className="bg-white/30 backdrop-blur-sm rounded-lg p-2 shrink-0">
+            <Sparkles className="w-5 h-5 text-white drop-shadow" />
+          </div>
+          <div>
+            <p className="font-bold text-sm text-white drop-shadow leading-tight">AI Insight</p>
+            <p className="text-xs text-blue-900/80 leading-snug mt-0.5 font-medium">
+              Understand every student in seconds.<br />
+              Let AI highlight strengths, weaknesses,<br />
+              and learning risks for you.
+            </p>
+          </div>
+        </div>
 
-          <div className="bg-card border-2 border-card px-8 py-2 rounded-xl flex items-center gap-4 md:ml-auto">
-            <Avatar className="size-15">
+        {/* SPACER */}
+        <div className="flex-1" />
+
+        {/* RIGHT — Date/Time + Toggle + User */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* DATE TIME CARD */}
+          <div className="bg-card border border-border rounded-xl px-4 py-2 flex items-center gap-3">
+            <Clock className="w-4 h-4 text-blue-500 shrink-0" />
+            <div className="leading-tight">
+              <p className="text-xs text-muted-foreground">{dateStr}</p>
+              <p className="text-sm font-bold tabular-nums text-foreground">{timeStr}</p>
+            </div>
+          </div>
+
+          <ModeToggle />
+
+          {/* USER CARD */}
+          <div className="bg-card border border-border rounded-xl px-4 py-1.5 flex items-center gap-3">
+            <Avatar className="size-9">
               <AvatarImage
                 alt="user"
                 src={session.data?.user?.profileImageUrl ?? '/user.png'}

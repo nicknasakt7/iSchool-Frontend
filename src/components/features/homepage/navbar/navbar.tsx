@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { PATH } from '@/constants/path.constant';
 import Logo from '@/components/shared/logo';
 import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/shared/mode-toggle';
 import { ArrowRight } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
@@ -37,7 +38,8 @@ export default function Navbar() {
           </div>
         </Link>
       </div>
-      <div className="flex gap-4 items-center ">
+      <div className="flex gap-4 items-center">
+        <ModeToggle />
         {!isLoginPath &&
           (status === 'loading' ? (
             <div className="h-9 w-36 rounded-full bg-gray-200 animate-pulse" />

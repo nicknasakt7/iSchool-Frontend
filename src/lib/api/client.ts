@@ -72,6 +72,10 @@ const apiFetch = async <T>(
     throw new ApiError(error.message, error.code, error.details);
   }
 
+  if (res.status === 204 || res.headers.get('content-length') === '0') {
+    return undefined as T;
+  }
+
   return (await res.json()).data;
 };
 const get = <T>(

@@ -1,9 +1,8 @@
-import { StudentFormValues } from '@/lib/schemas/student.schema';
 import { apiClient } from '../client';
-import { Student, StudentListResponse } from './student.type';
+import { Student, StudentDetail, StudentListResponse } from './student.type';
 
 const createStudent = (input: FormData, token?: string) =>
-  apiClient.post<Student>("/students", input, token);
+  apiClient.post<Student>('/students', input, token);
 
 const getStudents = (
   params?: {
@@ -14,6 +13,12 @@ const getStudents = (
     classId?: string;
   },
   token?: string,
-) => apiClient.get<StudentListResponse>("/students", params, token);
+) => apiClient.get<StudentListResponse>('/students', params, token);
 
-export const studentService = { createStudent, getStudents };
+const getStudentById = (
+  id: string,
+  params?: { term?: number; year?: number },
+  token?: string,
+) => apiClient.get<StudentDetail>(`/students/${id}`, params, token);
+
+export const studentService = { createStudent, getStudents, getStudentById };
