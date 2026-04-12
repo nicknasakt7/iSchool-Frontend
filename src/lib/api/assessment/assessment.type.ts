@@ -88,6 +88,40 @@ export type UpdateScoreItemDto = {
   value: number;
 };
 
+// ─── GET /assessment-config/full ──────────────────────────────────────────
+export type FullScoreItem = {
+  scoreItemId: string;
+  configId: string;
+  value: number;
+};
+
+export type StudentInFullAssessment = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  nickName?: string | null;
+  studentCode: string;
+  profileImageUrl?: string | null;
+  scoreId?: string | null;
+  totalScore: number;
+  subjectGrade: number;
+  scores: FullScoreItem[];
+};
+
+export type FullAssessmentConfig = {
+  id: string;
+  name: string;
+  maxScore: number;
+  order: number;
+  term: number;
+  year: number;
+};
+
+export type FullAssessmentResponse = {
+  configs: FullAssessmentConfig[];
+  students: StudentInFullAssessment[];
+};
+
 // ─── GET /subject-assignments/find ────────────────────────────────────────
 export type FindSubjectAssignmentParams = {
   classroomId: string;

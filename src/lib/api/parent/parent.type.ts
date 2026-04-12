@@ -15,3 +15,18 @@ export type Parent = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type ParentAdmin = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  tel?: string | null;
+  lineId?: string | null;
+  students?: { id: string; firstName: string; lastName: string }[];
+};
+
+export type ParentAdminListResponse = {
+  data: ParentAdmin[];
+  meta: { total: number; page: number; limit: number };
+};

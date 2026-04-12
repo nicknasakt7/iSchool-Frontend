@@ -1,6 +1,6 @@
 import { FormValues } from "@/components/features/create/form/NewTeacherForm";
 
-import { Teacher, TeacherListResponse } from "./teacher.type";
+import { Teacher, TeacherListResponse, TeacherResponse } from "./teacher.type";
 import { api } from "../api-server";
 import { apiClient } from "../client";
 
@@ -19,4 +19,43 @@ const getTeachers = (
   token?: string,
 ) => apiClient.get<TeacherListResponse>("/teachers", params, token);
 
-export const teacherService = { createTeacher, getTeachers };
+const updateTeacher = (
+  id: string,
+  data: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    gender?: string;
+    homeroomClassId?: string | null;
+  },
+  token?: string,
+) => apiClient.patch<TeacherResponse>(`/teachers/${id}`, data, token);
+
+const assignSubject = (
+  data: { teacherId: string; subjectId: string; classId: string },
+  token?: string,
+) =>
+  apiClient.post<{ id: string; subjectName?: string; className?: string }>(
+    '/teachers/assign-subject',
+    data,
+    token,
+  );
+
+const deleteSubjectAssignment = (id: string, token?: string) =>
+  apiClient.delete<void>(`/subject-assignments/${id}`, token);
+
+const deleteTeacher = (id: string, token?: string) =>
+  apiClient.delete<void>(`/teachers/${id}`, token);
+
+const getTeacherById = (id: string, token?: string) =>
+  apiClient.get<TeacherResponse>(`/teachers/${id}`, undefined, token);
+
+export const teacherService = {
+  createTeacher,
+  getTeachers,
+  updateTeacher,
+  assignSubject,
+  deleteSubjectAssignment,
+  deleteTeacher,
+  getTeacherById,
+};

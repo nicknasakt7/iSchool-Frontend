@@ -1,6 +1,6 @@
 'use client';
 import SearchInput from '@/components/shared/search-input';
-import SubjectDropdown from '@/components/shared/subject-dropdown';
+import AllSubjectsDropdown from '@/components/shared/all-subjects-dropdown';
 import GradeDropdown from './grade-dropdown';
 
 import { useState } from 'react';
@@ -23,8 +23,8 @@ export default function FilterBar({
 }: Props) {
   const { data: grades } = useGrades();
 
-  console.log('gradessssssssss', grades);
   const [gradeId, setGradeId] = useState<string>();
+  const [subjectValue, setSubjectValue] = useState('all');
 
   const selectedGrade = grades?.find(g => g.id === gradeId);
   const classrooms = selectedGrade?.classrooms ?? [];
@@ -34,8 +34,14 @@ export default function FilterBar({
       {/*  Search */}
       <SearchInput onSearch={onSearch} />
 
-      {/* Subject */}
-      <SubjectDropdown onSubjectChange={onSubjectChange} />
+      {/* Subject — all subjects for teacher filtering */}
+      <AllSubjectsDropdown
+        value={subjectValue}
+        onChange={v => {
+          setSubjectValue(v);
+          onSubjectChange?.(v === 'all' ? '' : v);
+        }}
+      />
 
       {/*  Grade */}
       <GradeDropdown

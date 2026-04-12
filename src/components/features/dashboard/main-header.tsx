@@ -15,26 +15,27 @@ type DashboardHeaderProps = {
 export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
   const session = useSession();
   const { year, term, setYear, setTerm } = useAcademic();
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState<Date | null>(null);
   const YEAR_OPTIONS = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
 
   useEffect(() => {
+    setNow(new Date());
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const dateStr = now.toLocaleDateString('th-TH', {
+  const dateStr = now?.toLocaleDateString('th-TH', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-  });
-  const timeStr = now.toLocaleTimeString('th-TH', {
+  }) ?? '';
+  const timeStr = now?.toLocaleTimeString('th-TH', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
-  });
+  }) ?? '--:--:--';
 
   return (
     // <div className="flex flex-col gap-4 mb-6 bg-background shadow-sm rounded-xl p-4">

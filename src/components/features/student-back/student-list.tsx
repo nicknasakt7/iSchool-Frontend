@@ -1,7 +1,23 @@
 'use client';
 
+import Link from 'next/link';
+import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
+import { Trash2 } from 'lucide-react';
 import { useStudents } from '@/lib/api/student/hooks/useStudents';
-import StudentCard from './student-card';
+import { useDeleteStudent } from '@/lib/api/student/hooks/useDeleteStudent';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 type StudentsListProps = {
   search: string;
@@ -20,6 +36,7 @@ export default function StudentsList({
   classId,
   shouldFetch,
 }: StudentsListProps) {
+  const { data: session } = useSession();
   const { data, isLoading, isError } = useStudents(
     {
       page,
@@ -30,6 +47,11 @@ export default function StudentsList({
     },
     { enabled: shouldFetch },
   );
+
+  const { mutate: deleteStudent, isPending: isDeleting } = useDeleteStudent();
+
+  const role = session?.user?.role;
+  const canDelete = role === 'ADMIN' || role === 'SUPER_ADMIN';
 
   if (!shouldFetch)
     return (
@@ -54,14 +76,64 @@ export default function StudentsList({
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {data.data.map(s => (
-          <StudentCard
-            key={s.id}
-            id={s.id}
-            name={`${s.firstName} ${s.lastName}`}
-            nickname={s.nickName}
-            studentCode={s.studentCode}
-            image={s.profileImageUrl ?? '/user.png'}
-          />
+          <div key={s.id} className="relative group">
+            <Link href={`/students/${s.id}`}>
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-card hover:shadow-md hover:scale-[1.01] transition-all duration-200 cursor-pointer pr-14">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={s.profileImageUrl || '/user.png'}
+                    alt={`${s.firstName} ${s.lastName}`}
+                    width={80}
+                    height={80}
+                    className="rounded-full object-cover w-20 h-20"
+                  />
+                  <div>
+                    <p className="font-medium">{s.firstName} {s.lastName}</p>
+                    <p className="text-sm text-gray-500">{s.nickName}</p>
+                    <p className="text-xs text-gray-400">Student code: {s.studentCode}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {canDelete && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button
+                      disabled={isDeleting}
+                      className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-40"
+                      title="Delete student"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Student</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Permanently delete <strong>{s.firstName} {s.lastName}</strong>? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() =>
+                          deleteStudent(s.id, {
+                            onSuccess: () => toast.success(`${s.firstName} ${s.lastName} deleted`),
+                            onError: (e) => toast.error(e.message ?? 'Failed to delete'),
+                          })
+                        }
+                        className="bg-destructive hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
@@ -74,9 +146,7 @@ export default function StudentsList({
         >
           Prev
         </button>
-
         <span className="font-medium">Page {page}</span>
-
         <button
           disabled={!hasNext}
           onClick={() => setPage(page + 1)}

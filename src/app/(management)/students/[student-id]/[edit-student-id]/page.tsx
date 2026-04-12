@@ -1,16 +1,17 @@
-import ProfileForm from "@/components/profile/profile-form";
-import StudentIntelligenceHeader from "@/components/profile/student-intelligence-header";
+import ProfileForm from '@/components/profile/profile-form';
+import StudentIntelligenceHeader from '@/components/profile/student-intelligence-header';
 
-export default function ProfilePage() {
+type Props = {
+  params: Promise<{ 'student-id': string }>;
+};
+
+export default async function ProfilePage({ params }: Props) {
+  const { 'student-id': studentId } = await params;
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      {/* Header */}
+    <div className="max-w-3xl mx-auto py-4 space-y-0">
       <StudentIntelligenceHeader />
-
-      {/* Card */}
-      <div className="bg-white rounded-2xl p-6 shadow">
-        <ProfileForm />
-      </div>
+      <ProfileForm studentId={studentId} />
     </div>
   );
 }

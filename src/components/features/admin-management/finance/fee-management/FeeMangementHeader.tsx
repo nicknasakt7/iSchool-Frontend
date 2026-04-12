@@ -12,7 +12,7 @@ export default function FeeManagementHeader() {
   return (
     <div className="flex justify-between items-center">
       <div>
-        <h1 className="text-3xl font-bold">Tuition & Fees Management</h1>
+        <h1 className="text-4xl font-bold">Tuition & Fees Management</h1>
         <p className="text-gray-500">
           Centralized oversight for academic financial transactions.
         </p>

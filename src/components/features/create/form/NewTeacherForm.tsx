@@ -193,10 +193,10 @@ export default function NewTeacherForm() {
               <Field>
                 <FieldLabel>Gender</FieldLabel>
                 <div className="flex gap-6">
-                  {["MALE", "FEMALE"].map((g) => (
+                  {(["MALE", "FEMALE", "OTHER"] as const).map((g) => (
                     <label
                       key={g}
-                      className="flex items-center gap-2 cursor-pointer"
+                      className="flex items-center gap-2 cursor-pointer capitalize"
                     >
                       <input
                         type="radio"
@@ -204,7 +204,7 @@ export default function NewTeacherForm() {
                         checked={field.value === g}
                         onChange={() => field.onChange(g)}
                       />
-                      {g}
+                      {g.charAt(0) + g.slice(1).toLowerCase()}
                     </label>
                   ))}
                 </div>

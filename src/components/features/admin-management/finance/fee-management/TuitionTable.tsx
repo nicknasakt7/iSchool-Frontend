@@ -1,232 +1,168 @@
 'use client';
 
 import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
-
-type Student = {
-  name: string;
-  nickname: string;
+type BillRow = {
   id: string;
-  code: string;
-  status: 'Paid' | 'Unpaid';
+  billNumber: string;
+  title: string;
+  studentName: string;
+  amount: number;
+  term: number;
+  year: number;
+  dueDate?: string | null;
+  isPaid: boolean;
 };
 
+// Mock data — teammate replaces with real useAdminBills() hook
+const MOCK_BILLS: BillRow[] = [
+  {
+    id: '1',
+    billNumber: 'SCH-0001',
+    title: 'Tuition Fee Term 1',
+    studentName: 'Somchai Rakdee',
+    amount: 1240000,
+    term: 1,
+    year: 2025,
+    dueDate: '2025-06-30',
+    isPaid: true,
+  },
+  {
+    id: '2',
+    billNumber: 'SCH-0002',
+    title: 'Tuition Fee Term 1',
+    studentName: 'Kanya Srisai',
+    amount: 1240000,
+    term: 1,
+    year: 2025,
+    dueDate: '2025-06-30',
+    isPaid: false,
+  },
+  {
+    id: '3',
+    billNumber: 'SCH-0003',
+    title: 'Extra Math Class',
+    studentName: 'Arthit Boon',
+    amount: 250000,
+    term: 1,
+    year: 2025,
+    dueDate: null,
+    isPaid: false,
+  },
+];
+
+const PAGE_SIZE = 10;
+
+function formatAmount(satang: number): string {
+  return `฿${(satang / 100).toLocaleString('th-TH', { minimumFractionDigits: 2 })}`;
+}
+
 export default function TuitionTable() {
-  const [students, setStudents] = useState<Student[]>([
-    {
-      name: 'Somchai Rakdee',
-      nickname: 'Som',
-      id: '650124',
-      code: 'ST-2024-08932',
-      status: 'Paid',
-    },
-    {
-      name: 'Kanya Wattana',
-      nickname: 'Nan',
-      id: '650025',
-      code: 'ST-2024-8415',
-      status: 'Unpaid',
-    },
-    {
-      name: 'Anan Siri',
-      nickname: 'Panu',
-      id: '650029',
-      code: 'ST-2024-1182',
-      status: 'Paid',
-    },
-    {
-      name: 'Malee Boon',
-      nickname: 'May',
-      id: '650032',
-      code: 'ST-2024-6557',
-      status: 'Unpaid',
-    },
+  const [bills] = useState<BillRow[]>(MOCK_BILLS); // Teammate: replace with real data
+  const [page, setPage] = useState(1);
+  const [filterPaid, setFilterPaid] = useState<'all' | 'paid' | 'unpaid'>('all');
 
-    // 🔥 เพิ่มอีก 4 คน → รวม 8 คน (ได้ 4 หน้า ถ้า page ละ 2)
-    {
-      name: 'Niran Chaiyo',
-      nickname: 'Ran',
-      id: '650041',
-      code: 'ST-2024-2231',
-      status: 'Paid',
-    },
-    {
-      name: 'Suda Meechai',
-      nickname: 'Da',
-      id: '650052',
-      code: 'ST-2024-9981',
-      status: 'Unpaid',
-    },
-    {
-      name: 'Prasit Wong',
-      nickname: 'Sit',
-      id: '650063',
-      code: 'ST-2024-4412',
-      status: 'Paid',
-    },
-    {
-      name: 'Chalida Nook',
-      nickname: 'Lin',
-      id: '650074',
-      code: 'ST-2024-7712',
-      status: 'Unpaid',
-    },
-  ]);
+  const filtered = bills.filter(b => {
+    if (filterPaid === 'paid') return b.isPaid;
+    if (filterPaid === 'unpaid') return !b.isPaid;
+    return true;
+  });
 
-  // 🔥 Pagination State
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 4;
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentStudents = students.slice(startIndex, startIndex + itemsPerPage);
-  const totalPages = Math.ceil(students.length / itemsPerPage);
-
-  // 🔥 Update Status
-  const handleStatusChange = (index: number, value: 'Paid' | 'Unpaid') => {
-    const updated = [...students];
-    updated[index].status = value;
-    setStudents(updated);
-  };
-
-  const getStatusStyle = (status: 'Paid' | 'Unpaid') => {
-    return status === 'Paid'
-      ? 'bg-green-100 text-green-600'
-      : 'bg-yellow-100 text-yellow-600';
-  };
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-      <table className="w-full">
-        {/* HEADER */}
-        <thead className="text-gray-500 text-sm border-b">
-          <tr>
-            <th className="text-left p-4">FULL NAME</th>
-            <th className="text-left p-4">STUDENT ID</th>
-            <th className="text-left p-4">TUITION FEE</th>
-            <th className="text-left p-4">STATUS</th>
-            <th className="text-left p-4">ACTIONS</th>
-          </tr>
-        </thead>
-
-        {/* BODY */}
-        <tbody>
-          {currentStudents.map((s, i) => (
-            <tr key={i} className="border-b">
-              {/* NAME */}
-              <td className="p-4 flex items-center gap-4">
-                <div className="w-12 h-12 bg-teal-500 text-white flex items-center justify-center rounded-xl font-semibold">
-                  {s.name
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')
-                    .slice(0, 2)}
-                </div>
-
-                <div>
-                  <p className="font-medium">{s.name}</p>
-                  <p className="text-gray-400 text-sm">{s.nickname}</p>
-                </div>
-              </td>
-
-              {/* ID */}
-              <td className="p-4">
-                <p>{s.id}</p>
-                <p className="text-gray-400 text-sm">{s.code}</p>
-              </td>
-
-              {/* FEE */}
-              <td className="p-4">
-                <p className="text-blue-600 font-medium">฿45,000.00</p>
-                <p className="text-gray-400 text-xs">TUITION FEE</p>
-              </td>
-
-              {/* STATUS */}
-              <td className="p-4">
-                <Select
-                  value={s.status}
-                  onValueChange={(value: 'Paid' | 'Unpaid') =>
-                    handleStatusChange(startIndex + i, value)
-                  }
-                >
-                  <SelectTrigger
-                    className={`
-                      w-120px h-9 rounded-full text-sm border-none
-                      ${getStatusStyle(s.status)}
-                    `}
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    <SelectItem value="Paid">Paid</SelectItem>
-                    <SelectItem value="Unpaid">Unpaid</SelectItem>
-                  </SelectContent>
-                </Select>
-              </td>
-
-              {/* ACTION */}
-              <td className="p-4">
-                <button className="border px-4 py-2 rounded-lg hover:bg-gray-50">
-                  View Ledger
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* 🔥 PAGINATION */}
-      <div className="flex justify-between items-center p-4 text-sm text-gray-500">
-        <p>
-          Showing {startIndex + 1}-
-          {Math.min(startIndex + itemsPerPage, students.length)} of{' '}
-          {students.length} students
-        </p>
-
-        <div className="flex gap-2 items-center">
-          {/* Previous */}
+    <div className="space-y-4">
+      {/* Filter row */}
+      <div className="flex gap-2">
+        {(['all', 'paid', 'unpaid'] as const).map(f => (
           <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-2 disabled:opacity-50"
+            key={f}
+            onClick={() => { setFilterPaid(f); setPage(1); }}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition ${
+              filterPaid === f
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
+            }`}
           >
-            Previous
+            {f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
+        ))}
+        <span className="ml-auto text-sm text-gray-500 self-center">
+          {filtered.length} bill{filtered.length !== 1 ? 's' : ''}
+        </span>
+      </div>
 
-          {/* Page Numbers */}
-          {Array.from({ length: totalPages }).map((_, i) => {
-            const page = i + 1;
+      {/* Table */}
+      <div className="overflow-x-auto rounded-xl border bg-white">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-gray-500 border-b bg-gray-50">
+              <th className="px-4 py-3 font-medium">Bill No.</th>
+              <th className="px-4 py-3 font-medium">Title</th>
+              <th className="px-4 py-3 font-medium">Student</th>
+              <th className="px-4 py-3 font-medium">Amount</th>
+              <th className="px-4 py-3 font-medium">Term / Year</th>
+              <th className="px-4 py-3 font-medium">Due Date</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {paginated.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
+                  No bills found
+                </td>
+              </tr>
+            ) : (
+              paginated.map(bill => (
+                <tr key={bill.id} className="hover:bg-gray-50 transition">
+                  <td className="px-4 py-3 font-mono text-xs text-gray-600">{bill.billNumber}</td>
+                  <td className="px-4 py-3 font-medium">{bill.title}</td>
+                  <td className="px-4 py-3 text-gray-600">{bill.studentName}</td>
+                  <td className="px-4 py-3 font-medium">{formatAmount(bill.amount)}</td>
+                  <td className="px-4 py-3 text-gray-600">Term {bill.term} / {bill.year}</td>
+                  <td className="px-4 py-3 text-gray-500 text-xs">
+                    {bill.dueDate
+                      ? new Date(bill.dueDate).toLocaleDateString('th-TH')
+                      : '—'}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge
+                      variant={bill.isPaid ? 'default' : 'destructive'}
+                      className={bill.isPaid ? 'bg-green-100 text-green-700 hover:bg-green-100' : ''}
+                    >
+                      {bill.isPaid ? 'Paid' : 'Unpaid'}
+                    </Badge>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
-            return (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-2 ${
-                  currentPage === page ? 'font-bold text-black' : ''
-                }`}
-              >
-                {page}
-              </button>
-            );
-          })}
-
-          {/* Next */}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-3">
           <button
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-2 disabled:opacity-50"
+            disabled={page === 1}
+            onClick={() => setPage(p => p - 1)}
+            className="px-3 py-1.5 border rounded text-sm disabled:opacity-40"
+          >
+            Prev
+          </button>
+          <span className="text-sm text-gray-600">Page {page} of {totalPages}</span>
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage(p => p + 1)}
+            className="px-3 py-1.5 border rounded text-sm disabled:opacity-40"
           >
             Next
           </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import EnrollmentSection from '@/components/features/admin-management/enrollment
 export default function EnrollmentPage() {
   return (
     <div>
-      <h2 className="text-4xl font-semibold mb-4">Enrollment Hub</h2>
+      <h2 className="text-4xl font-bold mb-4">Enrollment Hub</h2>
 
       {/* ใส่ SummaryCards + Filters + Table ที่เราทำไว้ตรงนี้ */}
       <p className="text-sm text-muted-foreground">
