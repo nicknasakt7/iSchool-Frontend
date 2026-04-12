@@ -12,7 +12,7 @@ export default function CreateTransactionHeader() {
   return (
     <div className="flex justify-between items-center">
       <div>
-        <h1 className="text-3xl font-bold">Create New Transaction</h1>
+        <h1 className="text-4xl font-bold">Create New Transaction</h1>
         <p className="text-gray-500">
           Define the academic parameters and financial details.
         </p>

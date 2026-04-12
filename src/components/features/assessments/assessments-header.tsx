@@ -20,6 +20,7 @@ type AssessmentsHeaderProps = {
   isLoadingGrades?: boolean;
   term?: number;
   year?: number;
+  hasClassroom?: boolean;
 };
 
 export default function AssessmentsHeader({
@@ -35,6 +36,7 @@ export default function AssessmentsHeader({
   isLoadingGrades,
   term,
   year,
+  hasClassroom,
 }: AssessmentsHeaderProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -52,11 +54,6 @@ export default function AssessmentsHeader({
         )}
       </div>
 
-      <SearchInput
-        placeholder="Find student by name or student ID..."
-        onSearch={onSearch}
-      />
-
       <div className="flex flex-wrap gap-4">
         <GradeDropdown
           value={grade}
@@ -71,8 +68,19 @@ export default function AssessmentsHeader({
           onChange={onClassroomChange}
         />
 
-        <SubjectDropdown value={subject} onSubjectChange={onSubjectChange} />
+        <SubjectDropdown
+          value={subject}
+          onSubjectChange={onSubjectChange}
+          classroomId={classroom}
+        />
       </div>
+
+      {hasClassroom && (
+        <SearchInput
+          placeholder="Find student by name or student ID..."
+          onSearch={onSearch}
+        />
+      )}
     </div>
   );
 }

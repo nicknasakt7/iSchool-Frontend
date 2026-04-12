@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Sidebar from "@/components/layouts/dashboard/sidebar";
 import MainHeader from "@/components/features/dashboard/main-header";
+import { AcademicProvider } from "@/lib/context/academic-context";
 
 export default function DashboardLayout({
   children,
@@ -15,6 +16,7 @@ export default function DashboardLayout({
   const handleCloseSidebar = () => setOpenSidebar(false);
 
   return (
+    <AcademicProvider>
     <div className="flex min-h-screen">
       {/* ===== DESKTOP SIDEBAR ===== */}
       <div className="hidden md:block w-64 border-r">
@@ -43,5 +45,6 @@ export default function DashboardLayout({
         <main className="px-4 md:px-6 py-4">{children}</main>
       </div>
     </div>
+    </AcademicProvider>
   );
 }

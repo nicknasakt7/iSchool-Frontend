@@ -15,6 +15,22 @@ export type Teacher = {
   updatedAt: Date;
 };
 
+export type HomeroomClassInTeacher = {
+  id: string;
+  name: string;
+  gradeId: string;
+  gradeLevel: number;
+  gradeName: string;
+};
+
+export type TeacherSubjectAssignment = {
+  id: string;
+  subjectId: string;
+  classId: string;
+  subjectName?: string | null;
+  className?: string | null;
+};
+
 export type TeacherResponse = {
   id: string;
   email: string;
@@ -22,13 +38,9 @@ export type TeacherResponse = {
   lastName: string;
   gender: Gender;
   homeroomClassId?: string | null;
+  homeroomClass?: HomeroomClassInTeacher | null;
   profileImageUrl?: string | null;
-
-  subjects?: {
-    subjectName?: string;
-    className?: string;
-  }[];
-
+  subjects?: TeacherSubjectAssignment[];
   createdAt: Date;
   updatedAt: Date;
 };

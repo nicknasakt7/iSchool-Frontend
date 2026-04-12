@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -248,13 +247,14 @@ export default function GradeArchitecturePage() {
   const hasFilter = activeFilter.year !== null || activeFilter.term !== null;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-3xl font-semibold mb-1">Grade Architecture</h2>
+          <h2 className="text-4xl font-bold mb-1">Grade Architecture</h2>
           <p className="text-sm text-muted-foreground">
-            จัดการระดับชั้นและห้องเรียน · ห้องเรียนสามารถมีหลายปีการศึกษาเพื่อเก็บประวัติ
+            จัดการระดับชั้นและห้องเรียน ·
+            ห้องเรียนสามารถมีหลายปีการศึกษาเพื่อเก็บประวัติ
           </p>
         </div>
         <Button onClick={openCreateGrade} size="sm" className="gap-1.5">
@@ -297,9 +297,7 @@ export default function GradeArchitecturePage() {
                   ))}
                 </SelectContent>
               </Select>
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -325,9 +323,7 @@ export default function GradeArchitecturePage() {
                   <SelectItem value="2">เทอม 2</SelectItem>
                 </SelectContent>
               </Select>
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -414,11 +410,7 @@ export default function GradeArchitecturePage() {
           <School className="w-12 h-12 mb-3 opacity-30" />
           <p className="text-base font-medium">ยังไม่มีระดับชั้น</p>
           <p className="text-sm mt-1">เริ่มต้นด้วยการเพิ่มระดับชั้นเรียนแรก</p>
-          <Button
-            className="mt-4 gap-1.5"
-            size="sm"
-            onClick={openCreateGrade}
-          >
+          <Button className="mt-4 gap-1.5" size="sm" onClick={openCreateGrade}>
             <Plus className="w-4 h-4" />
             เพิ่มระดับชั้น
           </Button>

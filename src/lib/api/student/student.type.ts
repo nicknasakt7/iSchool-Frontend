@@ -1,5 +1,12 @@
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
 
+export type ParentInStudent = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  tel?: string | null;
+};
+
 export type Student = {
   id: string;
   studentCode: string;
@@ -23,8 +30,30 @@ export type Student = {
 
   profileImageUrl?: string | null;
 
+  parentId?: string | null;
+  parent?: ParentInStudent | null;
+
   createdAt: string;
   updatedAt: string;
+};
+
+export type ParentMatchCandidate = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  tel: string | null;
+  lineId: string | null;
+};
+
+export type ParentMatchResult = {
+  studentId: string;
+  studentName: string;
+  parentsEmail: string;
+  alreadyMatched: boolean;
+  currentParent: { id: string; firstName: string; lastName: string; email: string | null } | null;
+  matchFound: boolean;
+  candidate: ParentMatchCandidate | null;
 };
 
 export type StudentListResponse = {

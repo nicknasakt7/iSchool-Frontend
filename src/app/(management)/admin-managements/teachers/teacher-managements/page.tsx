@@ -17,11 +17,11 @@ export default function TeacherManagementPage() {
   const debouncedSearch = useDebounce(search, 500);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-4xl font-semibold mb-2">
+          <h2 className="text-4xl font-bold mb-2">
             Teacher Resource Management
           </h2>
           <p className="text-sm text-chart-2">

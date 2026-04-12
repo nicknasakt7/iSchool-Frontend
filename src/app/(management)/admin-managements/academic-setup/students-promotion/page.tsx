@@ -192,16 +192,16 @@ function OutcomeSelector({
         selectedGrade?.classrooms &&
         selectedGrade.classrooms.length > 0 && (
           <Select
-            value={value.targetClassroomId ?? ''}
+            value={value.targetClassroomId ?? '__none__'}
             onValueChange={v =>
-              onChange({ ...value, targetClassroomId: v || undefined })
+              onChange({ ...value, targetClassroomId: v === '__none__' ? undefined : v })
             }
           >
             <SelectTrigger className="h-8 w-24 text-xs rounded-lg">
               <SelectValue placeholder="ห้อง" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">ไม่ระบุห้อง</SelectItem>
+              <SelectItem value="__none__">ไม่ระบุห้อง</SelectItem>
               {selectedGrade.classrooms.map((c: Classroom) => (
                 <SelectItem key={c.id} value={c.id}>
                   {c.name}
@@ -218,7 +218,6 @@ function OutcomeSelector({
 
 function PromotionTab() {
   const queryClient = useQueryClient();
-  const { data: grades = [] } = useGrades();
 
   // Source filters
   const [srcYear, setSrcYear] = useState<number>(CURRENT_YEAR);
@@ -229,6 +228,13 @@ function PromotionTab() {
   // Target
   const [tgtYear, setTgtYear] = useState<number>(CURRENT_YEAR);
   const [tgtTerm, setTgtTerm] = useState<number>(2);
+
+  // grades without year/term filter — สำหรับ source selector และ list grade names
+  const { data: grades = [] } = useGrades();
+  // grades filtered by target year/term — สำหรับ OutcomeSelector classroom dropdown
+  const { data: tgtGrades = [] } = useGrades({ year: tgtYear, term: tgtTerm });
+
+  const isSameTermAsSource = srcYear === tgtYear && srcTerm === tgtTerm;
 
   // Whether we've "searched"
   const [searched, setSearched] = useState(false);
@@ -421,9 +427,9 @@ function PromotionTab() {
                   <span className="text-muted-foreground">(ไม่บังคับ)</span>
                 </p>
                 <Select
-                  value={srcClassroomId}
+                  value={srcClassroomId || '__none__'}
                   onValueChange={v => {
-                    setSrcClassroomId(v);
+                    setSrcClassroomId(v === '__none__' ? '' : v);
                     setSearched(false);
                   }}
                 >
@@ -431,7 +437,7 @@ function PromotionTab() {
                     <SelectValue placeholder="ทุกห้อง" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">ทุกห้อง</SelectItem>
+                    <SelectItem value="__none__">ทุกห้อง</SelectItem>
                     {srcClassrooms.map((c: Classroom) => (
                       <SelectItem key={c.id} value={c.id}>
                         {c.name}
@@ -500,10 +506,16 @@ function PromotionTab() {
           </div>
         </div>
 
+        {isSameTermAsSource && (
+          <p className="text-xs text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+            ต้นทางและปลายทางเป็นปี/เทอมเดียวกัน — กรุณาเปลี่ยนปลายทางก่อน
+          </p>
+        )}
+
         <div className="flex justify-end">
           <Button
             onClick={handleSearch}
-            disabled={!srcGradeId}
+            disabled={!srcGradeId || isSameTermAsSource}
             className="gap-2"
           >
             <Users className="w-4 h-4" />
@@ -623,7 +635,7 @@ function PromotionTab() {
                       <OutcomeSelector
                         value={outcome}
                         onChange={v => setOutcome(student.id, v)}
-                        grades={grades}
+                        grades={tgtGrades}
                       />
                     )}
 
@@ -703,13 +715,13 @@ function HistoryTab() {
           <p className="text-xs text-muted-foreground mb-1">ระดับชั้น</p>
           <Select
             value={filterGradeId}
-            onValueChange={setFilterGradeId}
+            onValueChange={v => setFilterGradeId(v === '__none__' ? '' : v)}
           >
             <SelectTrigger className="rounded-xl w-36">
               <SelectValue placeholder="ทุกระดับชั้น" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">ทุกระดับชั้น</SelectItem>
+              <SelectItem value="__none__">ทุกระดับชั้น</SelectItem>
               {grades.map(g => (
                 <SelectItem key={g.id} value={g.id}>
                   {g.name}
@@ -722,14 +734,14 @@ function HistoryTab() {
         <div>
           <p className="text-xs text-muted-foreground mb-1">ปีการศึกษา</p>
           <Select
-            value={filterYear ? String(filterYear) : ''}
-            onValueChange={v => setFilterYear(v ? Number(v) : undefined)}
+            value={filterYear ? String(filterYear) : '__none__'}
+            onValueChange={v => setFilterYear(v === '__none__' ? undefined : Number(v))}
           >
             <SelectTrigger className="rounded-xl w-32">
               <SelectValue placeholder="ทุกปี" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">ทุกปี</SelectItem>
+              <SelectItem value="__none__">ทุกปี</SelectItem>
               {YEAR_OPTIONS.map(y => (
                 <SelectItem key={y} value={String(y)}>
                   {y}
@@ -836,7 +848,7 @@ export default function StudentsPromotionPage() {
     <div className="p-8 space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-3xl font-semibold mb-1">Student Promotion</h2>
+        <h2 className="text-4xl font-bold mb-1">Student Promotion</h2>
         <p className="text-sm text-muted-foreground">
           เลื่อนชั้น / ซ้ำชั้น / ย้ายโรงเรียน และดูประวัติย้อนหลัง
         </p>

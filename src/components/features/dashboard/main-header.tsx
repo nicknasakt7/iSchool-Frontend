@@ -5,6 +5,8 @@ import { ModeToggle } from '@/components/shared/mode-toggle';
 import { useSession } from 'next-auth/react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
+import { useAcademic } from '@/lib/context/academic-context';
+import { cn } from '@/lib/utils';
 
 type DashboardHeaderProps = {
   onOpenSidebar?: () => void;
@@ -12,25 +14,28 @@ type DashboardHeaderProps = {
 
 export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
   const session = useSession();
-  const [now, setNow] = useState(new Date());
+  const { year, term, setYear, setTerm } = useAcademic();
+  const [now, setNow] = useState<Date | null>(null);
+  const YEAR_OPTIONS = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
 
   useEffect(() => {
+    setNow(new Date());
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const dateStr = now.toLocaleDateString('th-TH', {
+  const dateStr = now?.toLocaleDateString('th-TH', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-  });
-  const timeStr = now.toLocaleTimeString('th-TH', {
+  }) ?? '';
+  const timeStr = now?.toLocaleTimeString('th-TH', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
-  });
+  }) ?? '--:--:--';
 
   return (
     // <div className="flex flex-col gap-4 mb-6 bg-background shadow-sm rounded-xl p-4">
@@ -68,6 +73,35 @@ export default function MainHeader({ onOpenSidebar }: DashboardHeaderProps) {
               and learning risks for you.
             </p>
           </div>
+        </div>
+
+        {/* ACADEMIC SELECTOR */}
+        <div className="flex items-center gap-1 bg-card border border-border rounded-xl px-3 py-1.5">
+          <select
+            value={year}
+            onChange={e => setYear(Number(e.target.value))}
+            className="text-sm font-medium bg-transparent outline-none cursor-pointer pr-1"
+          >
+            {YEAR_OPTIONS.map(y => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+          <span className="text-muted-foreground text-xs">·</span>
+          {([1, 2] as const).map(t => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTerm(t)}
+              className={cn(
+                'text-xs font-semibold px-2.5 py-1 rounded-lg transition',
+                term === t
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-muted',
+              )}
+            >
+              เทอม {t}
+            </button>
+          ))}
         </div>
 
         {/* SPACER */}

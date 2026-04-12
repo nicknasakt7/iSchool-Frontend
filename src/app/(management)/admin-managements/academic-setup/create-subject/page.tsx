@@ -165,7 +165,7 @@ export default function CreateSubjectPage() {
     <div className="p-8 space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-3xl font-semibold mb-1">Subject Management</h2>
+        <h2 className="text-4xl font-bold mb-1">Subject Management</h2>
         <p className="text-sm text-muted-foreground">
           สร้างและจัดการรายวิชาของโรงเรียน วิชาเป็น Global ไม่ผูกกับปีหรือเทอม
         </p>

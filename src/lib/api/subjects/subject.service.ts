@@ -9,6 +9,13 @@ import {
 const getSubjects = (token?: string) =>
   apiClient.get<Subject[]>('/subjects', undefined, token);
 
+const getSubjectsByClassroom = (classroomId: string, token?: string) =>
+  apiClient.get<{ id: string; subjectId: string; subject: { id: string; name: string } }[]>(
+    '/subject-assignments/by-classroom',
+    { classroomId },
+    token,
+  );
+
 const createSubject = (payload: CreateSubjectPayload, token?: string) =>
   apiClient.post<Subject>('/subjects', payload, token);
 
@@ -28,6 +35,7 @@ const deleteSubject = (id: string, token?: string) =>
 
 export const subjectService = {
   getSubjects,
+  getSubjectsByClassroom,
   createSubject,
   createManySubjects,
   updateSubject,
