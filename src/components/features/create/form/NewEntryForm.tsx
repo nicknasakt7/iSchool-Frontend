@@ -99,7 +99,7 @@ export default function NewEntryForm() {
   };
 
   return (
-    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+    <div className="bg-card p-10 rounded-[30px] shadow-sm w-full max-w-3xl border">
       <ProfileUpload preview={preview} setPreview={setPreview} />
 
       <form onSubmit={handleSubmit(onSubmit)}>

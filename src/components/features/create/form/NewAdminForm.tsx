@@ -51,7 +51,7 @@
 //   };
 
 //   return (
-//     <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+//     <div className="bg-card p-10 rounded-[30px] shadow-sm w-full max-w-3xl border">
 //       <h1 className="text-3xl font-bold text-center mb-2">New Admin</h1>
 //       <p className="text-center text-muted-foreground mb-8">
 //         Onboard a new faculty member to the iSchool ecosystem.
@@ -209,7 +209,7 @@ export default function NewAdminForm() {
   };
 
   return (
-    <div className="bg-white p-10 rounded-[30px] shadow-sm w-full max-w-3xl">
+    <div className="bg-card p-10 rounded-[30px] shadow-sm w-full max-w-3xl border">
       <ProfileUpload preview={preview} setPreview={setPreview} />
 
       <form onSubmit={handleSubmit(onSubmit)}>

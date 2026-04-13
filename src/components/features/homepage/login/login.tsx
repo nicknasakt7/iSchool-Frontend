@@ -92,7 +92,7 @@ export default function Login() {
                     placeholder="Enter you email"
                     {...register('email')}
                     autoComplete="name"
-                    className="rounded-xl bg-accent"
+                    className="rounded-xl bg-accent text-foreground placeholder:text-muted-foreground"
                   />
                   {errors.email && (
                     <p className="text-red-500 text-md text-left">
@@ -109,7 +109,7 @@ export default function Login() {
                     type="password"
                     {...register('password')}
                     autoComplete="email"
-                    className="rounded-xl bg-accent"
+                    className="rounded-xl bg-accent text-foreground placeholder:text-muted-foreground"
                     placeholder="Enter you password"
                   />
                   {errors.password && (

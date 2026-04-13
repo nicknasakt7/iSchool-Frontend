@@ -82,23 +82,23 @@ export default function TuitionTable() {
             onClick={() => { setFilterPaid(f); setPage(1); }}
             className={`px-4 py-1.5 rounded-full text-sm font-medium border transition ${
               filterPaid === f
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-card text-muted-foreground border-border hover:border-primary/50'
             }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
         ))}
-        <span className="ml-auto text-sm text-gray-500 self-center">
+        <span className="ml-auto text-sm text-muted-foreground self-center">
           {filtered.length} bill{filtered.length !== 1 ? 's' : ''}
         </span>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border bg-white">
+      <div className="overflow-x-auto rounded-xl border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-gray-500 border-b bg-gray-50">
+            <tr className="text-left text-muted-foreground border-b bg-muted/50">
               <th className="px-4 py-3 font-medium">Bill No.</th>
               <th className="px-4 py-3 font-medium">Title</th>
               <th className="px-4 py-3 font-medium">Student</th>
@@ -111,19 +111,19 @@ export default function TuitionTable() {
           <tbody className="divide-y">
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
+                <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
                   No bills found
                 </td>
               </tr>
             ) : (
               paginated.map(bill => (
-                <tr key={bill.id} className="hover:bg-gray-50 transition">
-                  <td className="px-4 py-3 font-mono text-xs text-gray-600">{bill.billNumber}</td>
+                <tr key={bill.id} className="hover:bg-muted/40 transition">
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{bill.billNumber}</td>
                   <td className="px-4 py-3 font-medium">{bill.title}</td>
-                  <td className="px-4 py-3 text-gray-600">{bill.studentName}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{bill.studentName}</td>
                   <td className="px-4 py-3 font-medium">{formatAmount(bill.amount)}</td>
-                  <td className="px-4 py-3 text-gray-600">Term {bill.term} / {bill.year}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">
+                  <td className="px-4 py-3 text-muted-foreground">Term {bill.term} / {bill.year}</td>
+                  <td className="px-4 py-3 text-muted-foreground text-xs">
                     {bill.dueDate
                       ? new Date(bill.dueDate).toLocaleDateString('th-TH')
                       : '—'}
@@ -153,7 +153,7 @@ export default function TuitionTable() {
           >
             Prev
           </button>
-          <span className="text-sm text-gray-600">Page {page} of {totalPages}</span>
+          <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
           <button
             disabled={page === totalPages}
             onClick={() => setPage(p => p + 1)}
