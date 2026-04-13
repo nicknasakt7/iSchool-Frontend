@@ -62,7 +62,7 @@ export default function Navbar() {
                   href="#contect"
                   className=" hover:scale-105"
                 >
-                  Form Regiter
+                  Interested form
                 </a>
                 <ArrowRight size={16} />
               </Button>
