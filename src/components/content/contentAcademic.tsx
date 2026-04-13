@@ -6,11 +6,11 @@ export default function ContentAcademic() {
       <div className="flex flex-col lg:flex-row gap-7">
         <div>
           <h1 className="font-bold text-xl">Academic Calendar</h1>
-          <p className="text-gray-400 text-sm mt-3">
+          <p className="text-muted-foreground text-sm mt-3">
             Key dates and upcoming events at iSchool.
           </p>
           <div className="flex flex-col gap-4 mt-5">
-            <div className="bg-white inline-block shadow-2xl p-3 rounded-4xl">
+            <div className="bg-card inline-block shadow-md p-3 rounded-4xl border">
               <div className="flex gap-5">
                 <div className="flex flex-col items-center bg-[#eff6ff] rounded-full px-3 py-1">
                   <p className="text-[9px] text-[#2d7cbc]">AUG</p>
@@ -24,7 +24,7 @@ export default function ContentAcademic() {
                 </div>
               </div>
             </div>
-            <div className="bg-white inline-block shadow-2xl p-3 rounded-4xl">
+            <div className="bg-card inline-block shadow-md p-3 rounded-4xl border">
               <div className="flex gap-5">
                 <div className="flex flex-col items-center bg-[#eff6ff] rounded-full px-3 py-1">
                   <p className="text-[9px] text-[#2d7cbc]">AUG</p>
@@ -38,7 +38,7 @@ export default function ContentAcademic() {
                 </div>
               </div>
             </div>
-            <div className="bg-white inline-block shadow-2xl p-3 rounded-4xl">
+            <div className="bg-card inline-block shadow-md p-3 rounded-4xl border">
               <div className="flex gap-5">
                 <div className="flex flex-col items-center bg-[#eff6ff] rounded-full px-3 py-1">
                   <p className="text-[9px] text-[#2d7cbc]">AUG</p>
@@ -57,11 +57,11 @@ export default function ContentAcademic() {
         <div>
           <div>
             <h1 className="font-bold text-xl">Latest Announcements</h1>
-            <p className="text-gray-400 text-sm mb-5 mt-4">
+            <p className="text-muted-foreground text-sm mb-5 mt-4">
               Recent news and breakthroughs from our iSchool community.
             </p>
             <div className="flex gap-3 ">
-              <div className="bg-gray-100 rounded-3xl overflow-hidden shadow-sm ">
+              <div className="bg-muted/50 rounded-3xl overflow-hidden shadow-sm border">
                 <div className="relative">
                   <Image
                     src="/content.png"
@@ -75,11 +75,11 @@ export default function ContentAcademic() {
                   </span>
                 </div>
                 <div className="p-5 space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold text-foreground">
                     Robotics Team Wins National Championship
                   </h3>
 
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     Our students utilized AI Insight to optimize their robots
                     pathfinding logic.
                   </p>
@@ -89,7 +89,7 @@ export default function ContentAcademic() {
                   </button>
                 </div>
               </div>
-              <div className="bg-gray-100 rounded-3xl overflow-hidden shadow-sm">
+              <div className="bg-muted/50 rounded-3xl overflow-hidden shadow-sm border">
                 <div className="relative">
                   <Image
                     src="/content.png"
@@ -103,11 +103,11 @@ export default function ContentAcademic() {
                   </span>
                 </div>
                 <div className="p-5 space-y-3">
-                  <h3 className="text-lg font-semibold text-gray-800">
+                  <h3 className="text-lg font-semibold text-foreground">
                     Robotics Team Wins National Championship
                   </h3>
 
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     Our students utilized AI Insight to optimize their robots
                     pathfinding logic.
                   </p>

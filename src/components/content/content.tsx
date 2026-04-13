@@ -34,11 +34,6 @@ export default function Hero() {
     >
       <div className="flex flex-col md:flex-row pt-10 px-5">
         <div>
-          <div className="bg-[#f0f4f8] inline-block">
-            <h1 className="text-[10px]">
-              🔵 Reimagining Education for the Future
-            </h1>
-          </div>
 
           <div className="mt-5 space-y-2.5 text-5xl">
             <motion.p variants={container} initial="hidden" animate="visible">
@@ -55,7 +50,7 @@ export default function Hero() {
                   {char}
                 </motion.span>
               ))}
-              <span className="text-blue-500">
+              <span className="text-blue-500 font-bold">
                 {highlight.split('').map((char, i) => (
                   <motion.span key={i} variants={child}>
                     {char}
@@ -67,7 +62,7 @@ export default function Hero() {
           </div>
 
           <div className="mt-5">
-            <p className="text-gray-400">
+            <p className="text-muted-foreground">
               Step into The Digital Atrium—where advanced technology meets
               human-centric learning to cultivate tomorrow global leaders.
             </p>
@@ -81,7 +76,7 @@ export default function Hero() {
               </button>
             </Link>
 
-            <button className="bg-white rounded-2xl hover:bg-[#f7f9fb] px-5">
+            <button className="bg-card border rounded-2xl hover:bg-muted transition px-5 text-foreground">
               Our Curriculum
             </button>
           </div>
