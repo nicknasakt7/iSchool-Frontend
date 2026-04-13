@@ -30,3 +30,23 @@ export type ParentAdminListResponse = {
   data: ParentAdmin[];
   meta: { total: number; page: number; limit: number };
 };
+
+export type MyStudent = {
+  id: string;
+  studentCode: string;
+  firstName: string;
+  lastName: string;
+  nickName: string;
+  dob: string;
+  gender: string;
+  profileImageUrl?: string | null;
+  gradeId: string;
+  classId?: string | null;
+  parentsEmail: string;
+  parentsFirstName: string;
+  parentsLastName: string;
+  favorite?: string | null;
+  healthNote?: string | null;
+  grade?: { id: string; name: string; level: number } | null;
+  classroom?: { id: string; name: string } | null;
+};
