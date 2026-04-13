@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { useMyStudents } from '@/lib/api/parent/hooks/useMyStudents';
 import { useStudentDetail } from '@/lib/api/student/hooks/useStudentDetail';
@@ -67,6 +67,187 @@ function getGreeting() {
   return 'Good evening';
 }
 
+// ─── AI Insights Panel ───────────────────────────────────────────────────────
+
+type ScoreItem = { id: string; subjectGrade: number; totalScore: number; subject: { name: string } };
+type CommentItem = { id: string; content: string; subject: { name: string }; teacher: { firstName: string; lastName: string } };
+
+type AiInsightsPanelProps = {
+  scores: ScoreItem[];
+  comments: CommentItem[];
+  healthNote?: string | null;
+  gpa: string | null;
+  studentName: string;
+};
+
+function Section({ label, color, children }: { label: string; color: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border bg-muted/40 p-4 space-y-2">
+      <p className={`text-xs uppercase tracking-widest font-semibold ${color}`}>{label}</p>
+      <div className="text-sm text-foreground/80 space-y-1">{children}</div>
+    </div>
+  );
+}
+
+function Bullet({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex gap-2 items-start">
+      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-current shrink-0 opacity-50" />
+      <p>{children}</p>
+    </div>
+  );
+}
+
+function AiInsightsPanel({ scores, comments, healthNote, gpa, studentName }: AiInsightsPanelProps) {
+  const name = studentName || 'นักเรียน';
+  const gpaNum = gpa ? parseFloat(gpa) : null;
+
+  // หาวิชาที่แข็งแกร่งที่สุดและอ่อนที่สุด
+  const sorted = [...scores].sort((a, b) => b.subjectGrade - a.subjectGrade);
+  const strongSubjects = sorted.slice(0, 2).map(s => s.subject.name);
+  const weakSubjects = sorted.slice(-2).filter(s => s.subjectGrade < 2.5).map(s => s.subject.name);
+
+  // ประมาณสายการเรียนจากวิชาที่เก่ง
+  const sciMathKeywords = ['คณิต', 'วิทย', 'ฟิสิกส์', 'เคมี', 'ชีว', 'math', 'science', 'physics', 'chemistry', 'bio'];
+  const artLangKeywords = ['ภาษา', 'อังกฤษ', 'จีน', 'ญี่ปุ่น', 'ฝรั่งเศส', 'english', 'language', 'french', 'japanese'];
+  const socialKeywords = ['สังคม', 'ประวัติ', 'ภูมิ', 'กฎหมาย', 'social', 'history', 'geography', 'law'];
+
+  const allNames = scores.map(s => s.subject.name.toLowerCase()).join(' ');
+  const isSciMath = sciMathKeywords.some(k => allNames.includes(k.toLowerCase()));
+  const isArtLang = artLangKeywords.some(k => allNames.includes(k.toLowerCase()));
+  const isSocial = socialKeywords.some(k => allNames.includes(k.toLowerCase()));
+
+  const pathSuggestions: string[] = [];
+  if (isSciMath && gpaNum && gpaNum >= 3.0) pathSuggestions.push('วิทย์-คณิต');
+  if (isSciMath) pathSuggestions.push('ศิลป์คำนวณ');
+  if (isArtLang) pathSuggestions.push('ศิลป์ภาษา');
+  if (isSocial) pathSuggestions.push('ไทย-สังคม / นิติศาสตร์');
+  if (!pathSuggestions.length) pathSuggestions.push('ยังไม่มีข้อมูลเพียงพอสำหรับการคาดเดาสายการเรียน');
+
+  return (
+    <div className="space-y-4">
+
+      {/* 1. การเรียน */}
+      <Section label="📚 ด้านการเรียน" color="text-blue-600">
+        {scores.length === 0 ? (
+          <p className="text-muted-foreground">ยังไม่มีข้อมูลคะแนนในเทอมนี้</p>
+        ) : (
+          <>
+            {gpaNum !== null && (
+              <Bullet>
+                GPA เฉลี่ยอยู่ที่ <strong>{gpa}</strong> —{' '}
+                {gpaNum >= 3.5 ? 'ผลการเรียนอยู่ในระดับดีมาก' :
+                  gpaNum >= 3.0 ? 'ผลการเรียนอยู่ในระดับดี' :
+                    gpaNum >= 2.0 ? 'ผลการเรียนอยู่ในระดับปานกลาง ควรพัฒนาเพิ่มเติม' :
+                      'ผลการเรียนยังต้องการการปรับปรุงอย่างเร่งด่วน'}
+              </Bullet>
+            )}
+            {strongSubjects.length > 0 && (
+              <Bullet>วิชาที่โดดเด่น: <strong>{strongSubjects.join(', ')}</strong> — ควรส่งเสริมต่อเนื่อง</Bullet>
+            )}
+            {weakSubjects.length > 0 ? (
+              <Bullet>วิชาที่ควรให้ความสนใจเพิ่มเติม: <strong>{weakSubjects.join(', ')}</strong> — แนะนำให้หาครูสอนพิเศษหรือทบทวนเพิ่ม</Bullet>
+            ) : (
+              <Bullet>ไม่พบวิชาที่มีคะแนนต่ำกว่าเกณฑ์น่าเป็นห่วงในเทอมนี้</Bullet>
+            )}
+            {comments.length > 0 && (
+              <Bullet>ครูได้ฝากข้อสังเกต {comments.length} รายการ — แนะนำให้อ่านและนำไปปรับใช้</Bullet>
+            )}
+          </>
+        )}
+      </Section>
+
+      {/* 2. สังคมและเพื่อน */}
+      <Section label="🤝 ด้านสังคมและเพื่อน" color="text-violet-600">
+        <Bullet>
+          {gpaNum && gpaNum >= 3.0
+            ? `${name} มีผลการเรียนที่ดี ซึ่งมักสัมพันธ์กับการมีทัศนคติเชิงบวกและความรับผิดชอบต่อหน้าที่ในกลุ่ม`
+            : `แนะนำให้ผู้ปกครองพูดคุยถึงสภาพแวดล้อมการเรียนและกลุ่มเพื่อนของ${name} เพื่อให้ทราบว่ามีสิ่งที่รบกวนการเรียนหรือไม่`}
+        </Bullet>
+        <Bullet>ควรส่งเสริมให้เข้าร่วมกิจกรรมนอกหลักสูตร เช่น ชมรมหรือกีฬา เพื่อพัฒนาทักษะการทำงานร่วมกัน</Bullet>
+        <Bullet>หากมีสัญญาณว่า{name}ถูกโดดเดี่ยวหรือเครียดจากสังคมเพื่อน ควรแจ้งครูที่ปรึกษาโดยตรง</Bullet>
+      </Section>
+
+      {/* 3. สิ่งที่ควรปรับ */}
+      <Section label="🔧 สิ่งที่ควรปรับปรุง" color="text-amber-600">
+        {weakSubjects.length > 0 ? (
+          <Bullet>ให้ความสำคัญกับ <strong>{weakSubjects.join(' และ ')}</strong> โดยอาจจัดตารางทบทวนหลังเลิกเรียน</Bullet>
+        ) : (
+          <Bullet>ผลการเรียนในทุกวิชาอยู่ในเกณฑ์ที่ยอมรับได้ ควรรักษาระดับนี้ต่อเนื่อง</Bullet>
+        )}
+        <Bullet>ฝึกนิสัยการวางแผนการอ่านหนังสือล่วงหน้า แทนการอ่านก่อนสอบ</Bullet>
+        <Bullet>ส่งเสริมทักษะการจดบันทึกและการสรุปเนื้อหาด้วยตนเอง</Bullet>
+      </Section>
+
+      {/* 4. สิ่งที่ควรส่งเสริม */}
+      <Section label="⭐ สิ่งที่ควรส่งเสริม" color="text-emerald-600">
+        {strongSubjects.length > 0 && (
+          <Bullet>
+            ส่งเสริมความเชี่ยวชาญด้าน <strong>{strongSubjects.join(', ')}</strong> ด้วยการเข้าแข่งขันหรือเรียนเพิ่มเติมในระดับที่สูงขึ้น
+          </Bullet>
+        )}
+        <Bullet>สนับสนุนการอ่านหนังสือนอกเวลา หรือดูสารคดีที่เกี่ยวกับสาขาที่สนใจ</Bullet>
+        <Bullet>ชื่นชมความพยายามของ{name}เมื่อมีพัฒนาการ แม้จะเป็นเรื่องเล็กน้อย เพื่อสร้างแรงจูงใจ</Bullet>
+      </Section>
+
+      {/* 5. สุขภาพ */}
+      <Section label="❤️ ด้านสุขภาพ" color="text-rose-600">
+        {healthNote ? (
+          <>
+            <Bullet>บันทึกสุขภาพ: <strong className="text-amber-600">{healthNote}</strong></Bullet>
+            <Bullet>โปรดแจ้งครูประจำชั้นและพยาบาลของโรงเรียนให้ทราบถึงข้อมูลนี้เพื่อความปลอดภัย</Bullet>
+          </>
+        ) : (
+          <Bullet>ไม่พบบันทึกข้อมูลสุขภาพพิเศษ — อย่าลืมดูแลการนอนหลับพักผ่อนที่เพียงพอ (8 ชั่วโมง/วัน) และโภชนาการที่ดี</Bullet>
+        )}
+        <Bullet>นักเรียนในช่วงวัยนี้ควรได้รับการออกกำลังกายอย่างน้อย 3 ครั้งต่อสัปดาห์ เพื่อช่วยให้สมองทำงานได้ดีขึ้น</Bullet>
+      </Section>
+
+      {/* 6. สิ่งที่น่าเป็นห่วง vs ไม่ต้องห่วง */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Section label="⚠️ สิ่งที่ควรติดตาม" color="text-orange-600">
+          {weakSubjects.length > 0 ? (
+            <Bullet>คะแนน <strong>{weakSubjects.join(', ')}</strong> ยังต่ำกว่าเป้าหมาย ควรพูดคุยกับครูประจำวิชา</Bullet>
+          ) : (
+            <Bullet>ยังไม่พบสิ่งที่น่ากังวลด้านวิชาการในเทอมนี้</Bullet>
+          )}
+          {healthNote && (
+            <Bullet>ควรติดตามเรื่องสุขภาพอย่างสม่ำเสมอตามที่บันทึกไว้</Bullet>
+          )}
+          <Bullet>ความเครียดสะสมจากการเรียน — สังเกตพฤติกรรมของ{name}ที่บ้านด้วย</Bullet>
+        </Section>
+
+        <Section label="✅ ไม่ต้องกังวล" color="text-emerald-600">
+          {strongSubjects.length > 0 && (
+            <Bullet>ด้าน <strong>{strongSubjects[0]}</strong> — {name}มีผลการเรียนที่ดีและสม่ำเสมอ</Bullet>
+          )}
+          {gpaNum && gpaNum >= 2.5 && (
+            <Bullet>ภาพรวม GPA อยู่ในเกณฑ์ที่ดี ไม่มีความเสี่ยงด้านผลการเรียนโดยรวม</Bullet>
+          )}
+          {!healthNote && (
+            <Bullet>ไม่มีข้อจำกัดด้านสุขภาพที่ต้องดูแลเป็นพิเศษ</Bullet>
+          )}
+        </Section>
+      </div>
+
+      {/* 7. คาดเดาสายการเรียน */}
+      <Section label="🎓 สายการเรียนที่น่าจะเหมาะสม" color="text-blue-600">
+        <div className="flex flex-wrap gap-2 mt-1">
+          {pathSuggestions.map((p, i) => (
+            <span key={i} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20">
+              {p}
+            </span>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          * การคาดเดานี้อิงจากวิชาที่มีคะแนนโดดเด่น ควรปรึกษาครูแนะแนวเพื่อข้อมูลเพิ่มเติม
+        </p>
+      </Section>
+
+    </div>
+  );
+}
+
 export default function StudentsPage() {
   const { data: session } = useSession();
   const { data: students = [], isLoading: loadingStudents } = useMyStudents();
@@ -90,13 +271,14 @@ export default function StudentsPage() {
   const gpa = useMemo(() => {
     const scores = detail?.scores ?? [];
     if (!scores.length) return null;
-    const avg = scores.reduce((sum, s) => sum + s.subjectGrade, 0) / scores.length;
+    const avg =
+      scores.reduce((sum, s) => sum + s.subjectGrade, 0) / scores.length;
     return avg.toFixed(2);
   }, [detail?.scores]);
 
   const parentName = session?.user?.parent
     ? `${session.user.parent.firstName}`
-    : session?.user?.firstName ?? 'Parent';
+    : (session?.user?.firstName ?? 'Parent');
 
   if (loadingStudents) {
     return (
@@ -113,10 +295,14 @@ export default function StudentsPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-3 p-8">
-          <GraduationCap size={48} className="text-muted-foreground/30 mx-auto" />
+          <GraduationCap
+            size={48}
+            className="text-muted-foreground/30 mx-auto"
+          />
           <p className="text-lg font-semibold">No students linked</p>
           <p className="text-sm text-muted-foreground">
-            Your account is not yet linked to any student. Please contact the school administrator.
+            Your account is not yet linked to any student. Please contact the
+            school administrator.
           </p>
         </div>
       </div>
@@ -126,7 +312,7 @@ export default function StudentsPage() {
   return (
     <div className="min-h-screen bg-muted/20">
       {/* ── HEADER BANNER ── */}
-      <div className="bg-white border-b px-6 py-8">
+      <div className="bg-card border-b px-6 py-8">
         <div className="max-w-7xl mx-auto flex items-start justify-between gap-6 flex-wrap">
           <div>
             <p className="text-sm text-muted-foreground uppercase tracking-widest mb-1">
@@ -144,7 +330,7 @@ export default function StudentsPage() {
 
           {/* GPA Card */}
           {gpa && (
-            <Card className="min-w-[160px] text-center shadow-sm">
+            <Card className="min-w-40 text-center shadow-sm">
               <CardContent className="p-5">
                 <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">
                   Cumulative GPA
@@ -152,7 +338,9 @@ export default function StudentsPage() {
                 <p className="text-5xl font-bold text-foreground">{gpa}</p>
                 <div className="mt-2 flex items-center justify-center gap-1 text-xs text-emerald-600">
                   <TrendingUp size={12} />
-                  <span>Term {term} / {year}</span>
+                  <span>
+                    Term {term} / {year}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -162,10 +350,7 @@ export default function StudentsPage() {
         {/* Student selector — only show if >1 students */}
         {students.length > 1 && (
           <div className="max-w-7xl mx-auto mt-5">
-            <Select
-              value={resolvedId}
-              onValueChange={setSelectedStudentId}
-            >
+            <Select value={resolvedId} onValueChange={setSelectedStudentId}>
               <SelectTrigger className="w-64">
                 <SelectValue placeholder="Select student..." />
               </SelectTrigger>
@@ -185,7 +370,6 @@ export default function StudentsPage() {
       {/* ── MAIN CONTENT ── */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
           {/* ─── LEFT: Student Profile ─── */}
           <div className="lg:col-span-3 space-y-4">
             <Card className="shadow-sm">
@@ -217,7 +401,9 @@ export default function StudentsPage() {
                       {currentStudent?.firstName} {currentStudent?.lastName}
                     </p>
                     {currentStudent?.nickName && (
-                      <p className="text-sm text-muted-foreground">{currentStudent.nickName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {currentStudent.nickName}
+                      </p>
                     )}
                   </div>
 
@@ -245,36 +431,61 @@ export default function StudentsPage() {
                 {/* Profile details */}
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">Student ID</p>
-                    <p className="font-mono font-medium text-xs">#{currentStudent?.studentCode}</p>
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">
+                      Student ID
+                    </p>
+                    <p className="font-mono font-medium text-xs">
+                      #{currentStudent?.studentCode}
+                    </p>
                   </div>
 
                   {currentStudent?.dob && (
                     <div className="flex gap-2 items-start">
-                      <CalendarDays size={14} className="text-muted-foreground mt-0.5 shrink-0" />
+                      <CalendarDays
+                        size={14}
+                        className="text-muted-foreground mt-0.5 shrink-0"
+                      />
                       <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">Date of Birth</p>
-                        <p className="font-medium text-xs">{formatDob(currentStudent.dob)}</p>
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">
+                          Date of Birth
+                        </p>
+                        <p className="font-medium text-xs">
+                          {formatDob(currentStudent.dob)}
+                        </p>
                       </div>
                     </div>
                   )}
 
                   {currentStudent?.favorite && (
                     <div className="flex gap-2 items-start">
-                      <Heart size={14} className="text-muted-foreground mt-0.5 shrink-0" />
+                      <Heart
+                        size={14}
+                        className="text-muted-foreground mt-0.5 shrink-0"
+                      />
                       <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">Favorite</p>
-                        <p className="font-medium text-xs">{currentStudent.favorite}</p>
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">
+                          Favorite
+                        </p>
+                        <p className="font-medium text-xs">
+                          {currentStudent.favorite}
+                        </p>
                       </div>
                     </div>
                   )}
 
                   {currentStudent?.healthNote && (
                     <div className="flex gap-2 items-start">
-                      <AlertCircle size={14} className="text-amber-500 mt-0.5 shrink-0" />
+                      <AlertCircle
+                        size={14}
+                        className="text-amber-500 mt-0.5 shrink-0"
+                      />
                       <div>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">Health Note</p>
-                        <p className="font-medium text-xs text-amber-700">{currentStudent.healthNote}</p>
+                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">
+                          Health Note
+                        </p>
+                        <p className="font-medium text-xs text-amber-700">
+                          {currentStudent.healthNote}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -285,12 +496,14 @@ export default function StudentsPage() {
 
           {/* ─── RIGHT: Scores + AI ─── */}
           <div className="lg:col-span-9 space-y-5">
-
             {/* Term/Year filter */}
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Term</span>
-                <Select value={String(term)} onValueChange={v => setTerm(Number(v))}>
+                <Select
+                  value={String(term)}
+                  onValueChange={v => setTerm(Number(v))}
+                >
                   <SelectTrigger className="w-28">
                     <SelectValue />
                   </SelectTrigger>
@@ -302,13 +515,18 @@ export default function StudentsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Year</span>
-                <Select value={String(year)} onValueChange={v => setYear(Number(v))}>
+                <Select
+                  value={String(year)}
+                  onValueChange={v => setYear(Number(v))}
+                >
                   <SelectTrigger className="w-28">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {YEARS.map(y => (
-                      <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                      <SelectItem key={y} value={String(y)}>
+                        {y}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -329,13 +547,18 @@ export default function StudentsPage() {
                 {loadingDetail ? (
                   <div className="space-y-3">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="animate-pulse h-12 rounded-lg bg-muted/50" />
+                      <div
+                        key={i}
+                        className="animate-pulse h-12 rounded-lg bg-muted/50"
+                      />
                     ))}
                   </div>
                 ) : !detail?.scores?.length ? (
                   <div className="text-center py-10 text-muted-foreground">
                     <BookOpen size={32} className="mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">No results for Term {term} / {year}</p>
+                    <p className="text-sm">
+                      No results for Term {term} / {year}
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -351,16 +574,24 @@ export default function StudentsPage() {
 
                         {/* Subject name */}
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm truncate">{score.subject.name}</p>
-                          <p className="text-xs text-muted-foreground">Total score: {score.totalScore}</p>
+                          <p className="font-medium text-sm truncate">
+                            {score.subject.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Total score: {score.totalScore}
+                          </p>
                         </div>
 
                         {/* Grade */}
                         <div className="text-right">
-                          <p className={`text-xl font-bold ${gradeColor(score.subjectGrade)}`}>
+                          <p
+                            className={`text-xl font-bold ${gradeColor(score.subjectGrade)}`}
+                          >
                             {gradeLabel(score.subjectGrade)}
                           </p>
-                          <p className="text-xs text-muted-foreground">{score.subjectGrade.toFixed(1)}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {score.subjectGrade.toFixed(1)}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -373,17 +604,26 @@ export default function StudentsPage() {
             {!!detail?.comments?.length && (
               <Card className="shadow-sm">
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-base mb-4">Teacher Comments</h3>
+                  <h3 className="font-semibold text-base mb-4">
+                    Teacher Comments
+                  </h3>
                   <div className="space-y-3">
                     {detail.comments.map(c => (
-                      <div key={c.id} className="rounded-xl border bg-muted/20 px-4 py-3">
+                      <div
+                        key={c.id}
+                        className="rounded-xl border bg-muted/20 px-4 py-3"
+                      >
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-xs font-semibold text-primary">{c.subject.name}</p>
+                          <p className="text-xs font-semibold text-primary">
+                            {c.subject.name}
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             {c.teacher.firstName} {c.teacher.lastName}
                           </p>
                         </div>
-                        <p className="text-sm text-foreground/80">{c.content}</p>
+                        <p className="text-sm text-foreground/80">
+                          {c.content}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -392,7 +632,7 @@ export default function StudentsPage() {
             )}
 
             {/* AI Insights */}
-            <Card className="shadow-sm bg-gradient-to-br from-slate-50 to-blue-50/30">
+            <Card className="shadow-sm bg-card">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
@@ -401,52 +641,36 @@ export default function StudentsPage() {
                   </div>
                   <Button
                     size="sm"
-                    className="bg-slate-700 hover:bg-slate-800 text-white"
+                    className="rounded-full"
                     onClick={() => setAiGenerated(v => !v)}
                   >
+                    <Sparkles />
                     {aiGenerated ? 'Refresh Analysis' : 'Generate Analysis'}
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground mb-5">
-                  Predictive analysis based on current grading trends
+                  การวิเคราะห์เชิงลึกจากข้อมูลผลการเรียนและบันทึกของครู
                 </p>
 
                 {!aiGenerated ? (
-                  <div className="text-center py-6 text-muted-foreground">
-                    <Sparkles size={28} className="mx-auto mb-2 opacity-20" />
-                    <p className="text-sm">Click "Generate Analysis" to get AI-powered insights</p>
+                  <div className="text-center py-10 text-muted-foreground">
+                    <Sparkles size={32} className="mx-auto mb-3 opacity-20" />
+                    <p className="text-sm font-medium">พร้อมวิเคราะห์</p>
+                    <p className="text-xs mt-1 opacity-70">
+                      กด Generate Analysis เพื่อดูรายงานเชิงลึกสำหรับ{currentStudent?.firstName}
+                    </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="rounded-xl border bg-white/80 p-4">
-                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Focus Area</p>
-                      <p className="text-sm text-foreground/80">
-                        {detail?.scores?.length
-                          ? `${detail.scores.reduce((min, s) => s.subjectGrade < min.subjectGrade ? s : min, detail.scores[0]).subject.name} may need more attention this term.`
-                          : 'Keep up the consistent effort across all subjects.'}
-                      </p>
-                    </div>
-                    <div className="rounded-xl border bg-white/80 p-4">
-                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Projection</p>
-                      <p className="text-sm text-foreground/80">
-                        {gpa && parseFloat(gpa) >= 3.0
-                          ? `Maintaining current trajectory will keep GPA above ${gpa}. Strong academic standing.`
-                          : 'Focus on improving weaker subjects to raise overall GPA.'}
-                      </p>
-                    </div>
-                    <div className="rounded-xl border bg-white/80 p-4">
-                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Next Action</p>
-                      <p className="text-sm text-foreground/80">
-                        {detail?.comments?.length
-                          ? 'Review teacher feedback and discuss progress during the next parent meeting.'
-                          : 'Schedule a consultation with the homeroom teacher for a progress update.'}
-                      </p>
-                    </div>
-                  </div>
+                  <AiInsightsPanel
+                    scores={detail?.scores ?? []}
+                    comments={detail?.comments ?? []}
+                    healthNote={currentStudent?.healthNote}
+                    gpa={gpa}
+                    studentName={currentStudent?.firstName ?? ''}
+                  />
                 )}
               </CardContent>
             </Card>
-
           </div>
         </div>
       </div>
