@@ -45,6 +45,12 @@ export type TeacherResponse = {
   updatedAt: Date;
 };
 
+export type TeacherSummary = {
+  total: number;
+  bySubject: { subjectId: string; subjectName: string; count: number }[];
+  byClassroom: { classroomId: string; classroomName: string; gradeName: string; gradeLevel: number; count: number }[];
+};
+
 export type TeacherListResponse = {
   data: TeacherResponse[];
   meta: {

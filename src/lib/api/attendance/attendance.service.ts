@@ -10,3 +10,10 @@ export const getAttendanceSummary = (classId: string, date?: string, token?: str
     { classId, ...(date ? { date } : {}) },
     token,
   );
+
+export const getSchoolAttendanceSummary = (date?: string, token?: string) =>
+  apiClient.get<AttendanceSummary>(
+    '/attendance/school-summary',
+    date ? { date } : undefined,
+    token,
+  );

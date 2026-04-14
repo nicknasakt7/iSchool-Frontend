@@ -1,5 +1,5 @@
 import { apiClient } from '../client';
-import { ParentMatchResult, Student, StudentDetail, StudentListResponse } from './student.type';
+import { AtRiskSummary, GpaDistribution, ParentMatchResult, SchoolSummary, Student, StudentDetail, StudentListResponse } from './student.type';
 
 const createStudent = (input: FormData, token?: string) =>
   apiClient.post<Student>('/students', input, token);
@@ -45,9 +45,21 @@ const removeParent = (studentId: string, token?: string) =>
 const deleteStudent = (id: string, token?: string) =>
   apiClient.delete<void>(`/students/${id}`, token);
 
+const getSchoolSummary = (token?: string) =>
+  apiClient.get<SchoolSummary>('/students/school-summary', undefined, token);
+
+const getAtRiskStudents = (params?: { term?: number; year?: number }, token?: string) =>
+  apiClient.get<AtRiskSummary>('/students/at-risk', params as Record<string, number>, token);
+
+const getGpaDistribution = (params?: { term?: number; year?: number }, token?: string) =>
+  apiClient.get<GpaDistribution>('/students/gpa-distribution', params as Record<string, number>, token);
+
 export const studentService = {
   createStudent,
   getStudents,
+  getSchoolSummary,
+  getAtRiskStudents,
+  getGpaDistribution,
   getStudentById,
   updateStudent,
   uploadProfileImage,

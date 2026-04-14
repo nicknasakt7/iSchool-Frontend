@@ -64,7 +64,7 @@ export default function Login() {
       transition={{ duration: 0.5 }}
     >
       <div className="flex justify-center items-cente px-3">
-        <Card className="w-120 max-w-sm shadow-2xl rounded-4xl px-2 bg-linear-to-b from-blue-400 via-blue-100 to-white">
+        <Card className="w-120 max-w-sm rounded-4xl px-2 bg-linear-to-b from-blue-400/50 via-blue-100/50 to-white/50 shadow-[0_0_60px_rgba(59,130,246,0.5)]">
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardHeader className="mt-3">
               <CardTitle className="font-bold">
@@ -73,26 +73,26 @@ export default function Login() {
                     <Logo />
                   </div>
                   <div className="flex flex-col gap-2 text-xl items-center text-center">
-                    <p className="text-primary">Login to iSchool</p>
+                    <p className="text-blue-600">Login to iSchool</p>
                     <p className="mb-2">AI Insight</p>
                   </div>
                 </div>
               </CardTitle>
-              <CardDescription className="flex text-foreground justify-center">
+              <CardDescription className="flex text-muted-foreground justify-center">
                 Welcome back to the Future of Learning
               </CardDescription>
             </CardHeader>
             <CardContent className="mt-6">
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-chart-3">Email</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="Enter you email"
                     {...register('email')}
                     autoComplete="name"
-                    className="rounded-xl bg-accent text-foreground placeholder:text-muted-foreground"
+                    className="rounded-xl bg-accent text-gray-900 placeholder:text-gray-400"
                   />
                   {errors.email && (
                     <p className="text-red-500 text-md text-left">
@@ -102,14 +102,14 @@ export default function Login() {
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-chart-3">Password</Label>
                   </div>
                   <Input
                     id="password"
                     type="password"
                     {...register('password')}
                     autoComplete="email"
-                    className="rounded-xl bg-accent text-foreground placeholder:text-muted-foreground"
+                    className="rounded-xl bg-accent text-gray-900 placeholder:text-gray-400"
                     placeholder="Enter you password"
                   />
                   {errors.password && (
