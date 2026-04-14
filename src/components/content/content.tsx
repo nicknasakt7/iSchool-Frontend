@@ -32,10 +32,9 @@ export default function Hero() {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 1 }}
     >
-      <div className="flex flex-col md:flex-row pt-10 px-5">
-        <div>
-
-          <div className="mt-5 space-y-2.5 text-5xl">
+      <div className="relative flex flex-col md:flex-row items-stretch gap-12 pt-10 px-5">
+        <div className="flex-1 min-w-0">
+          <div className="mt-5 space-y-2.5 text-5xl font-semibold">
             <motion.p variants={container} initial="hidden" animate="visible">
               {text1.split('').map((char, i) => (
                 <motion.span key={i} variants={child}>
@@ -50,7 +49,7 @@ export default function Hero() {
                   {char}
                 </motion.span>
               ))}
-              <span className="text-blue-500 font-bold">
+              <span className="block text-blue-500 font-bold mt-2">
                 {highlight.split('').map((char, i) => (
                   <motion.span key={i} variants={child}>
                     {char}
@@ -82,13 +81,12 @@ export default function Hero() {
           </div>
         </div>
 
-        <div>
+        <div className="shrink-0 relative min-h-full w-160">
           <Image
-            src="/content.png"
+            src="/ischool-homepage.png"
             alt="User Picture"
-            width={628}
-            height={628}
-            className=" hover:scale-105 duration-200"
+            fill
+            className="hover:scale-105 duration-200 rounded-xl opacity-90 object-cover object-top"
             priority
           />
         </div>
