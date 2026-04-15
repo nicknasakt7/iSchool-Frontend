@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MoreVertical, Pencil, Trash2, GraduationCap, BookOpen, Hash, User } from 'lucide-react';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import type { StudentDetail } from '@/lib/api/student/student.type';
 
 type Props = {
@@ -13,6 +14,8 @@ type Props = {
 
 export default function StudentProfileHeader({ student, studentId }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session } = useSession();
+  const canManage = session?.user?.role === 'ADMIN' || session?.user?.role === 'SUPER_ADMIN';
 
   const badges = [
     { icon: GraduationCap, label: student.grade?.name ?? '—', show: true },
@@ -28,13 +31,13 @@ export default function StudentProfileHeader({ student, studentId }: Props) {
           <Image
             src={student.profileImageUrl}
             alt={student.firstName}
-            width={80}
-            height={80}
-            className="size-20 rounded-2xl object-cover border border-border"
+            width={160}
+            height={160}
+            className="w-36 h-36 rounded-xl object-cover border border-border"
           />
         ) : (
-          <div className="size-20 rounded-2xl bg-muted flex items-center justify-center border border-border">
-            <User className="size-8 text-muted-foreground" />
+          <div className="w-36 h-36 rounded-xl bg-muted flex items-center justify-center border border-border">
+            <User className="size-14 text-muted-foreground" />
           </div>
         )}
       </div>
@@ -56,38 +59,40 @@ export default function StudentProfileHeader({ student, studentId }: Props) {
             </p>
           </div>
 
-          {/* Kebab action menu */}
-          <div className="relative shrink-0">
-            <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center justify-center size-8 rounded-lg border border-border text-muted-foreground hover:bg-accent transition-colors"
-            >
-              <MoreVertical className="size-4" />
-            </button>
+          {/* Kebab action menu — Admin/SuperAdmin only */}
+          {canManage && (
+            <div className="relative shrink-0">
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                className="flex items-center justify-center size-8 rounded-lg border border-border text-muted-foreground hover:bg-accent transition-colors"
+              >
+                <MoreVertical className="size-4" />
+              </button>
 
-            {menuOpen && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-9 z-20 w-40 rounded-xl border border-border bg-popover shadow-lg py-1 overflow-hidden">
-                  <Link
-                    href={`/students/${studentId}/edit`}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <Pencil className="size-3.5 text-muted-foreground" />
-                    Edit Profile
-                  </Link>
-                  <button
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <Trash2 className="size-3.5" />
-                    Delete Student
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+              {menuOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+                  <div className="absolute right-0 top-9 z-20 w-40 rounded-xl border border-border bg-popover shadow-lg py-1 overflow-hidden">
+                    <Link
+                      href={`/students/${studentId}/edit`}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Pencil className="size-3.5 text-muted-foreground" />
+                      Edit Profile
+                    </Link>
+                    <button
+                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Trash2 className="size-3.5" />
+                      Delete Student
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Badges */}

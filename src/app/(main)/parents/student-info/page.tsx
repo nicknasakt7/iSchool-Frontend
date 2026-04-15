@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useMyStudents } from '@/lib/api/parent/hooks/useMyStudents';
 import { useStudentDetail } from '@/lib/api/student/hooks/useStudentDetail';
 import {
@@ -25,6 +26,7 @@ import {
   Sparkles,
   TrendingUp,
   User,
+  FileText,
 } from 'lucide-react';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -249,6 +251,7 @@ function AiInsightsPanel({ scores, comments, healthNote, gpa, studentName }: AiI
 }
 
 export default function StudentsPage() {
+  const router = useRouter();
   const { data: session } = useSession();
   const { data: students = [], isLoading: loadingStudents } = useMyStudents();
 
@@ -380,20 +383,21 @@ export default function StudentsPage() {
 
                 {/* Avatar */}
                 <div className="flex flex-col items-center text-center gap-2 mb-4">
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden bg-muted ring-2 ring-primary/20">
+                  <div className="relative w-36 h-36 rounded-xl overflow-hidden bg-muted ring-2 ring-primary/20">
                     {currentStudent?.profileImageUrl ? (
                       <Image
                         src={currentStudent.profileImageUrl}
                         alt="profile"
                         fill
+                        sizes="144px"
                         className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-primary/10">
-                        <User size={32} className="text-primary/50" />
+                        <User size={48} className="text-primary/50" />
                       </div>
                     )}
-                    <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-400 ring-2 ring-white" />
+                    <span className="absolute bottom-2 right-2 w-4 h-4 rounded-full bg-emerald-400 ring-2 ring-white" />
                   </div>
 
                   <div>
@@ -492,6 +496,20 @@ export default function StudentsPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* ── Academic Result Button ── */}
+            <Button
+              className="w-full gap-2"
+              variant="outline"
+              onClick={() =>
+                router.push(
+                  `/parents/academic-result?studentId=${resolvedId}&term=${term}&year=${year}`,
+                )
+              }
+            >
+              <FileText size={16} />
+              สรุปผลการเรียน
+            </Button>
           </div>
 
           {/* ─── RIGHT: Scores + AI ─── */}

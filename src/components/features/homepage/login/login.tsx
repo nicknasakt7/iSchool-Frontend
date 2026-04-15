@@ -22,10 +22,17 @@ import { ArrowRight, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import Logo from '@/components/shared/logo';
 
+const DEMO_ACCOUNTS = [
+  { label: 'Try as Admin', email: 'admin1@test.com', password: '123456', color: 'bg-purple-500 hover:bg-purple-600' },
+  { label: 'Try as Teacher', email: 'teacher5@test.com', password: '123456', color: 'bg-emerald-500 hover:bg-emerald-600' },
+  { label: 'Try as Parents', email: 'parent3@test.com', password: '123456', color: 'bg-orange-500 hover:bg-orange-600' },
+];
+
 export default function Login() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
@@ -43,6 +50,15 @@ export default function Login() {
   }, [status, session, router]);
 
   const [isPending, startTransition] = useTransition();
+
+  const fillAndLogin = (email: string, password: string) => {
+    setValue('email', email);
+    setValue('password', password);
+    setTimeout(() => {
+      handleSubmit(onSubmit)();
+    }, 0);
+  };
+
   const onSubmit = (data: LoginInput) => {
     startTransition(async () => {
       const res = await login(data);
@@ -82,6 +98,22 @@ export default function Login() {
                 Welcome back to the Future of Learning
               </CardDescription>
             </CardHeader>
+            <div className="px-6 pb-2">
+              <p className="text-xs text-center text-muted-foreground mb-2">Live Demo</p>
+              <div className="flex gap-2 justify-center flex-wrap">
+                {DEMO_ACCOUNTS.map((acc) => (
+                  <button
+                    key={acc.label}
+                    type="button"
+                    onClick={() => fillAndLogin(acc.email, acc.password)}
+                    disabled={isPending}
+                    className={`text-xs text-white px-3 py-1.5 rounded-full font-medium transition-colors cursor-pointer disabled:opacity-50 ${acc.color}`}
+                  >
+                    {acc.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <CardContent className="mt-6">
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">

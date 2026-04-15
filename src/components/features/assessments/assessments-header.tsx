@@ -21,6 +21,7 @@ type AssessmentsHeaderProps = {
   term?: number;
   year?: number;
   hasClassroom?: boolean;
+  hasSubject?: boolean;
 };
 
 export default function AssessmentsHeader({
@@ -37,6 +38,7 @@ export default function AssessmentsHeader({
   term,
   year,
   hasClassroom,
+  hasSubject,
 }: AssessmentsHeaderProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -75,7 +77,7 @@ export default function AssessmentsHeader({
         />
       </div>
 
-      {hasClassroom && (
+      {hasSubject && (
         <SearchInput
           placeholder="Find student by name or student ID..."
           onSearch={onSearch}

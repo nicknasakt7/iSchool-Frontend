@@ -86,6 +86,7 @@ export default function Hero() {
             src="/ischool-homepage.png"
             alt="User Picture"
             fill
+            sizes="(max-width: 768px) 100vw, 640px"
             className="hover:scale-105 duration-200 rounded-xl opacity-90 object-cover object-top"
             priority
           />

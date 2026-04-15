@@ -9,7 +9,11 @@ const nextConfig: NextConfig = {
         hostname: 'i.pravatar.cc',
       },
 
-      new URL('https://res.cloudinary.com/dboof56wt/**'),
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/dboof56wt/**',
+      },
     ],
   },
 };
