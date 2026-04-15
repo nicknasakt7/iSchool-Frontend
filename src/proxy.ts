@@ -2,7 +2,12 @@ import { auth } from "@/lib/auth/auth";
 import { NextResponse } from "next/server";
 
 // const protectedRoutes = ['/dashboard', '/students', '/assessments', '/checkin' ,'/create/new-entry' , '/create/new-admin'];
-const publicRoutes = ["/", "/login", "/reset-password"];
+const publicRoutes = [
+  "/",
+  "/login",
+  "/reset-password",
+  "/parents-registration",
+];
 const teacherRoutes = [
   "/dashboard",
   "/students",

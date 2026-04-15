@@ -1,16 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useTransition } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Info } from "lucide-react";
 import { z } from "zod";
 
 import InputField from "./InputField";
 import PasswordField from "./PasswordField";
-import InfoBox from "./InfoBox";
 import { createParent } from "@/lib/actions/parent.action";
-// import { createParent } from "@/lib/actions/parent.action";
 
 const schema = z
   .object({
@@ -50,14 +49,11 @@ export default function ParentForm({ token }: { token: string }) {
     },
   });
 
-  console.log("errors", errors);
-
   const [isPending, startTransition] = useTransition();
 
   const onSubmit = (data: ParentFormValues) => {
     startTransition(async () => {
       try {
-        console.log("submit data:", data);
         await createParent(data);
         reset();
       } catch (error) {
@@ -67,17 +63,16 @@ export default function ParentForm({ token }: { token: string }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      {/* NAME */}
-      <div className="grid grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Controller
           control={control}
           name="firstName"
           render={({ field }) => (
             <InputField
-              label="FIRST NAME"
+              label="First Name"
               required
-              placeholder="First Name"
+              placeholder="First name"
               value={field.value}
               onChange={field.onChange}
               error={errors.firstName?.message}
@@ -90,9 +85,9 @@ export default function ParentForm({ token }: { token: string }) {
           name="lastName"
           render={({ field }) => (
             <InputField
-              label="LAST NAME"
+              label="Last Name"
               required
-              placeholder="Last Name"
+              placeholder="Last name"
               value={field.value}
               onChange={field.onChange}
               error={errors.lastName?.message}
@@ -101,13 +96,12 @@ export default function ParentForm({ token }: { token: string }) {
         />
       </div>
 
-      {/* EMAIL */}
       <Controller
         control={control}
         name="email"
         render={({ field }) => (
           <InputField
-            label="EMAIL ADDRESS"
+            label="Email Address"
             required
             placeholder="example@email.com"
             value={field.value}
@@ -117,13 +111,12 @@ export default function ParentForm({ token }: { token: string }) {
         )}
       />
 
-      {/* PASSWORD */}
       <Controller
         control={control}
         name="password"
         render={({ field }) => (
           <PasswordField
-            label="PASSWORD"
+            label="Password"
             required
             placeholder="Minimum 6 characters"
             value={field.value}
@@ -138,7 +131,7 @@ export default function ParentForm({ token }: { token: string }) {
         name="confirmPassword"
         render={({ field }) => (
           <PasswordField
-            label="CONFIRM PASSWORD"
+            label="Confirm Password"
             required
             placeholder="Re-enter your password"
             value={field.value}
@@ -148,13 +141,12 @@ export default function ParentForm({ token }: { token: string }) {
         )}
       />
 
-      {/* PHONE */}
       <Controller
         control={control}
         name="tel"
         render={({ field }) => (
           <InputField
-            label="PHONE NUMBER"
+            label="Phone Number"
             required
             placeholder="0xx-xxx-xxxx"
             value={field.value}
@@ -164,13 +156,12 @@ export default function ParentForm({ token }: { token: string }) {
         )}
       />
 
-      {/* LINE */}
       <Controller
         control={control}
         name="lineId"
         render={({ field }) => (
           <InputField
-            label="LINE ID"
+            label="Line ID"
             placeholder="@yourlineid"
             hint="Line ID will be used for important notifications and updates"
             value={field.value}
@@ -180,38 +171,50 @@ export default function ParentForm({ token }: { token: string }) {
         )}
       />
 
-      {/* INFO BOX */}
-      <InfoBox
-        title="Student Information"
-        text="Your account will be automatically linked to your student's record. You will receive access to payment history, academic updates, and school announcements."
-      />
-
-      {/* TERMS */}
-      <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 flex gap-3">
-        <CheckCircle className="w-5 h-5 text-green-500 mt-1 shrink-0" />
-        <p>
-          By creating an account, you agree to our Terms of Service and Privacy
-          Policy. We will use your information solely for school-related
-          communications and will never share it with third parties without your
-          consent.
-        </p>
+      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+        <div className="flex items-start gap-3">
+          <Info className="mt-0.5 h-5 w-5 text-blue-600 shrink-0" />
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-blue-700">
+              Student Information
+            </p>
+            <p className="text-sm leading-6 text-blue-700/90">
+              Your account will be automatically linked to your student’s
+              record. You will receive access to payment history, academic
+              updates, and school announcements.
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* BUTTON */}
+      <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+        <div className="flex items-start gap-3">
+          <CheckCircle className="mt-0.5 h-5 w-5 text-emerald-600 shrink-0" />
+          <p className="text-sm leading-6 text-slate-700">
+            By creating an account, you agree to our Terms of Service and
+            Privacy Policy. We will use your information solely for
+            school-related communications and will never share it with third
+            parties without your consent.
+          </p>
+        </div>
+      </div>
+
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
+        className="w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
       >
         {isPending ? "Creating..." : "Create Account"}
       </button>
 
-      {/* SIGN IN */}
-      <p className="text-center text-sm">
+      <p className="text-center text-sm text-slate-500">
         Already have an account?{" "}
-        <span className="text-blue-600 font-medium cursor-pointer">
+        <Link
+          href="/login"
+          className="font-semibold text-blue-600 transition hover:text-blue-700 hover:underline"
+        >
           Sign in here
-        </span>
+        </Link>
       </p>
     </form>
   );

@@ -1,27 +1,39 @@
 import ParentForm from "@/components/features/homepage/parents-registration/ParentForm";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-export default async function ParentRegisterPage(
-  props: PageProps<"/parents-registration">,
-) {
-  const { token } = await props.searchParams;
-  console.log("token", token);
+export default function ParentRegisterPage({
+  searchParams,
+}: {
+  searchParams: { token?: string };
+}) {
+  const token = searchParams.token;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-sm p-8 space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Parent Registration</h1>
-          <p className="text-gray-500 mt-2">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-10">
+      <Card className="w-full max-w-xl rounded-3xl border border-slate-200 shadow-sm">
+        <CardHeader className="space-y-2 text-center pb-4">
+          <CardTitle className="text-3xl font-bold tracking-tight text-slate-900">
+            Parent Registration
+          </CardTitle>
+          <CardDescription className="text-sm text-slate-500">
             Please fill in your information to create an account
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="px-6 pb-6 pt-0">
+          <ParentForm token={token ?? ""} />
+
+          <p className="mt-6 text-center text-xs tracking-wide text-slate-400">
+            SECURE REGISTRATION | SSL ENCRYPTED
           </p>
-        </div>
-
-        <ParentForm token={String(token)} />
-
-        <p className="text-center text-sm text-gray-500">
-          SECURE REGISTRATION | SSL ENCRYPTED
-        </p>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
