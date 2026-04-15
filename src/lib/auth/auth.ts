@@ -8,8 +8,6 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
       async authorize(credentials) {
         const result = await authService.login(credentials);
         const { user, accessToken, expiresIn } = result;
-        console.log('result', result);
-        // console.log('  teacher: user.teacher', user.teacher);
         return {
           ...user,
           accessToken,

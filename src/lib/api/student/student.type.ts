@@ -146,9 +146,23 @@ export type ClassroomInDetail = {
   name: string;
 };
 
+export type EnrollmentStatus = 'ACTIVE' | 'PROMOTED' | 'REPEATED' | 'TRANSFERRED';
+
+export type EnrollmentHistoryInDetail = {
+  id: string;
+  year: number;
+  term: number;
+  status: EnrollmentStatus;
+  startDate: string | null;
+  endDate: string | null;
+  grade: GradeInDetail;
+  classroom: ClassroomInDetail | null;
+};
+
 export type StudentDetail = Student & {
   grade?: GradeInDetail | null;
   classroom?: ClassroomInDetail | null;
   scores: ScoreInDetail[];
   comments: CommentInDetail[];
+  studentEnrollments: EnrollmentHistoryInDetail[];
 };
