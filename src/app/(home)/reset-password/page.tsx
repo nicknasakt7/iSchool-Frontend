@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { useMemo, useState } from "react";
 import { signOut } from "next-auth/react";
+import { requestResetPassword } from "@/lib/actions/auth.action";
 
 const resetPasswordSchema = z
   .object({
@@ -41,13 +42,13 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (input: ResetPasswordInput) => {
     setApiError(null);
-    // try {
-    //   await requestResetPassword(token, input.password);
-    //   await signOut({ redirect: false });
-    //   setDone(true);
-    // } catch (error) {
-    //   setApiError(error instanceof Error ? error.message : "Request failed");
-    // }
+    try {
+      await requestResetPassword(token, input.password);
+      await signOut({ redirect: false });
+      setDone(true);
+    } catch (error) {
+      setApiError(error instanceof Error ? error.message : "Request failed");
+    }
   };
 
   return (

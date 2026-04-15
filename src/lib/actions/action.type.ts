@@ -1,6 +1,7 @@
 export type SuccessActionResult<T = unknown> = {
   success: true;
   data?: T;
+  message?: string;
 };
 
 export type ErrorActionResult = {

@@ -7,12 +7,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function ParentRegisterPage({
+export default async function ParentRegisterPage({
   searchParams,
 }: {
-  searchParams: { token?: string };
+  searchParams: Promise<{ token?: string }>;
 }) {
-  const token = searchParams.token;
+  const params = await searchParams;
+  const token = params.token ?? "";
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-10">
@@ -27,7 +28,7 @@ export default function ParentRegisterPage({
         </CardHeader>
 
         <CardContent className="px-6 pb-6 pt-0">
-          <ParentForm token={token ?? ""} />
+          <ParentForm token={token} />
 
           <p className="mt-6 text-center text-xs tracking-wide text-slate-400">
             SECURE REGISTRATION | SSL ENCRYPTED
