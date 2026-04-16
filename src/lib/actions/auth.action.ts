@@ -17,6 +17,40 @@ export const logout = async () => {
   await signOut({ redirectTo: "/" });
 };
 
+export const requestForgotPassword = async (
+  email: string,
+): Promise<ActionResult> => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/forgot-password`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+        cache: "no-store",
+      },
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+        code: data?.code || "FORGOT_PASSWORD_FAILED",
+        message: data?.message || "Failed to send reset link",
+      };
+    }
+
+    return { success: true, message: data?.message };
+  } catch {
+    return {
+      success: false,
+      code: "NETWORK_ERROR",
+      message: "Unable to connect to server",
+    };
+  }
+};
+
 export const requestResetPassword = async (
   token: string,
   password: string,

@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { useDebounce } from '@/lib/api/student/hooks/useDebounce';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type SearchInputProps = {
   placeholder?: string;
@@ -20,10 +20,14 @@ export default function SearchInput({
 
   const debounced = useDebounce(value, 500);
 
-  // ยิงตอน debounce เปลี่ยน
+  // เก็บ callback ล่าสุดไว้ใน ref เพื่อไม่ให้ effect fire ตอน onSearch reference เปลี่ยน
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
+
+  // ยิงเฉพาะตอน debounced value เปลี่ยนเท่านั้น
   useEffect(() => {
-    onSearch?.(debounced);
-  }, [debounced, onSearch]);
+    onSearchRef.current?.(debounced);
+  }, [debounced]);
 
   return (
     <div className={`relative w-full ${className}`}>

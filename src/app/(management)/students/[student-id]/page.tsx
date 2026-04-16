@@ -79,7 +79,7 @@ export default function StudentDetailPage({
       />
 
       {/* Enrollment History */}
-      {student.studentEnrollments.length > 0 && (
+      {(student.studentEnrollments?.length ?? 0) > 0 && (
         <StudentEnrollmentHistory enrollments={student.studentEnrollments} />
       )}
     </div>

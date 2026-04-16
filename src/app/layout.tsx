@@ -27,7 +27,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={cn(`antialiased ${poppins.className}`)} suppressHydrationWarning>
-      <body className={`antialiased ${poppins.className}`}>
+      <body className={`antialiased ${poppins.className}`} suppressHydrationWarning>
         <Providers>
           {children}
           <Toaster position="top-right" richColors />
