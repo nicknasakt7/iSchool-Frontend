@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import { toast } from 'sonner';
-import { Trash2 } from 'lucide-react';
-import { useStudents } from '@/lib/api/student/hooks/useStudents';
-import { useDeleteStudent } from '@/lib/api/student/hooks/useDeleteStudent';
+import Link from "next/link";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
+import { useStudents } from "@/lib/api/student/hooks/useStudents";
+import { useDeleteStudent } from "@/lib/api/student/hooks/useDeleteStudent";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Mail } from "lucide-react";
+import { inviteParent } from "@/lib/actions/invite.action";
 
 type StudentsListProps = {
   search: string;
@@ -42,8 +44,8 @@ export default function StudentsList({
       page,
       limit: 10,
       search,
-      gradeId: grade === 'all' ? undefined : grade,
-      classId: classId === 'all' ? undefined : classId,
+      gradeId: grade === "all" ? undefined : grade,
+      classId: classId === "all" ? undefined : classId,
     },
     { enabled: shouldFetch },
   );
@@ -51,7 +53,22 @@ export default function StudentsList({
   const { mutate: deleteStudent, isPending: isDeleting } = useDeleteStudent();
 
   const role = session?.user?.role;
-  const canDelete = role === 'ADMIN' || role === 'SUPER_ADMIN';
+  const canDelete = role === "ADMIN" || role === "SUPER_ADMIN";
+  const canInvite = role === "ADMIN" || role === "SUPER_ADMIN";
+
+  const handleInvite = async (email?: string | null) => {
+    if (!email) {
+      toast.error("No parent email");
+      return;
+    }
+
+    try {
+      await inviteParent(email);
+      toast.success("Invite sent!");
+    } catch {
+      toast.error("Invite failed");
+    }
+  };
 
   if (!shouldFetch)
     return (
@@ -75,27 +92,49 @@ export default function StudentsList({
   return (
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {data.data.map(s => (
+        {data.data.map((s) => (
           <div key={s.id} className="relative group">
             <Link href={`/students/${s.id}`}>
-              <div className="flex items-center justify-between p-4 rounded-xl border bg-card hover:shadow-md hover:scale-[1.01] transition-all duration-200 cursor-pointer pr-14">
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-card hover:shadow-md hover:scale-[1.01] transition-all duration-200 cursor-pointer pr-20">
                 <div className="flex items-center gap-4">
                   <Image
-                    src={s.profileImageUrl || '/user.png'}
+                    src={s.profileImageUrl || "/user.png"}
                     alt={`${s.firstName} ${s.lastName}`}
                     width={80}
                     height={80}
                     className="rounded-full object-cover w-20 h-20"
                   />
                   <div>
-                    <p className="font-medium">{s.firstName} {s.lastName}</p>
+                    <p className="font-medium">
+                      {s.firstName} {s.lastName}
+                    </p>
                     <p className="text-sm text-gray-500">{s.nickName}</p>
-                    <p className="text-xs text-gray-400">Student code: {s.studentCode}</p>
+                    <p className="text-xs text-gray-400">
+                      Student code: {s.studentCode}
+                    </p>
                   </div>
                 </div>
               </div>
             </Link>
 
+            {/* Invite Button */}
+            {canInvite && (
+              <div className="absolute right-12 top-1/2 -translate-y-1/2">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleInvite(s.parentsEmail);
+                  }}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-blue-600 hover:bg-blue-100 transition-colors"
+                  title="Invite parent"
+                >
+                  <Mail size={16} />
+                </button>
+              </div>
+            )}
+
+            {/* Delete Button */}
             {canDelete && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 <AlertDialog>
@@ -112,7 +151,11 @@ export default function StudentsList({
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Student</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Permanently delete <strong>{s.firstName} {s.lastName}</strong>? This action cannot be undone.
+                        Permanently delete{" "}
+                        <strong>
+                          {s.firstName} {s.lastName}
+                        </strong>
+                        ? This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -120,8 +163,12 @@ export default function StudentsList({
                       <AlertDialogAction
                         onClick={() =>
                           deleteStudent(s.id, {
-                            onSuccess: () => toast.success(`${s.firstName} ${s.lastName} deleted`),
-                            onError: (e) => toast.error(e.message ?? 'Failed to delete'),
+                            onSuccess: () =>
+                              toast.success(
+                                `${s.firstName} ${s.lastName} deleted`,
+                              ),
+                            onError: (e) =>
+                              toast.error(e.message ?? "Failed to delete"),
                           })
                         }
                         className="bg-destructive hover:bg-destructive/90"
