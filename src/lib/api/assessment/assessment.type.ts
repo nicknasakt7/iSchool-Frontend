@@ -133,3 +133,10 @@ export type SubjectAssignmentItem = {
   classId: string;
   subjectId: string;
 };
+
+// ─── GET /assessment-config/suggestions?subjectId= ────────────────────────
+export type ConfigSuggestion = {
+  term: number;
+  year: number;
+  items: { name: string; maxScore: number }[];
+};

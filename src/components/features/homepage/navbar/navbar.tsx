@@ -52,9 +52,7 @@ export default function Navbar() {
           ) : (
             <>
               <Link href={PATH.LOGIN}>
-                <div className=" hover:bg-gray-50 px-4 py-1 rounded-2xl animate-pulse">
-                  <Button className="font-semibold">Login</Button>
-                </div>
+                <Button className="font-semibold">Login</Button>
               </Link>
               <Button variant="outline">
                 <a
@@ -62,7 +60,7 @@ export default function Navbar() {
                   href="#contect"
                   className=" hover:scale-105"
                 >
-                  Form Regiter
+                  Interested form
                 </a>
                 <ArrowRight size={16} />
               </Button>

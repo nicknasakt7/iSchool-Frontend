@@ -36,7 +36,6 @@ export default function CreateTransactionPage() {
       classroomIds: selection.classroomIds,
       gradeIds: selection.gradeIds,
     };
-    console.log('CREATE BILLS PAYLOAD:', payload);
     // TODO: await createBills(payload)
   };
 

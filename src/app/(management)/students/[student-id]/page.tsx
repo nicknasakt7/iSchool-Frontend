@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useStudentDetail } from '@/lib/api/student/hooks/useStudentDetail';
 import StudentProfileHeader from '@/components/features/student-back/student-detail/student-profile-header';
@@ -8,9 +8,7 @@ import StudentAiInsight from '@/components/features/student-back/student-detail/
 import StudentAcademicDossier from '@/components/features/student-back/student-detail/student-academic-dossier';
 import StudentSubjectPerformance from '@/components/features/student-back/student-detail/student-subject-performance';
 import StudentTeacherComments from '@/components/features/student-back/student-detail/student-teacher-comments';
-
-const CURRENT_TERM = 1;
-const CURRENT_YEAR = new Date().getFullYear();
+import StudentEnrollmentHistory from '@/components/features/student-back/student-detail/student-enrollment-history';
 
 export default function StudentDetailPage({
   params,
@@ -19,9 +17,12 @@ export default function StudentDetailPage({
 }) {
   const { 'student-id': studentId } = use(params);
 
+  const [selectedTerm, setSelectedTerm] = useState<number>(1);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+
   const { data: student, isLoading, isError } = useStudentDetail(studentId, {
-    term: CURRENT_TERM,
-    year: CURRENT_YEAR,
+    term: selectedTerm,
+    year: selectedYear,
   });
 
   if (isLoading) {
@@ -42,14 +43,23 @@ export default function StudentDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* Header: ชื่อ, ชื่อเล่น, student code, badges, action menu */}
-      <StudentProfileHeader student={student} studentId={studentId} />
+      {/* Header: ชื่อ, ชื่อเล่น, student code, badges, term/year selector */}
+      <StudentProfileHeader
+        student={student}
+        studentId={studentId}
+        selectedTerm={selectedTerm}
+        selectedYear={selectedYear}
+        onTermYearChange={(term, year) => {
+          setSelectedTerm(term);
+          setSelectedYear(year);
+        }}
+      />
 
       {/* AI Insight */}
       <StudentAiInsight
         studentId={studentId}
-        term={CURRENT_TERM}
-        year={CURRENT_YEAR}
+        term={selectedTerm}
+        year={selectedYear}
       />
 
       {/* Academic Dossier + Subject Performance */}
@@ -64,9 +74,14 @@ export default function StudentDetailPage({
       {/* Teacher Comments */}
       <StudentTeacherComments
         comments={student.comments}
-        term={CURRENT_TERM}
-        year={CURRENT_YEAR}
+        term={selectedTerm}
+        year={selectedYear}
       />
+
+      {/* Enrollment History */}
+      {student.studentEnrollments.length > 0 && (
+        <StudentEnrollmentHistory enrollments={student.studentEnrollments} />
+      )}
     </div>
   );
 }

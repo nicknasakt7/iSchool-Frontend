@@ -1,6 +1,6 @@
 import { FormValues } from "@/components/features/create/form/NewTeacherForm";
 
-import { Teacher, TeacherListResponse, TeacherResponse } from "./teacher.type";
+import { Teacher, TeacherListResponse, TeacherResponse, TeacherSummary } from "./teacher.type";
 import { api } from "../api-server";
 import { apiClient } from "../client";
 
@@ -50,7 +50,11 @@ const deleteTeacher = (id: string, token?: string) =>
 const getTeacherById = (id: string, token?: string) =>
   apiClient.get<TeacherResponse>(`/teachers/${id}`, undefined, token);
 
+const getTeacherSummary = (token?: string) =>
+  apiClient.get<TeacherSummary>('/teachers/summary', undefined, token);
+
 export const teacherService = {
+  getTeacherSummary,
   createTeacher,
   getTeachers,
   updateTeacher,

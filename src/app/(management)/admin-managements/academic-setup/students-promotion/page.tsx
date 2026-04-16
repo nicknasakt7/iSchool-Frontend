@@ -151,7 +151,7 @@ function OutcomeSelector({
           onChange({ outcome: v as EnrollmentStatus, targetGradeId: undefined, targetClassroomId: undefined })
         }
       >
-        <SelectTrigger className="h-8 w-32 text-xs rounded-lg">
+        <SelectTrigger className="h-8 w-32 text-xs rounded-lg bg-background">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -173,7 +173,7 @@ function OutcomeSelector({
             onChange({ ...value, targetGradeId: v || undefined, targetClassroomId: undefined })
           }
         >
-          <SelectTrigger className="h-8 w-28 text-xs rounded-lg">
+          <SelectTrigger className="h-8 w-28 text-xs rounded-lg bg-background">
             <SelectValue placeholder="เลือกชั้น" />
           </SelectTrigger>
           <SelectContent>
@@ -197,7 +197,7 @@ function OutcomeSelector({
               onChange({ ...value, targetClassroomId: v === '__none__' ? undefined : v })
             }
           >
-            <SelectTrigger className="h-8 w-24 text-xs rounded-lg">
+            <SelectTrigger className="h-8 w-24 text-xs rounded-lg bg-background">
               <SelectValue placeholder="ห้อง" />
             </SelectTrigger>
             <SelectContent>
@@ -229,10 +229,8 @@ function PromotionTab() {
   const [tgtYear, setTgtYear] = useState<number>(CURRENT_YEAR);
   const [tgtTerm, setTgtTerm] = useState<number>(2);
 
-  // grades without year/term filter — สำหรับ source selector และ list grade names
+  // grades without year/term filter — สำหรับทุก selector (classroom เป็น entity กลาง ไม่ผูก term)
   const { data: grades = [] } = useGrades();
-  // grades filtered by target year/term — สำหรับ OutcomeSelector classroom dropdown
-  const { data: tgtGrades = [] } = useGrades({ year: tgtYear, term: tgtTerm });
 
   const isSameTermAsSource = srcYear === tgtYear && srcTerm === tgtTerm;
 
@@ -602,9 +600,7 @@ function PromotionTab() {
                 return (
                   <div
                     key={student.id}
-                    className={`flex items-center gap-4 px-5 py-3.5 transition-colors ${
-                      isSelected ? 'bg-blue-50' : 'hover:bg-muted/30'
-                    }`}
+                    className="flex items-center gap-4 px-5 py-3.5 hover:bg-muted/30 transition-colors"
                   >
                     <input
                       type="checkbox"
@@ -635,7 +631,7 @@ function PromotionTab() {
                       <OutcomeSelector
                         value={outcome}
                         onChange={v => setOutcome(student.id, v)}
-                        grades={tgtGrades}
+                        grades={grades}
                       />
                     )}
 

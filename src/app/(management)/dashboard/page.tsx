@@ -1,10 +1,10 @@
 import AlertCard from '@/components/features/dashboard/alert-card';
 import LeftStatCard from '@/components/features/dashboard/left-stat-card';
-import SummaryCard from '@/components/features/dashboard/summary-card';
-import { simulateLoading } from '@/lib/utils';
+import SummaryCards from '@/components/features/dashboard/summary-card';
+import TeacherStatCard from '@/components/features/dashboard/teacher-stat-card';
+import GpaDistributionCard from '@/components/features/dashboard/gpa-distribution-card';
 
-export default async function DashboardPage() {
-  await simulateLoading(1);
+export default function DashboardPage() {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 ease-out">
       {/* TITLE */}
@@ -20,22 +20,26 @@ export default async function DashboardPage() {
       {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
-          <LeftStatCard total={1248} />
+          <LeftStatCard />
         </div>
 
         <div className="lg:col-span-2 flex flex-col gap-6">
           <AlertCard />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <SummaryCard
-              title="Students Present Today"
-              value={1214}
-              color="green"
-            />
-
-            <SummaryCard title="Students Absent Today" value={34} color="red" />
+            <SummaryCards />
           </div>
         </div>
+      </div>
+
+      {/* TEACHER SECTION */}
+      <div className="mt-6">
+        <TeacherStatCard />
+      </div>
+
+      {/* GPA DISTRIBUTION */}
+      <div className="mt-6">
+        <GpaDistributionCard />
       </div>
     </div>
   );

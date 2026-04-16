@@ -120,6 +120,10 @@ export default function ProfileForm({ studentId }: ProfileFormProps) {
     mutationFn: (data: UpdateStudentFormValues) => {
       const payload: Record<string, unknown> = { ...data };
       if (!payload.classId) delete payload.classId;
+      // Remove optional empty-string fields — backend's @IsNotEmpty() rejects "" even on optional fields
+      if (!payload.nickName) delete payload.nickName;
+      if (!payload.favorite) delete payload.favorite;
+      if (!payload.healthNote) delete payload.healthNote;
       return studentService.updateStudent(studentId, payload, token);
     },
     onSuccess: () => {

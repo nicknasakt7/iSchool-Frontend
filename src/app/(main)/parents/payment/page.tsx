@@ -73,12 +73,12 @@ export default function PaymentPage() {
   const paidBills = bills.filter(b => b.isPaid);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
+    <div className="min-h-screen bg-muted/20 p-6 md:p-10">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Back */}
         <Link
           href="/parents/student-info"
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition"
         >
           <ArrowLeft size={16} />
           Back to Dashboard
@@ -86,7 +86,7 @@ export default function PaymentPage() {
 
         <div>
           <h1 className="text-3xl font-bold">My Bills</h1>
-          <p className="text-gray-500 mt-1">
+          <p className="text-muted-foreground mt-1">
             View and pay outstanding bills for your child.
           </p>
         </div>
@@ -95,35 +95,35 @@ export default function PaymentPage() {
           {/* LEFT — bill list */}
           <div className="space-y-4">
             {unpaidBills.length === 0 && paidBills.length === 0 && (
-              <p className="text-center text-gray-400 py-10">No bills found.</p>
+              <p className="text-center text-muted-foreground py-10">No bills found.</p>
             )}
 
             {/* Unpaid */}
             {unpaidBills.length > 0 && (
               <div className="space-y-3">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   Outstanding
                 </p>
                 {unpaidBills.map(bill => (
                   <div
                     key={bill.id}
                     onClick={() => setSelectedBillId(bill.id === selectedBillId ? null : bill.id)}
-                    className={`bg-white rounded-2xl border p-5 cursor-pointer transition-all ${
+                    className={`bg-card rounded-2xl border p-5 cursor-pointer transition-all ${
                       selectedBillId === bill.id
-                        ? 'border-blue-500 ring-2 ring-blue-200'
-                        : 'hover:border-blue-300'
+                        ? 'border-primary ring-2 ring-primary/20'
+                        : 'hover:border-primary/40'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-mono text-gray-400">{bill.billNumber}</span>
+                          <span className="text-xs font-mono text-muted-foreground">{bill.billNumber}</span>
                           <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 font-medium">
                             <Clock size={10} /> Unpaid
                           </span>
                         </div>
                         <p className="font-semibold truncate">{bill.title}</p>
-                        <p className="text-sm text-gray-500">{bill.studentName} · Term {bill.term}/{bill.year}</p>
+                        <p className="text-sm text-muted-foreground">{bill.studentName} · Term {bill.term}/{bill.year}</p>
                         {bill.dueDate && (
                           <p className="text-xs text-red-400 mt-1">
                             Due: {new Date(bill.dueDate).toLocaleDateString('th-TH')}
@@ -159,20 +159,20 @@ export default function PaymentPage() {
                 {paidBills.map(bill => (
                   <div
                     key={bill.id}
-                    className="bg-white rounded-2xl border p-5 opacity-60"
+                    className="bg-card rounded-2xl border p-5 opacity-60"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-mono text-gray-400">{bill.billNumber}</span>
+                          <span className="text-xs font-mono text-muted-foreground">{bill.billNumber}</span>
                           <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-600 font-medium">
                             <CheckCircle2 size={10} /> Paid
                           </span>
                         </div>
                         <p className="font-semibold truncate">{bill.title}</p>
-                        <p className="text-sm text-gray-500">{bill.studentName} · Term {bill.term}/{bill.year}</p>
+                        <p className="text-sm text-muted-foreground">{bill.studentName} · Term {bill.term}/{bill.year}</p>
                       </div>
-                      <p className="font-bold text-lg shrink-0 text-gray-400">{formatAmount(bill.amount)}</p>
+                      <p className="font-bold text-lg shrink-0 text-muted-foreground">{formatAmount(bill.amount)}</p>
                     </div>
                   </div>
                 ))}
@@ -183,9 +183,9 @@ export default function PaymentPage() {
           {/* RIGHT — Stripe checkout */}
           <div className="sticky top-6">
             {selectedBill ? (
-              <div className="bg-white rounded-2xl border p-6 space-y-4">
+              <div className="bg-card rounded-2xl border p-6 space-y-4">
                 <div>
-                  <p className="text-sm text-gray-500">Paying for</p>
+                  <p className="text-sm text-muted-foreground">Paying for</p>
                   <p className="font-semibold text-lg">{selectedBill.title}</p>
                   <p className="text-2xl font-bold text-blue-600 mt-1">
                     {formatAmount(selectedBill.amount)}
@@ -195,7 +195,7 @@ export default function PaymentPage() {
                 <CheckoutPage clientSecret={clientSecret} />
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border p-10 flex flex-col items-center justify-center text-center text-gray-400 min-h-64">
+              <div className="bg-card rounded-2xl border p-10 flex flex-col items-center justify-center text-center text-muted-foreground min-h-64">
                 <p className="text-base font-medium">Select a bill to pay</p>
                 <p className="text-sm mt-1">
                   Click on any outstanding bill to proceed to checkout.

@@ -52,7 +52,7 @@ export default function TeacherList({
   const { mutate: deleteTeacher, isPending: isDeleting } = useDeleteTeacher();
 
   const role = session?.user?.role;
-  const canDelete = role === 'ADMIN' || role === 'SUPER_ADMIN';
+  const canManage = role === 'SUPER_ADMIN';
 
   const total = data?.meta.total ?? 0;
   const limit = data?.meta.limit ?? 10;
@@ -101,15 +101,13 @@ export default function TeacherList({
               </div>
 
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  className="text-sm"
-                  asChild
-                >
-                  <Link href={`/admin-managements/teachers/${t.id}/edit`}>
-                    Edit
-                  </Link>
-                </Button>
+                {canManage && (
+                  <Button variant="outline" className="text-sm" asChild>
+                    <Link href={`/admin-managements/teachers/${t.id}/edit`}>
+                      Edit
+                    </Link>
+                  </Button>
+                )}
 
                 <Button
                   variant="outline"
@@ -119,7 +117,7 @@ export default function TeacherList({
                   Manage
                 </Button>
 
-                {canDelete && (
+                {canManage && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" className="text-sm" disabled={isDeleting}>

@@ -1,11 +1,11 @@
-import ParentForm from "@/components/features/homepage/parents-registration/ParentForm";
+import ParentForm from '@/components/features/homepage/parents-registration/ParentForm';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
 export default async function ParentRegisterPage({
   searchParams,
@@ -13,7 +13,7 @@ export default async function ParentRegisterPage({
   searchParams: Promise<{ token?: string }>;
 }) {
   const params = await searchParams;
-  const token = params.token ?? "";
+  const token = params.token ?? '';
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-10">

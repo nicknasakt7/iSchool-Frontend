@@ -59,12 +59,9 @@ const apiFetch = async <T>(
     headers,
   };
   const res = await fetch(`${BACKEND_URL}${fullUrl}`, config);
-  // const res = await fetch(`${BACKEND_URL}${url}`, config); เก่า
-  console.log("res", res);
 
   if (!res.ok) {
     const error = await res.json();
-    console.log("errorhhhhhhhhhh", error);
     if (res.status === 401 && UNAUTHORIZED_CODE.includes(error.code)) {
       redirect("/api/proxy/clear-session");
     }

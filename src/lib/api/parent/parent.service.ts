@@ -1,5 +1,5 @@
 import { ParentFormValues } from "@/components/features/homepage/parents-registration/ParentForm";
-import { Parent, ParentAdminListResponse } from "./parent.type";
+import { MyStudent, Parent, ParentAdminListResponse } from "./parent.type";
 import { api } from "../api-server";
 import { apiClient } from "../client";
 
@@ -13,4 +13,7 @@ const getParents = (
   token?: string,
 ) => apiClient.get<ParentAdminListResponse>("/parents", params, token);
 
-export const parentService = { createParent, getParents };
+const getMyStudents = (token?: string) =>
+  apiClient.get<MyStudent[]>("/parents/my-student", undefined, token);
+
+export const parentService = { createParent, getParents, getMyStudents };

@@ -18,10 +18,8 @@ const REVALIDATE_PATH =
 export const createClassroomAction = async (
   payload: CreateClassroomPayload,
 ): Promise<ActionResult> => {
-  console.log('payload:', payload);
   try {
-    const result = await api.post('/classrooms', payload);
-    console.log('response:', result);
+    await api.post('/classrooms', payload);
     revalidatePath(REVALIDATE_PATH);
     return {};
   } catch (err) {
@@ -47,10 +45,8 @@ export const updateClassroomAction = async (
   id: string,
   payload: UpdateClassroomPayload,
 ): Promise<ActionResult> => {
-  console.log('payload:', payload);
   try {
-    const result = await api.patch(`/classrooms/${id}`, payload);
-    console.log('response:', result);
+    await api.patch(`/classrooms/${id}`, payload);
     revalidatePath(REVALIDATE_PATH);
     return {};
   } catch (err) {

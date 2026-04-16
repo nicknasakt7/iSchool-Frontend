@@ -10,6 +10,8 @@ import { useUpdateScoreItem } from '@/lib/api/assessment/hooks/useUpdateScoreIte
 import { useGetTeacherComment } from '@/lib/api/teacher-comment/hooks/useGetTeacherComment';
 import { useUpsertTeacherComment } from '@/lib/api/teacher-comment/hooks/useUpsertTeacherComment';
 import { Loader } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 type ScoreItem = {
   scoreItemId?: string;
@@ -86,13 +88,16 @@ export default function StudentPerformanceCard({
   const [comment, setComment] = useState('');
   const [isEditingComment, setIsEditingComment] = useState(false);
 
-  const { mutate: saveScore, isPending: isSaving } = useUpdateScoreItem();
+  const queryClient = useQueryClient();
+  const { mutateAsync: saveScore, isPending: isSaving } = useUpdateScoreItem();
   const { data: commentData } = useGetTeacherComment({ studentId, subjectId, term, year });
   const { mutate: saveComment, isPending: isSavingComment } = useUpsertTeacherComment();
 
   useEffect(() => {
-    setLocalScores(scores);
-  }, [scores]);
+    if (!isEditing) {
+      setLocalScores(scores);
+    }
+  }, [scores, isEditing]);
 
   useEffect(() => {
     if (commentData?.content !== undefined) {
@@ -116,7 +121,7 @@ export default function StudentPerformanceCard({
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const itemsToSave = localScores.filter(item => item.scoreItemId);
 
     if (itemsToSave.length === 0) {
@@ -124,18 +129,16 @@ export default function StudentPerformanceCard({
       return;
     }
 
-    let completed = 0;
-    itemsToSave.forEach(item => {
-      saveScore(
-        { scoreItemId: item.scoreItemId!, value: item.score },
-        {
-          onSuccess: () => {
-            completed++;
-            if (completed === itemsToSave.length) setIsEditing(false);
-          },
-        },
-      );
-    });
+    try {
+      for (const item of itemsToSave) {
+        await saveScore({ scoreItemId: item.scoreItemId!, value: item.score });
+      }
+      setIsEditing(false);
+      toast.success('Scores saved');
+      queryClient.invalidateQueries({ queryKey: ['full-assessment'] });
+    } catch {
+      // onError in useUpdateScoreItem already shows toast.error
+    }
   };
 
   const handleDiscard = () => {

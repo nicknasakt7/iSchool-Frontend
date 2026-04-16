@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { studentService } from '../student.service';
 import { useSession } from 'next-auth/react';
 
@@ -14,6 +14,7 @@ type Params = {
 
 type Options = {
   enabled?: boolean;
+  keepPreviousData?: boolean;
 };
 
 export const useStudents = (params: Params, options?: Options) => {
@@ -36,5 +37,6 @@ export const useStudents = (params: Params, options?: Options) => {
       return res;
     },
     enabled: !!session?.user?.accessToken && (options?.enabled ?? true),
+    placeholderData: options?.keepPreviousData ? keepPreviousData : undefined,
   });
 };

@@ -18,7 +18,6 @@ export default function ForgotPasswordPage() {
       return;
     }
 
-    console.log("Send reset link to:", email);
   };
 
   return (

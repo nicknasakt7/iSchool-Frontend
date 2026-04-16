@@ -12,6 +12,7 @@ import {
   FindSubjectAssignmentParams,
   SubjectAssignmentItem,
   FullAssessmentResponse,
+  ConfigSuggestion,
 } from './assessment.type';
 
 // API calls are abstracted in service layer — consumed by TanStack Query hooks
@@ -48,11 +49,16 @@ export const assessmentService = {
 
   // PATCH /score-item — updates a single student score item by its id
   updateScoreItem: (input: UpdateScoreItemDto, token?: string) =>
-    apiClient.patch('/score-item', input, token),
+    apiClient.patch('/assessment-config/score-item', input, token),
 
   // GET /assessment-config/full — configs + all students with real scoreItemIds
   getFullAssessment: (params: GetAssessmentConfigParams, token?: string) =>
     apiClient.get<FullAssessmentResponse>('/assessment-config/full', params, token),
+
+  // GET /assessment-config/suggestions?subjectId=
+  // Returns distinct config templates used previously for this subject
+  getConfigSuggestions: (subjectId: string, token?: string) =>
+    apiClient.get<ConfigSuggestion[]>('/assessment-config/suggestions', { subjectId }, token),
 
   // GET /subject-assignments/find?classroomId=&subjectId=
   // Returns the subjectAssignment id for a given classroom + subject pair

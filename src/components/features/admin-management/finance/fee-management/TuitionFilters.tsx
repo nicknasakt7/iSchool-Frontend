@@ -16,11 +16,11 @@ export default function TuitionFilters() {
   const [status, setStatus] = useState('All Status');
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm flex justify-between items-center">
+    <div className="bg-card p-6 rounded-2xl border shadow-sm flex justify-between items-center">
       <div className="flex gap-6">
         {/* 🔥 Grade */}
         <div className="flex flex-col gap-1">
-          <p className="text-xs text-gray-500 font-medium">SELECT GRADE</p>
+          <p className="text-xs text-muted-foreground font-medium">SELECT GRADE</p>
           <Select value={grade} onValueChange={setGrade}>
             <SelectTrigger className="w-160px">
               <SelectValue placeholder="Select Grade" />
@@ -34,7 +34,7 @@ export default function TuitionFilters() {
 
         {/* 🔥 Classroom */}
         <div className="flex flex-col gap-1">
-          <p className="text-xs text-gray-500 font-medium">SELECT CLASSROOM</p>
+          <p className="text-xs text-muted-foreground font-medium">SELECT CLASSROOM</p>
           <Select value={classroom} onValueChange={setClassroom}>
             <SelectTrigger className="w-160px">
               <SelectValue placeholder="Select Classroom" />
@@ -48,7 +48,7 @@ export default function TuitionFilters() {
 
         {/* 🔥 Status */}
         <div className="flex flex-col gap-1">
-          <p className="text-xs text-gray-500 font-medium">PAYMENT STATUS</p>
+          <p className="text-xs text-muted-foreground font-medium">PAYMENT STATUS</p>
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-160px">
               <SelectValue placeholder="Select Status" />
@@ -63,7 +63,7 @@ export default function TuitionFilters() {
       </div>
 
       {/* 🔥 Advanced Filters */}
-      <button className="px-4 py-2 rounded-lg border text-blue-600">
+      <button className="px-4 py-2 rounded-lg border text-primary hover:bg-muted transition">
         Advanced Filters
       </button>
     </div>

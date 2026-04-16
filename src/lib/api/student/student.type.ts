@@ -1,5 +1,39 @@
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
 
+export type SchoolSummary = {
+  total: number;
+  byGrade: { gradeId: string; gradeName: string; gradeLevel: number; count: number }[];
+};
+
+export type AtRiskStudent = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  gradeName: string;
+  classroomName: string;
+  subjects: { name: string; grade: number }[];
+  avgGrade: number;
+};
+
+export type AtRiskSummary = {
+  count: number;
+  students: AtRiskStudent[];
+  term: number;
+  year: number;
+};
+
+export type GpaDistribution = {
+  term: number;
+  year: number;
+  distribution: { label: string; count: number }[];
+};
+
+export type SchoolAttendanceSummary = {
+  total: number;
+  present: number;
+  absent: number;
+};
+
 export type ParentInStudent = {
   id: string;
   firstName: string;
@@ -112,9 +146,23 @@ export type ClassroomInDetail = {
   name: string;
 };
 
+export type EnrollmentStatus = 'ACTIVE' | 'PROMOTED' | 'REPEATED' | 'TRANSFERRED';
+
+export type EnrollmentHistoryInDetail = {
+  id: string;
+  year: number;
+  term: number;
+  status: EnrollmentStatus;
+  startDate: string | null;
+  endDate: string | null;
+  grade: GradeInDetail;
+  classroom: ClassroomInDetail | null;
+};
+
 export type StudentDetail = Student & {
   grade?: GradeInDetail | null;
   classroom?: ClassroomInDetail | null;
   scores: ScoreInDetail[];
   comments: CommentInDetail[];
+  studentEnrollments: EnrollmentHistoryInDetail[];
 };
