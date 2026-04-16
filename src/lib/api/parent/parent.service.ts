@@ -4,8 +4,8 @@ import { api } from "../api-server";
 import { apiClient } from "../client";
 
 const createParent = (input: ParentFormValues) => {
-  const { confirmPassword, ...res } = input;
-  return api.post<Parent>("/auth/register-parent", res);
+  const { token, confirmPassword, ...body } = input;
+  return api.post<Parent>(`/invites/register-parent?token=${token}`, body);
 };
 
 const getParents = (

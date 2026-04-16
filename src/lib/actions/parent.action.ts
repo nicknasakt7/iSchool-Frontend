@@ -11,6 +11,8 @@ export const createParent = async (input: ParentFormValues) => {
     revalidatePath("/parents-registration");
   } catch (error) {
     console.log("error", error);
+    throw error;
   }
-  redirect("/parents-registration");
+
+  redirect("/login");
 };
