@@ -71,7 +71,7 @@ const superAdminRoutes = [
   // super admin only
   '/create/new-admin',
 ];
-const parents = ['/', '/parents/student-info', '/parents/payment'];
+const parents = ['/', '/parents/student-info', '/parents/payment', '/parents/academic-result'];
 
 const ROLE = {
   SUPER_ADMIN: 'SUPER_ADMIN',
