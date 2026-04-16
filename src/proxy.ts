@@ -7,6 +7,7 @@ const publicRoutes = [
   '/login',
   '/reset-password',
   '/parents-registration',
+  '/password/forgetpassword',
 ];
 const teacherRoutes = [
   '/dashboard',

@@ -21,6 +21,7 @@ import { useSession } from 'next-auth/react';
 import { ArrowRight, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import Logo from '@/components/shared/logo';
+import Link from 'next/link';
 
 const DEMO_ACCOUNTS = [
   { label: 'Try as Admin', email: 'admin1@test.com', password: '123456', color: 'bg-purple-500 hover:bg-purple-600' },
@@ -133,8 +134,14 @@ export default function Login() {
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between">
                     <Label htmlFor="password" className="text-chart-3">Password</Label>
+                    <Link
+                      href="/password/forgetpassword"
+                      className="text-xs text-blue-500 hover:text-blue-700 transition-colors"
+                    >
+                      Forgot password?
+                    </Link>
                   </div>
                   <Input
                     id="password"
