@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { useMemo, useState } from "react";
-import { signOut } from "next-auth/react";
-import { requestResetPassword } from "@/lib/actions/auth.action";
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import z from 'zod';
+import { useMemo, useState } from 'react';
+import { signOut } from 'next-auth/react';
+import { requestResetPassword } from '@/lib/actions/auth.action';
 
 const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(6, "Password must be at least 6 characters")
-      .regex(/^[a-zA-Z0-9]+$/, "Use only English letters and numbers"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
+      .min(6, 'Password must be at least 6 characters')
+      .regex(/^[a-zA-Z0-9]+$/, 'Use only English letters and numbers'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
   })
-  .refine((value) => value.password === value.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Passwords do not match",
+  .refine(value => value.password === value.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
   });
 
 type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
-  const token = useMemo(() => searchParams.get("token") ?? "", [searchParams]);
+  const token = useMemo(() => searchParams.get('token') ?? '', [searchParams]);
 
   const [done, setDone] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -36,7 +36,7 @@ export default function ResetPasswordPage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ResetPasswordInput>({
-    defaultValues: { password: "", confirmPassword: "" },
+    defaultValues: { password: '', confirmPassword: '' },
     resolver: zodResolver(resetPasswordSchema),
   });
 
@@ -47,7 +47,7 @@ export default function ResetPasswordPage() {
       await signOut({ redirect: false });
       setDone(true);
     } catch (error) {
-      setApiError(error instanceof Error ? error.message : "Request failed");
+      setApiError(error instanceof Error ? error.message : 'Request failed');
     }
   };
 
@@ -152,11 +152,11 @@ export default function ResetPasswordPage() {
                     <input
                       type="password"
                       placeholder="Enter your new password"
-                      {...register("password")}
+                      {...register('password')}
                       className={`w-full rounded-2xl border px-4 py-3.5 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 ${
                         errors.password
-                          ? "border-rose-300 bg-rose-50 focus:ring-4 focus:ring-rose-100"
-                          : "border-slate-200 bg-slate-50 focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100"
+                          ? 'border-rose-300 bg-rose-50 focus:ring-4 focus:ring-rose-100'
+                          : 'border-slate-200 bg-slate-50 focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100'
                       }`}
                     />
                     {errors.password ? (
@@ -178,11 +178,11 @@ export default function ResetPasswordPage() {
                     <input
                       type="password"
                       placeholder="Re-enter your new password"
-                      {...register("confirmPassword")}
+                      {...register('confirmPassword')}
                       className={`w-full rounded-2xl border px-4 py-3.5 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 ${
                         errors.confirmPassword
-                          ? "border-rose-300 bg-rose-50 focus:ring-4 focus:ring-rose-100"
-                          : "border-slate-200 bg-slate-50 focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100"
+                          ? 'border-rose-300 bg-rose-50 focus:ring-4 focus:ring-rose-100'
+                          : 'border-slate-200 bg-slate-50 focus:border-sky-400 focus:bg-white focus:ring-4 focus:ring-sky-100'
                       }`}
                     />
                     {errors.confirmPassword ? (
@@ -203,9 +203,9 @@ export default function ResetPasswordPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full rounded-2xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+                    className="w-full rounded-2xl bg-linear-to-r from-sky-500 via-blue-600 to-indigo-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    {isSubmitting ? "Updating..." : "Update password"}
+                    {isSubmitting ? 'Updating...' : 'Update password'}
                   </button>
                 </form>
               )}
