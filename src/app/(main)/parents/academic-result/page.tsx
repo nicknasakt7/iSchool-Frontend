@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, Suspense } from 'react';
+import { useMemo, Suspense, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useMyStudents } from '@/lib/api/parent/hooks/useMyStudents';
 import { useStudentDetail } from '@/lib/api/student/hooks/useStudentDetail';
@@ -79,6 +79,43 @@ function AcademicResultContent() {
 
   const handlePrint = () => window.print();
 
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    const el = document.getElementById('transcript');
+    if (!el) return;
+    setDownloading(true);
+    try {
+      const [{ toPng }, { default: jsPDF }] = await Promise.all([
+        import('html-to-image'),
+        import('jspdf'),
+      ]);
+      const imgData = await toPng(el, {
+        pixelRatio: 2,
+        backgroundColor: '#ffffff',
+        style: { margin: '0', boxShadow: 'none' },
+      });
+      const img = new Image();
+      await new Promise<void>(resolve => { img.onload = () => resolve(); img.src = imgData; });
+      const PAGE_W = 210;
+      const PAGE_H = 297;
+      const imgH = (img.naturalHeight / img.naturalWidth) * PAGE_W;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      let y = 0;
+      while (y < imgH) {
+        if (y > 0) pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, -y, PAGE_W, imgH);
+        y += PAGE_H;
+      }
+      const filename = student?.studentCode
+        ? `transcript-${student.studentCode}-T${term}-${year}.pdf`
+        : `transcript-T${term}-${year}.pdf`;
+      pdf.save(filename);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-muted/30 py-8 px-4">
       {/* Toolbar — hidden when printing */}
@@ -95,8 +132,9 @@ function AcademicResultContent() {
           <Button variant="outline" size="sm" onClick={handlePrint} className="gap-2">
             <Printer size={15} /> Print
           </Button>
-          <Button size="sm" onClick={handlePrint} className="gap-2">
-            <Download size={15} /> Download PDF
+          <Button size="sm" onClick={handleDownload} disabled={downloading} className="gap-2">
+            {downloading ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
+            Download PDF
           </Button>
         </div>
       </div>

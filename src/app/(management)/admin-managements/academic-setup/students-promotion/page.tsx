@@ -229,6 +229,9 @@ function PromotionTab() {
   const [tgtYear, setTgtYear] = useState<number>(CURRENT_YEAR);
   const [tgtTerm, setTgtTerm] = useState<number>(2);
 
+  // Target year always includes srcYear+1 so Term 2 → next year works
+  const tgtYearOptions = [srcYear, srcYear + 1];
+
   // grades without year/term filter — สำหรับทุก selector (classroom เป็น entity กลาง ไม่ผูก term)
   const { data: grades = [] } = useGrades();
 
@@ -366,7 +369,11 @@ function PromotionTab() {
                 <p className="text-xs text-muted-foreground mb-1">ปีการศึกษา</p>
                 <Select
                   value={String(srcYear)}
-                  onValueChange={v => setSrcYear(Number(v))}
+                  onValueChange={v => {
+                    const newSrcYear = Number(v);
+                    setSrcYear(newSrcYear);
+                    if (tgtYear < newSrcYear) setTgtYear(newSrcYear);
+                  }}
                 >
                   <SelectTrigger className="rounded-xl">
                     <SelectValue />
@@ -463,7 +470,7 @@ function PromotionTab() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {YEAR_OPTIONS.map(y => (
+                    {tgtYearOptions.map(y => (
                       <SelectItem key={y} value={String(y)}>
                         {y}
                       </SelectItem>

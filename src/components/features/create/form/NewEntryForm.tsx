@@ -3,6 +3,8 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
+import { useGrades } from "@/lib/api/grade/hooks/useGrade";
+import { useClassrooms } from "@/lib/api/classroom/hook/useClassrooms";
 import { ArrowRight, Loader } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -33,7 +35,8 @@ export default function NewEntryForm() {
     handleSubmit,
     control,
     reset,
-    formState: { errors },
+    watch,
+    setValue,
   } = useForm<StudentFormValues>({
     resolver: zodResolver(createStudentschema),
     defaultValues: {
@@ -55,8 +58,11 @@ export default function NewEntryForm() {
   });
 
   const [isPending, startTransition] = useTransition();
-
   const [preview, setPreview] = useState<File | null>(null);
+
+  const watchedGradeId = watch('gradeId');
+  const { data: grades } = useGrades();
+  const { data: classrooms } = useClassrooms({ gradeId: watchedGradeId || undefined, year: null, term: null });
 
   const onSubmit = (data: StudentFormValues) => {
     startTransition(async () => {
@@ -237,16 +243,20 @@ export default function NewEntryForm() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Grade</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        setValue('classId', '');
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Level" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="47c09bcf-089e-4acb-a16d-520b4647b1cc">
-                          Grade 1
-                        </SelectItem>
-                        <SelectItem value="2">Grade 2</SelectItem>
-                        <SelectItem value="3">Grade 3</SelectItem>
+                        {grades?.map((g) => (
+                          <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     {fieldState.invalid && (
@@ -256,23 +266,25 @@ export default function NewEntryForm() {
                 )}
               />
             </div>
-            {/*  Classroom dropdown (UPDATED) */}
+            {/* Classroom dropdown */}
             <Controller
               control={control}
               name="classId"
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel>Classroom</FieldLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!watchedGradeId}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select classroom" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="33eb243a-cbd0-4ba1-9d8f-210ea693daa4">
-                        Room 301
-                      </SelectItem>
-                      <SelectItem value="302">Room 302</SelectItem>
-                      <SelectItem value="303">Room 303</SelectItem>
+                      {classrooms?.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   {fieldState.invalid && (
