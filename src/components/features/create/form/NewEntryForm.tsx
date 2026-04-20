@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,55 +14,54 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-} from '@/components/ui/field';
+} from "@/components/ui/field";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
-import ProfileUpload from '../ProfileUpload';
-import { createStudent } from '@/lib/actions/student.action';
+import ProfileUpload from "../ProfileUpload";
+import { createStudent } from "@/lib/actions/student.action";
 import {
   createStudentschema,
   StudentFormValues,
-} from '@/lib/schemas/student.schema';
+} from "@/lib/schemas/student.schema";
 
 export default function NewEntryForm() {
-  const {
-    handleSubmit,
-    control,
-    reset,
-    watch,
-    setValue,
-  } = useForm<StudentFormValues>({
-    resolver: zodResolver(createStudentschema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      nickName: '',
-      dob: '',
-      gender: 'MALE',
+  const { handleSubmit, control, reset, watch, setValue } =
+    useForm<StudentFormValues>({
+      resolver: zodResolver(createStudentschema),
+      defaultValues: {
+        firstName: "",
+        lastName: "",
+        nickName: "",
+        dob: "",
+        gender: "MALE",
 
-      parentsFirstName: '',
-      parentsLastName: '',
-      parentsEmail: '',
+        parentsFirstName: "",
+        parentsLastName: "",
+        parentsEmail: "",
 
-      gradeId: '',
-      classId: '',
-      favorite: '',
-      healthNote: '',
-    },
-  });
+        gradeId: "",
+        classId: "",
+        favorite: "",
+        healthNote: "",
+      },
+    });
 
   const [isPending, startTransition] = useTransition();
   const [preview, setPreview] = useState<File | null>(null);
 
-  const watchedGradeId = watch('gradeId');
+  const watchedGradeId = watch("gradeId");
   const { data: grades } = useGrades();
-  const { data: classrooms } = useClassrooms({ gradeId: watchedGradeId || undefined, year: null, term: null });
+  const { data: classrooms } = useClassrooms({
+    gradeId: watchedGradeId || undefined,
+    year: null,
+    term: null,
+  });
 
   const onSubmit = (data: StudentFormValues) => {
     startTransition(async () => {
@@ -247,7 +246,7 @@ export default function NewEntryForm() {
                       value={field.value}
                       onValueChange={(val) => {
                         field.onChange(val);
-                        setValue('classId', '');
+                        setValue("classId", "");
                       }}
                     >
                       <SelectTrigger>
@@ -255,7 +254,9 @@ export default function NewEntryForm() {
                       </SelectTrigger>
                       <SelectContent>
                         {grades?.map((g) => (
-                          <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                          <SelectItem key={g.id} value={g.id}>
+                            {g.name}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -283,7 +284,9 @@ export default function NewEntryForm() {
                     </SelectTrigger>
                     <SelectContent>
                       {classrooms?.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -325,7 +328,7 @@ export default function NewEntryForm() {
                     <Loader className="animate-spin" /> Adding...
                   </>
                 ) : (
-                  'Add New Entry'
+                  "Add New Entry"
                 )}
                 <ArrowRight />
               </Button>
