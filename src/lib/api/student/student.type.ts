@@ -9,6 +9,7 @@ export type AtRiskStudent = {
   id: string;
   firstName: string;
   lastName: string;
+  profileImageUrl?: string | null;
   gradeName: string;
   classroomName: string;
   subjects: { name: string; grade: number }[];
