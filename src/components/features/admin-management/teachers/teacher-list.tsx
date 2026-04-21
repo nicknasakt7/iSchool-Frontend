@@ -9,6 +9,7 @@ import { useTeachers } from '@/lib/api/teacher/hooks/useTeachers';
 import { useDeleteTeacher } from '@/lib/api/teacher/hooks/useDeleteTeacher';
 import { TeacherResponse } from '@/lib/api/teacher/teacher.type';
 import ManageTeacherDialog from './manage-teacher-dialog';
+import TeacherAvatar from './teacher-avatar';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,7 +53,9 @@ export default function TeacherList({
   const { mutate: deleteTeacher, isPending: isDeleting } = useDeleteTeacher();
 
   const role = session?.user?.role;
-  const canManage = role === 'SUPER_ADMIN';
+  const canEdit = role === 'SUPER_ADMIN' || role === 'ADMIN';
+  const canDelete = role === 'SUPER_ADMIN';
+  const canUploadImage = role === 'ADMIN' || role === 'SUPER_ADMIN';
 
   const total = data?.meta.total ?? 0;
   const limit = data?.meta.limit ?? 10;
@@ -88,20 +91,30 @@ export default function TeacherList({
               key={t.id}
               className="flex gap-4 justify-between items-center border p-4 rounded-xl bg-card"
             >
-              <div>
-                <p className="font-medium">
-                  {t.firstName} {t.lastName}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Homeroom: {homeroom}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Subjects: {subjectList}
-                </p>
+              <div className="flex items-center gap-4">
+                <TeacherAvatar
+                  teacherId={t.id}
+                  firstName={t.firstName}
+                  lastName={t.lastName}
+                  profileImageUrl={t.profileImageUrl}
+                  canUpload={canUploadImage}
+                  size={44}
+                />
+                <div>
+                  <p className="font-medium">
+                    {t.firstName} {t.lastName}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Homeroom: {homeroom}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Subjects: {subjectList}
+                  </p>
+                </div>
               </div>
 
               <div className="flex gap-2">
-                {canManage && (
+                {canEdit && (
                   <Button variant="outline" className="text-sm" asChild>
                     <Link href={`/admin-managements/teachers/${t.id}/edit`}>
                       Edit
@@ -117,7 +130,7 @@ export default function TeacherList({
                   Manage
                 </Button>
 
-                {canManage && (
+                {canDelete && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" className="text-sm" disabled={isDeleting}>

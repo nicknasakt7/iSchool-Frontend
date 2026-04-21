@@ -31,8 +31,7 @@ const adminRoutes = [
   // admin-management
   '/admin-managements/enrollments',
 
-  '/admin-managements/teachers/teacher-managements',
-  '/admin-managements/teachers/new-teacher',
+  '/admin-managements/teachers',
 
   '/admin-managements/relations',
 
@@ -56,8 +55,7 @@ const superAdminRoutes = [
   // admin-management
   '/admin-managements/enrollments',
 
-  '/admin-managements/teachers/teacher-managements',
-  '/admin-managements/teachers/new-teacher',
+  '/admin-managements/teachers',
 
   '/admin-managements/relations',
 

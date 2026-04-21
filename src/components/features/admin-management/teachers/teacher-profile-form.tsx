@@ -12,6 +12,8 @@ import { z } from 'zod';
 import { Camera, Loader2, ArrowLeft } from 'lucide-react';
 
 import { teacherService } from '@/lib/api/teacher/teacher.service';
+import { useGrades } from '@/lib/api/grade/hooks/useGrade';
+import { useClassrooms } from '@/lib/api/classroom/hook/useClassrooms';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,6 +50,16 @@ export default function TeacherProfileForm({ teacherId }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
+  /* ── Homeroom state ── */
+  const [homeroomRole, setHomeroomRole] = useState<'none' | 'homeroom'>('none');
+  const [homeroomGradeId, setHomeroomGradeId] = useState('');
+  const [homeroomClassId, setHomeroomClassId] = useState('');
+
+  const { data: grades } = useGrades();
+  const { data: homeroomClassrooms } = useClassrooms(
+    homeroomGradeId ? { gradeId: homeroomGradeId } : undefined,
+  );
+
   const { data: teacher, isLoading } = useQuery({
     queryKey: ['teacher', teacherId],
     queryFn: () => teacherService.getTeacherById(teacherId, token),
@@ -63,23 +75,30 @@ export default function TeacherProfileForm({ teacherId }: Props) {
     formState: { errors, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      gender: 'MALE',
-    },
+    defaultValues: { firstName: '', lastName: '', email: '', gender: 'MALE' },
   });
 
   useEffect(() => {
-    if (teacher) {
-      reset({
-        firstName: teacher.firstName,
-        lastName: teacher.lastName,
-        email: teacher.email,
-        gender: (teacher.gender as 'MALE' | 'FEMALE' | 'OTHER') ?? 'MALE',
-      });
-      setPreviewUrl(teacher.profileImageUrl ?? null);
+    if (!teacher) return;
+    reset({
+      firstName: teacher.firstName,
+      lastName: teacher.lastName,
+      email: teacher.email,
+      gender: (teacher.gender as 'MALE' | 'FEMALE' | 'OTHER') ?? 'MALE',
+    });
+    setPreviewUrl(teacher.profileImageUrl ?? null);
+
+    if (teacher.homeroomClass) {
+      setHomeroomRole('homeroom');
+      setHomeroomGradeId(teacher.homeroomClass.gradeId);
+      setHomeroomClassId(teacher.homeroomClass.id);
+    } else if (teacher.homeroomClassId) {
+      setHomeroomRole('homeroom');
+      setHomeroomClassId(teacher.homeroomClassId);
+    } else {
+      setHomeroomRole('none');
+      setHomeroomGradeId('');
+      setHomeroomClassId('');
     }
   }, [teacher, reset]);
 
@@ -93,11 +112,7 @@ export default function TeacherProfileForm({ teacherId }: Props) {
       formData.append('profileImage', file);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/teachers/${teacherId}/profile-image`,
-        {
-          method: 'PATCH',
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
-        },
+        { method: 'PATCH', headers: { Authorization: `Bearer ${token}` }, body: formData },
       );
       if (!res.ok) throw new Error();
       toast.success('Profile photo updated');
@@ -110,8 +125,15 @@ export default function TeacherProfileForm({ teacherId }: Props) {
   };
 
   const updateMutation = useMutation({
-    mutationFn: (data: FormValues) =>
-      teacherService.updateTeacher(teacherId, data, token),
+    mutationFn: (data: FormValues) => {
+      const homeroomValue =
+        homeroomRole === 'homeroom' && homeroomClassId ? homeroomClassId : null;
+      return teacherService.updateTeacher(
+        teacherId,
+        { ...data, homeroomClassId: homeroomValue ?? undefined },
+        token,
+      );
+    },
     onSuccess: () => {
       toast.success('Teacher profile saved');
       router.back();
@@ -186,7 +208,11 @@ export default function TeacherProfileForm({ teacherId }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label>First Name <span className="text-destructive">*</span></Label>
-            <Input {...register('firstName')} placeholder="First name" />
+            <Input
+              {...register('firstName')}
+              placeholder="First name"
+              className="rounded-full"
+            />
             {errors.firstName && (
               <p className="text-xs text-destructive">{errors.firstName.message}</p>
             )}
@@ -194,7 +220,11 @@ export default function TeacherProfileForm({ teacherId }: Props) {
 
           <div className="space-y-1.5">
             <Label>Last Name <span className="text-destructive">*</span></Label>
-            <Input {...register('lastName')} placeholder="Last name" />
+            <Input
+              {...register('lastName')}
+              placeholder="Last name"
+              className="rounded-full"
+            />
             {errors.lastName && (
               <p className="text-xs text-destructive">{errors.lastName.message}</p>
             )}
@@ -202,7 +232,12 @@ export default function TeacherProfileForm({ teacherId }: Props) {
 
           <div className="space-y-1.5 md:col-span-2">
             <Label>Email <span className="text-destructive">*</span></Label>
-            <Input type="email" {...register('email')} placeholder="teacher@example.com" />
+            <Input
+              type="email"
+              {...register('email')}
+              placeholder="teacher@example.com"
+              className="rounded-full"
+            />
             {errors.email && (
               <p className="text-xs text-destructive">{errors.email.message}</p>
             )}
@@ -214,7 +249,7 @@ export default function TeacherProfileForm({ teacherId }: Props) {
               value={gender}
               onValueChange={v => setValue('gender', v as 'MALE' | 'FEMALE' | 'OTHER', { shouldDirty: true })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="rounded-full">
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
               <SelectContent>
@@ -227,6 +262,75 @@ export default function TeacherProfileForm({ teacherId }: Props) {
               <p className="text-xs text-destructive">{errors.gender.message}</p>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Homeroom Assignment */}
+      <div className="bg-card border border-border rounded-2xl p-6">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+          Homeroom Assignment
+        </h2>
+        <div className="space-y-3">
+          <Select
+            value={homeroomRole}
+            onValueChange={v => {
+              setHomeroomRole(v as 'none' | 'homeroom');
+              if (v === 'none') {
+                setHomeroomGradeId('');
+                setHomeroomClassId('');
+              }
+            }}
+          >
+            <SelectTrigger className="rounded-full">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">None</SelectItem>
+              <SelectItem value="homeroom">Homeroom Teacher</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {homeroomRole === 'homeroom' && (
+            <div className="flex gap-3">
+              <div className="flex-1 space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Grade</Label>
+                <Select
+                  value={homeroomGradeId}
+                  onValueChange={v => {
+                    setHomeroomGradeId(v);
+                    setHomeroomClassId('');
+                  }}
+                >
+                  <SelectTrigger className="rounded-full">
+                    <SelectValue placeholder="Select grade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(grades ?? []).map(g => (
+                      <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex-1 space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Classroom</Label>
+                <Select
+                  value={homeroomClassId}
+                  onValueChange={setHomeroomClassId}
+                  disabled={!homeroomGradeId}
+                >
+                  <SelectTrigger className="rounded-full">
+                    <SelectValue placeholder="Select classroom" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(homeroomClassrooms ?? []).map(c => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -250,7 +354,13 @@ export default function TeacherProfileForm({ teacherId }: Props) {
           >
             Reset
           </Button>
-          <Button type="submit" disabled={updateMutation.isPending}>
+          <Button
+            type="submit"
+            disabled={
+              updateMutation.isPending ||
+              (homeroomRole === 'homeroom' && !homeroomClassId)
+            }
+          >
             {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
             Save Changes
           </Button>

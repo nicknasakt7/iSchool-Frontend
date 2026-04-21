@@ -13,24 +13,24 @@ export default async function EnrollmentSection() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-card rounded-2xl border p-4 text-center">
-          <p className="text-2xl font-bold">{total}</p>
-          <p className="text-xs text-muted-foreground mt-1">Total Leads</p>
+          <p className="text-xl font-bold">{total}</p>
+          <p className="text-sm text-muted-foreground mt-1">Total Leads</p>
         </div>
         <div className="bg-card rounded-2xl border p-4 text-center">
-          <p className="text-2xl font-bold text-amber-500">{waiting}</p>
-          <p className="text-xs text-muted-foreground mt-1">Waiting</p>
+          <p className="text-xl font-bold text-amber-500">{waiting}</p>
+          <p className="text-sm text-muted-foreground mt-1">Waiting</p>
         </div>
         <div className="bg-card rounded-2xl border p-4 text-center">
-          <p className="text-2xl font-bold text-green-500">{contacted}</p>
-          <p className="text-xs text-muted-foreground mt-1">Contacted</p>
+          <p className="text-xl font-bold text-green-500">{contacted}</p>
+          <p className="text-sm text-muted-foreground mt-1">Contacted</p>
         </div>
       </div>
 
       {/* Table Card */}
       <div className="bg-card rounded-2xl border p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium">Interested Leads</p>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full">
+          <p className="text-base font-medium">Interested Leads</p>
+          <span className="text-sm bg-muted px-2 py-1 rounded-full">
             {total} รายการ
           </span>
         </div>

@@ -6,7 +6,7 @@ export default function EnrollmentPage() {
       <h2 className="text-4xl font-bold mb-4">Enrollment Hub</h2>
 
       {/* ใส่ SummaryCards + Filters + Table ที่เราทำไว้ตรงนี้ */}
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         This is the main enrollment dashboard.
       </p>
 

@@ -42,17 +42,17 @@ export default function ActivityRow({ lead }: Props) {
   });
 
   return (
-    <div className="grid grid-cols-5 items-center px-4 py-4 border-t text-sm hover:bg-muted/40 transition">
+    <div className="grid grid-cols-5 items-center px-4 py-4 border-t text-base hover:bg-muted/40 transition">
       {/* Name */}
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-xs font-bold shrink-0">
+        <div className="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-sm font-bold shrink-0">
           {initials(lead.parentFirstName, lead.parentLastName)}
         </div>
         <div className="min-w-0">
           <p className="font-medium truncate">
             {lead.parentFirstName} {lead.parentLastName}
           </p>
-          <p className="text-xs text-muted-foreground truncate">{lead.email}</p>
+          <p className="text-sm text-muted-foreground truncate">{lead.email}</p>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export default function ActivityRow({ lead }: Props) {
           onValueChange={handleStatusChange}
           disabled={statusPending}
         >
-          <SelectTrigger className="w-32 h-8 rounded-full text-xs">
+          <SelectTrigger className="w-32 h-8 rounded-full text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
