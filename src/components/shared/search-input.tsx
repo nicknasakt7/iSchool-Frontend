@@ -1,0 +1,44 @@
+'use client';
+
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+import { useDebounce } from '@/lib/api/student/hooks/useDebounce';
+import { useEffect, useRef, useState } from 'react';
+
+type SearchInputProps = {
+  placeholder?: string;
+  onSearch?: (value: string) => void;
+  className?: string;
+};
+
+export default function SearchInput({
+  placeholder = 'Search...',
+  onSearch,
+  className,
+}: SearchInputProps) {
+  const [value, setValue] = useState('');
+
+  const debounced = useDebounce(value, 500);
+
+  // เก็บ callback ล่าสุดไว้ใน ref เพื่อไม่ให้ effect fire ตอน onSearch reference เปลี่ยน
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
+
+  // ยิงเฉพาะตอน debounced value เปลี่ยนเท่านั้น
+  useEffect(() => {
+    onSearchRef.current?.(debounced);
+  }, [debounced]);
+
+  return (
+    <div className={`relative w-full ${className}`}>
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 text-muted-foreground" />
+
+      <Input
+        value={value}
+        placeholder={placeholder}
+        className="pl-10 bg-card rounded-full h-9"
+        onChange={e => setValue(e.target.value)}
+      />
+    </div>
+  );
+}
